@@ -1,0 +1,15 @@
+.icon-login{
+	width: 100px;
+}
+
+.card-login{
+    margin-top: 60px;
+    box-shadow: 0 5px 20px 0px rgba(0, 0, 0, 0.3), 0 17px 20px -11px rgb(20, 26, 100) !important;
+}
+
+#visualizacion{
+	cursor: pointer;
+}
+
+
+
