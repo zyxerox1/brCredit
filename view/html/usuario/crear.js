@@ -113,7 +113,8 @@ function registrar_usuario(action,datos) {
             check_todo_input_verificado();
             validate_errores_peticion_ajax(obj);
           }else if(obj["error"]==0){
-            setTimeout(function() {window.history.go(-1) },1000);
+            setTimeout(function() {window.location.href = 'index.php?c=usuario' },1000);
+            //setTimeout(function() {window.history.go(-1) },1000);
             ohSnap('Se guardo correctamente',{color: 'green'});
           }else{
             ohSnap('Error desconocido.',{color: 'green'});
