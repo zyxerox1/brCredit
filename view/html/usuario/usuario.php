@@ -44,7 +44,14 @@
 						<button type="button" class="btn btn-outline-primary cambiar-vista-cuad"><i class="fas fa-th-large"></i></button>
 					</div>
 				</div>-->
+				
 	            <div class="card-body card-body-primary">
+	            	<div class="row">
+						<div class="col-md-6">
+							<button type="button" id="buscar" onclick="window.location.href = 'index.php?c=usuario&a=crear'" class="btn btn-primary btn-confirmar">Crear usuario</button>
+						</div>
+					</div>
+					<br>
 	        		<div class="table-responsive padding" >
 			            <table id="datausuarios" class="table table-bordred table-striped table-striped table-hover dt-responsive">
 			              <thead class="heade-table">
