@@ -43,7 +43,7 @@ class query_modelo
             if(isset($_REQUEST['a'])){
                 $acion=$_REQUEST['a'];
             }
-            $accion='c='.$control.' a='.$acion.' /-/ consulta='.$sql;
+            $accion='Consulta de dataTable => '.$sql;
             /*}///////////////////*/
             $queryTot = mysqli_query($this->DB, $sqlTot) or die('501,'.$this->LOG->log_errores($accion,mysqli_error($this->DB),$control,$acion));
 

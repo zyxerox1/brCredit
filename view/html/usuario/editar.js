@@ -47,11 +47,53 @@ $(document).ready(function() {
     var edad=calcularEdad($(this).val());
   });
 
+  $("#estados").change(function() {
+    cargarCiudades();
+  })
+
+  readTextFile("view/assets/plugins/localidad/Estados.json", function(text){
+    var arrayEstados = JSON.parse(text);
+    arrayEstados.forEach(data =>dibujarEstado(data.ID,data.Nome));
+    cargarCiudades();
+  });
+
   $( "#formulario-editar-usuario" ).submit(function( event ) {
       event.preventDefault();
       editar_usuario($(this).attr('action'),$(this).serializeArray());
   });
 });
+
+function cargarCiudades(){
+  var id=$("#estados").val();
+    $("#ciudades").html("<option value='0'>Selecione un ciudad...</option>");
+    readTextFile("view/assets/plugins/localidad/Cidades.json", function(text){
+      var arrayCiudad = JSON.parse(text);
+      $(".loader").fadeIn('slow');
+      arrayCiudad.forEach(element => dibujarCiudades(element,id));
+      $(".loader").fadeOut('slow');
+    });
+}
+
+
+function dibujarEstado(id,nome){
+
+  if($("#estados").attr("data-id")==id){
+    console.log($("#estados").attr("data-id")+"----"+id);
+    $("#estados").append("<option value="+id+" selected='selected'>"+nome+"</option>")
+  }else{
+    $("#estados").append("<option value="+id+">"+nome+"</option>")
+  }
+}
+
+function dibujarCiudades(data,id){
+  if(data.Estado==id){
+    if($("#ciudades").attr("data-id")==data.ID){
+      $("#ciudades").append("<option selected='selected' value="+data.ID+">"+data.Nome+"</option>");
+    }else{
+      $("#ciudades").append("<option value="+data.ID+">"+data.Nome+"</option>");
+    }
+  }
+}
 
 function editar_usuario(action,datos) {
   var formData = new FormData();

@@ -11,7 +11,8 @@ class usuario_modelo
         $this->user = array();
     }
 
-     public function log_usuario($movimiento="",$id="",$nota=""){
+    /*/////////////////////////////////////////////guardar///////////////////////////////////*/
+    public function log_usuario($movimiento="",$id="",$nota=""){
         /*parametro de errores{*/
         $controller="";
         $accion_func="";
@@ -22,7 +23,7 @@ class usuario_modelo
             $accion_func=$_REQUEST['a'];
         }
 
-        $query = "CALL logUsuarios('$movimiento.','$id',".$_SESSION["id_usu_credit"].",'$accion_func','$controller')";
+        $query = "CALL logUsuarios('$movimiento','$id',".$_SESSION["id_usu_credit"].",'$accion_func','$controller')";
 
         $this->DB_QUERY->save($query);
     }
@@ -45,7 +46,47 @@ class usuario_modelo
         return array('control' =>$user["text_img_perfil_usu"] ,'error' => 0,'resp'=>$id);
     }
 
-    public function atualizar_usuario($primernombre, $segundonombre, $primerapellido, $segundoapellido,$Genero, $Telefono_1, $Telefono_2, $Fecha, $Direcion, $Correo, $img_name,$id){
+    /*////////////////////////////////consulta//////////////////////////////////////////////////*/
+    public function obtener_usuarios($params){
+
+        $query="SELECT id_usu as id, documento_usu as CC, concat(primer_nombre_usu,' ',segundo_nombre_usu) as Nombre, concat(primer_apellido_usu,' ',segundo_apellido_usu) as Apellido, telefono_1_usu as t1, telefono_2_usu as t2,correo_usu as Correo, fecha_nacimineto_usu as fecha, estado_usu as Estado FROM tbl_usuarios WHERE 1 ";
+
+     
+        if(isset($params['Nombre']) && $params['Nombre']!=0){
+          $query.=" AND id_usu = ".$params['Nombre'];
+        }
+        if(isset($params['Cedula']) && $params['Cedula']!=0){
+            $query.=" AND documento_usu = ".$params['Cedula'];
+        }
+
+        //$tablaSearch="AND int_documento_usu LIKE '%".$params['search']['value']."%'";
+
+        $data=$this->DB_QUERY->queryDatatable($params,$query);
+        return $data;
+    }
+
+    public function obtener_filtro_usuario(){
+        $query="CALL obtenerFiltroUsuario()";
+        $data=$this->DB_QUERY->query($query);
+        return $data;
+    }
+
+
+    public function query_usuario($params){
+        $query="CALL buscarUsuario(".$params['i'].")";
+        $data=$this->DB_QUERY->query($query);
+        return $data;
+    }
+
+    /*////////////////////////////////atualizar//////////////////////////////////////////////////*/
+    public function cambiar_estado($params){
+        $query="UPDATE `tbl_usuarios` SET `estado_usu` = ".$params['estado']." WHERE `tbl_usuarios`.`id_usu` = '".$params['id']."'";
+        $id=$this->DB_QUERY->save($query,'cambiar estado de usuarios.');
+        $this->log_usuario(3,$params['id']);
+        return array('control' =>0 ,'error' => 0);
+    }
+
+    public function atualizar_usuario($primernombre, $segundonombre, $primerapellido, $segundoapellido,$Genero, $Telefono_1, $Telefono_2, $Fecha, $Direcion, $Correo, $img_name,$id,$estados,$ciudad){
 
         $user = array();
 
@@ -76,53 +117,14 @@ class usuario_modelo
                     direcion_usu='$Direcion',
                     sexo_usu='$Genero',
                     correo_usu='$Correo',
-                    fecha_nacimineto_usu='$Fecha'
+                    fecha_nacimineto_usu='$Fecha',
+                    estado_localidad_usu='$estados',
+                    ciudad_localidad_usu='$ciudad'
                     $text_img_perfil_usu
                   WHERE `tbl_usuarios`.`id_usu` =".$id;
-        mysqli_query($this->DB, $query) or die('501' . $this->LOG->log_errores('Actualizar usuario /-/ consulta='.$query,mysqli_error($this->DB)));
-        $id = mysqli_insert_id($this->DB);
-        $this->LOG->log_usuario(1,$id);
+
+        $this->DB_QUERY->save($query,'atualizar usuarios.');
+        $this->log_usuario(1,$id);
         return $user;
-    }
-
-    public function obtener_usuarios($params){
-
-        $query="SELECT id_usu as id, documento_usu as CC, concat(primer_nombre_usu,' ',segundo_nombre_usu) as Nombre, concat(primer_apellido_usu,' ',segundo_apellido_usu) as Apellido, telefono_1_usu as t1, telefono_2_usu as t2,correo_usu as Correo, fecha_nacimineto_usu as fecha, estado_usu as Estado FROM tbl_usuarios WHERE 1 ";
-
-     
-        if(isset($params['Nombre']) && $params['Nombre']!=0){
-          $query.=" AND id_usu = ".$params['Nombre'];
-        }
-        if(isset($params['Cedula']) && $params['Cedula']!=0){
-            $query.=" AND documento_usu = ".$params['Cedula'];
-        }
-
-        //$tablaSearch="AND int_documento_usu LIKE '%".$params['search']['value']."%'";
-
-        $data=$this->DB_QUERY->queryDatatable($params,$query);
-        return $data;
-    }
-
-    public function cambiar_estado($params){
-        $query="UPDATE `tbl_usuarios` SET `estado_usu` = ".$params['estado']." WHERE `tbl_usuarios`.`id_usu` = '".$params['id']."'";
-        mysqli_query($this->DB, $query) or die('501' . $this->LOG->log_errores('Cambiar estado /-/ consulta='.$query,mysqli_error($this->DB)));
-        $id = mysqli_insert_id($this->DB);
-        $this->LOG->log_usuario("cambiar estado",$id);
-        return array('control' =>0 ,'error' => 0);
-    }
-
-     public function obtener_filtro_usuario(){
-
-        $query="SELECT * FROM tbl_usuarios ";
-        $data=$this->DB_QUERY->query($query);
-        return $data;
-    }
-
-
-    public function query_usuario($params){
-
-        $query="SELECT * FROM tbl_usuarios WHERE id_usu=".$params['i'];
-        $data=$this->DB_QUERY->query($query);
-        return $data;
     }
 }

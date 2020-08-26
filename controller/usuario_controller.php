@@ -180,6 +180,13 @@ class usuario_controller
         if($this->validacion->soloLetras($_POST['Genero'])==false){
           $errores[] = array('control' =>"Genero" ,'error' =>"El campo de Genero solo debe contener letras");
         }
+        if($_POST['estados']==0){
+          $errores[] = array('control' =>"estados" ,'error' =>"Debes selecionar un estado");
+        }
+
+        if($_POST['ciudades']==0){
+          $errores[] = array('control' =>"ciudades" ,'error' =>"Debes selecionar un ciudad");
+        }
 
         if($this->validacion->soloNumeros($_POST['Telefono_1'])==false){
           $errores[] = array('control' =>"Telefono_1" ,'error' =>"El campo Telefono 1 solo debe contener numeros"  );
@@ -213,7 +220,7 @@ class usuario_controller
 
 
         if(count($errores)==0){
-            $result_editar_usuario=  $this->usuario->atualizar_usuario($_POST['primernombre'], $_POST['segundonombre'], $_POST['primerapellido'], $_POST['segundoapellido'], $_POST['Genero'], $_POST['Telefono_1'], $_POST['Telefono_2'], $_POST['Fecha'], $_POST['Direcion'], $_POST['Correo'],$img_name,$_SESSION['id_update']);
+            $result_editar_usuario=  $this->usuario->atualizar_usuario($_POST['primernombre'], $_POST['segundonombre'], $_POST['primerapellido'], $_POST['segundoapellido'], $_POST['Genero'], $_POST['Telefono_1'], $_POST['Telefono_2'], $_POST['Fecha'], $_POST['Direcion'], $_POST['Correo'],$img_name,$_SESSION['id_update'],$_POST['estados'],$_POST['ciudades']);
             if (isset($result_editar_usuario["text_img_perfil_usu"]) && $result_editar_usuario["text_img_perfil_usu"] !=1) {
               move_uploaded_file($_FILES['img']['tmp_name'], "view/assets/imagenes_usuario/".$result_editar_usuario["text_img_perfil_usu"]);
             }

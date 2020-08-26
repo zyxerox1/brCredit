@@ -6,6 +6,8 @@ $(document).ready(function() {
     cargar_usuarios();
   });
 });
+
+
 function cargar_usuarios(){
   if ( $.fn.dataTable.isDataTable( '#datausuarios' ) ) {
    $("#datausuarios").dataTable().fnDestroy();
@@ -53,7 +55,7 @@ function cargar_usuarios(){
               if(data==1){
                 input='<input type="checkbox" data-estado="'+row.id+'" checked data-toggle="toggle" data-size="sm" class="estado_usu">';
               }else{
-                input='<input type="checkbox" data-estado="'+row.id+'" checked data-toggle="toggle" data-size="sm" class="estado_usu">';
+                input='<input type="checkbox" data-estado="'+row.id+'" data-toggle="toggle" data-size="sm" class="estado_usu">';
               }
              return input;
            }

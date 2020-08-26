@@ -106,8 +106,28 @@
 
                         </div>
                       </div>
-                      <br>  
+                      <hr>  
+                      <div class="row">
                      
+                        <div class="col-md-6 container-select2">
+                          <div class="form-group">
+                            <label for="estados" class="text-color">Estados*</label>
+                            <select class="select2 form-control" id="estados" name="estados" required="required" data-id="<?php echo $data[0]['estado_localidad_usu']; ?>">
+                                <option value="0">Selecione un estado...</option>
+                               
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-md-6 container-select2">
+                              <div class="form-group">
+                                <label for="ciudades" class="text-color">Ciudades*</label>
+                                <select class="select2 form-control" id="ciudades" name="ciudades" required="required"  data-id="<?php echo $data[0]['ciudad_localidad_usu']; ?>">
+                                    <option>Selecione un ciudad...</option>
+                                </select>
+                              </div>
+                            </div>
+                    
+                    </div>
                       <div class="row">
                      
                         <div class="col-md-6">
