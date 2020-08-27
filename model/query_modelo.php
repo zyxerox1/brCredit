@@ -65,6 +65,7 @@ class query_modelo
     }
 
     public function query($sql="SELECT now()",$control="",$acion=""){
+        $data = array();
         /*parametro de errores{*/
         $accion='c='.$control.' a='.$acion.' /-/ consulta='.$sql;
         /*}///////////////////*/
