@@ -9,7 +9,7 @@ class gasto_modelo
     public function __construct()
     {
         $this->DB   = conexion::getConnection();
-        $this->DB_QUERY   = new conexion;
+        $this->DB_QUERY   = new query_modelo;
         $this->LOG   = new log_controller();
         $this->data = array();
     }
