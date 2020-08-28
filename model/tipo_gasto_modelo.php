@@ -30,7 +30,7 @@ class tipo_gasto_modelo
     }
 
     public function crear_tipo($tipo){
-        $query="SELECT id_tipog AS id FROM tbl_tipo_gasto WHERE tipo_tipog=".$_SESSION["rol"]." AND nombre_tipog = '$tipo'";
+        $query="SELECT id_tipog AS id FROM tbl_tipo_gasto WHERE tipo_tipog=".$_SESSION["rol"]." AND nombre_tipog = '$tipo' AND id_usu =".$_SESSION["id_usu_credit"]."";
         $data=$this->DB_QUERY->query($query);
         if(count($data)>0){
             return 3;

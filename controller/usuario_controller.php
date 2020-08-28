@@ -112,11 +112,17 @@ class usuario_controller
         if(strlen($_POST['Telefono_1'])<10){
           $errores[] = array('control' =>"Telefono_1" ,'error' =>"El numero Telefono 1 es corto");
         }
-        if($this->validacion->soloNumeros($_POST['Telefono_2'])==false){
-          $errores[] = array('control' =>"Telefono_2" ,'error' =>"El campo Telefono 2 solo debe contener numeros");
-        }
-        if(strlen($_POST['Telefono_2'])<10){
-          $errores[] = array('control' =>"Telefono_2" ,'error' =>"El numero Telefono 2 es corto");
+
+        if(strlen($_POST['Telefono_2'])!=0){
+           if(strlen($_POST['Telefono_2'])<10){
+              $errores[] = array('control' =>"Telefono_2" ,'error' =>"El numero Telefono 2 es corto");
+            } 
+
+            if($this->validacion->soloNumeros($_POST['Telefono_2'])==false){
+              $errores[] = array('control' =>"Telefono_2" ,'error' =>"El campo Telefono 2 solo debe contener numeros");
+            }
+        }else{
+            $_POST['Telefono_2']=0;
         }
 
         // if($this->validacion->muyJoven($_POST['Fecha'])==false){
@@ -197,11 +203,16 @@ class usuario_controller
         if(strlen($_POST['Telefono_1'])<10){
           $errores[] = array('control' =>"Telefono_1" ,'error' =>"El numero Telefono 1 es corto");
         }
-        if($this->validacion->soloNumeros($_POST['Telefono_2'])==false){
-          $errores[] = array('control' =>"Telefono_2" ,'error' =>"El campo Telefono 2 solo debe contener numeros");
-        }
-        if(strlen($_POST['Telefono_2'])<7){
-          $errores[] = array('control' =>"Telefono_2" ,'error' =>"El numero Telefono 2 es corto");
+        
+         if(strlen($_POST['Telefono_2'])!=0){
+           if(strlen($_POST['Telefono_2'])<10){
+              $errores[] = array('control' =>"Telefono_2" ,'error' =>"El numero Telefono 2 es corto");
+            } 
+            if($this->validacion->soloNumeros($_POST['Telefono_2'])==false){
+              $errores[] = array('control' =>"Telefono_2" ,'error' =>"El campo Telefono 2 solo debe contener numeros");
+            }
+        }else{
+            $_POST['Telefono_2']=0;
         }
 
         if($this->validacion->muyJoven($_POST['Fecha'])==false){
