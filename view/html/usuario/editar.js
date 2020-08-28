@@ -78,7 +78,7 @@ function cargarCiudades(){
 function dibujarEstado(id,nome){
 
   if($("#estados").attr("data-id")==id){
-    console.log($("#estados").attr("data-id")+"----"+id);
+    //console.log($("#estados").attr("data-id")+"----"+id);
     $("#estados").append("<option value="+id+" selected='selected'>"+nome+"</option>")
   }else{
     $("#estados").append("<option value="+id+">"+nome+"</option>")

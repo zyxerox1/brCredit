@@ -6,45 +6,44 @@ class gasto_controller
 {
     private $gasto;
     private $tipo;
+    private $validacion;
 
     public function __construct()
     {
         $this->gasto  = new gasto_modelo();
         $this->tipo  = new tipo_gasto_controller();
+        $this->validacion  = new validaciones_controller();
     }
 
     public function index()
     {
-        if($_SESSION["rol"]==2){
-            //variable necesaria para encontrar la ruta del script js--se utiliza en le footer de la app
-            $c='gasto'; //carpeta;
-            $p='gasto';//nombre del archivo js
-            require_once HTML_DIR . 'overall/header.php';
-            require_once HTML_DIR . 'overall/topNav.php';
-            require_once HTML_DIR . 'gasto/gasto.php';
-            require_once HTML_DIR . 'overall/footer.php';
-        }
+        $this->validacion->validarRol(2);
+        //variable necesaria para encontrar la ruta del script js--se utiliza en le footer de la app
+        $c='gasto'; //carpeta;
+        $p='gasto';//nombre del archivo js
+        require_once HTML_DIR . 'overall/header.php';
+        require_once HTML_DIR . 'overall/topNav.php';
+        require_once HTML_DIR . 'gasto/gasto.php';
+        require_once HTML_DIR . 'overall/footer.php';
       
     }
 
     public function registrar()
     {
-        if($_SESSION["rol"]==2){
-            $dataTipo=$this->tipo->obtener();
-            //variable necesaria para encontrar la ruta del script js--se utiliza en le footer de la app
-            $c='gasto'; //carpeta;
-            $p='registrar';//nombre del archivo js
-            require_once HTML_DIR . 'overall/header.php';
-            require_once HTML_DIR . 'overall/topNav.php';
-            require_once HTML_DIR . 'gasto/registrar.php';
-            require_once HTML_DIR . 'gasto/modal_registrar.php';
-            require_once HTML_DIR . 'overall/footer.php';
-        }
-      
+        $this->validacion->validarRol(2);
+        //variable necesaria para encontrar la ruta del script js--se utiliza en le footer de la app
+        $c='gasto'; //carpeta;
+        $p='registrar';//nombre del archivo js
+        require_once HTML_DIR . 'overall/header.php';
+        require_once HTML_DIR . 'overall/topNav.php';
+        require_once HTML_DIR . 'gasto/registrar.php';
+        require_once HTML_DIR . 'gasto/modal_registrar.php';
+        require_once HTML_DIR . 'overall/footer.php';
     }
 
     public function save()
-    {
+    {   
+        $this->validacion->validarRol(2);
         $errores=[];
         $img_name=0;
 
@@ -54,7 +53,7 @@ class gasto_controller
         if ($_POST['valor']=="") {
             $errores[] = array('control' =>"valor" ,'error' => "Tiene que ingresar un valor"  );
         }else{
-            $_POST['valor']= trim($_POST['valor'], ",");
+            $_POST['valor']= preg_replace('/[.,]/', '', $_POST['valor']);
         }
         if($_POST['nota']==""){
            $errores[] = array('control' =>"nota" ,'error' =>"Tiene que ingresar un detalle"  );
@@ -68,7 +67,7 @@ class gasto_controller
             $result_editar_usuario=  $this->gasto->crear_gasto($_POST['Tipo'], $_POST['valor'], $_POST['nota'],$img_name);
 
             if (isset($result_editar_usuario["control"]) && $result_editar_usuario["control"] !=1) {
-              move_uploaded_file($_FILES['img']['tmp_name'], "view/assets/imagenes_usuario/".$result_editar_usuario["control"]);
+              move_uploaded_file($_FILES['img']['tmp_name'], "view/assets/evidenciasGastosPropios/".$result_editar_usuario["control"]);
             }
           $errores=array('control' =>0 ,'error' => 0);
         }

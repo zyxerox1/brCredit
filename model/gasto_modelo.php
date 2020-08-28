@@ -2,7 +2,6 @@
 class gasto_modelo
 {
     private $DB;
-    private $LOG;
     private $data;
     private $DB_QUERY;
 
@@ -10,9 +9,26 @@ class gasto_modelo
     {
         $this->DB   = conexion::getConnection();
         $this->DB_QUERY   = new query_modelo;
-        $this->LOG   = new log_controller();
         $this->data = array();
     }
+
+    /*/////////////////////////////////////////////guardar///////////////////////////////////*/
+
+      public function log_gasto($movimiento="",$id="",$nota=""){
+        /*parametro de errores{*/
+        $controller="";
+        $accion_func="";
+        if(isset($_REQUEST['c'])){
+            $controller=$_REQUEST['c'];
+        }
+        if(isset($_REQUEST['a'])){
+            $accion_func=$_REQUEST['a'];
+        }
+
+        $query = "CALL logGasto('$movimiento','$id','$controller',".$_SESSION["id_usu_credit"].",'$accion_func')";
+        $this->DB_QUERY->save($query);
+    }
+
 
     public function crear_gasto($Tipo, $valor, $nota,$img_name){
         $data = array();
@@ -24,7 +40,9 @@ class gasto_modelo
             $data["img"]=1;
         }
         $query = "INSERT INTO `tbl_gasto` (`id_gas`, `valor_gas`, `fecha_gas`, `evidencia_gas`, `nota_gas`, `id_usu`) VALUES (NULL, '$valor', now(), '$img_name', '$nota', '".$_SESSION["id_usu_credit"]."')";
-        mysqli_query($this->DB, $query) or die('501' . $this->LOG->log_errores('Creacion de tipo vendedor /-/ consulta='.$query,mysqli_error($this->DB)));
+
+        $id=$this->DB_QUERY->save($query,'Creaciòn de gasto propio del vendedor.');
+        $this->log_gasto(0,$id);
         return array('control' =>$data["img"] ,'error' => 0);
     }
 }

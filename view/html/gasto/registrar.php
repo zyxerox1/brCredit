@@ -13,9 +13,7 @@
 		                	<select class="select2 form-control pmd-select2" id="Tipo" name="Tipo" required="required">
 
 		                    	<option>Seleciones un tipo</option>
-		                    	<?php foreach ($dataTipo as $key => $data) { ?>
-		                    		<option value="<?php echo $data['id']?>"><?php echo $data['tipo']?></option>
-		                    	<?php } ?>
+		               
 		                	</select>
 		              	</div>
 		             </div>
@@ -31,7 +29,7 @@
 						  	<div class="input-group-prepend">
 						    	<span class="input-group-text">$</span>
 						  	</div>
-						  	<input type="number" class="form-control" id="valor" name="valor" onkeyup="format(this)" required="required">
+						  	<input type="text" class="form-control Spinner" id="valor" name="valor" onkeyup="format(this)" onchange="format(this)" value="1" min="0" max="" step="1" required="required">
 						  	<div class="input-group-append">
 						    	<span class="input-group-text">.00</span>
 						  	</div>

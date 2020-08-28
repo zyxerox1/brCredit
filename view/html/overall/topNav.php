@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
   <a class="navbar-brand mb-0 h1" href="index.php"><img src="./<?php echo(APP_ICON)?>?v=1" width="30" height="30" alt="" class="d-inline-block align-top" > <?php echo APP_TITTLE;?></a>
 
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

@@ -1,5 +1,5 @@
 <form  action="index.php?c=tipo_gasto&a=save" id="formulario-crear-tipo" method="post">
-  <div class="modal" id="agragar" tabindex="-1" role="dialog">
+  <div class="modal fade" id="agragar" tabindex="-1" role="dialog" data-backdrop="false">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">

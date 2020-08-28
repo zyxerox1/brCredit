@@ -4,12 +4,11 @@ require_once 'model/usuario_modelo.php';
 
 class usuario_controller
 {
-    private $segurity;
     private $validacion;
     private $usuario;
     public function __construct()
     {
-        $this->segurity = new conexion();
+
         $this->validacion  = new validaciones_controller();
         $this->usuario  = new usuario_modelo();
     }
@@ -41,6 +40,7 @@ class usuario_controller
 
     public function editar()
     {   
+        $this->validacion->validarRol(0);
         //variable necesaria para encontrar la ruta del script js--se utiliza en le footer de la app
         $c='usuario';
         $p='editar';
@@ -54,12 +54,14 @@ class usuario_controller
     }
 
     public function cargar(){
+        $this->validacion->validarRol(0);
         $data=$this->usuario->obtener_usuarios($_REQUEST);
         echo json_encode($data);
     }
 
     public function save()
     {   
+        $this->validacion->validarRol(0);
         $errores=[];
         $img_name=0;
 
@@ -152,6 +154,7 @@ class usuario_controller
 
     public function update()
     {   
+        $this->validacion->validarRol(0);
         $errores=[];
         $img_name=0;
 
@@ -230,7 +233,8 @@ class usuario_controller
     }
 
     function encriptar($cadena)
-    {
+    {   
+        $this->validacion->validarRol(0);
         $timeTarget = 0.05; // 50 milisegundos 
         $coste = 8;
         $pass="";
@@ -245,6 +249,7 @@ class usuario_controller
     }
 
      public function cambiar_estado(){
+        $this->validacion->validarRol(0);
         $errores=[];
         if(!isset($_POST['id']) || !isset($_POST['estado'])){
             $errores[]=array('control' =>"1" ,'error' =>"Algo salio mal");

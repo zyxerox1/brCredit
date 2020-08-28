@@ -1,3 +1,4 @@
+var valor;
 $(document).ready(function() {
     $("#input-b5").fileinput(
     	{
@@ -11,9 +12,9 @@ $(document).ready(function() {
             allowedFileExtensions: ["jpg", "png", "jpeg","pdf","docx","doc"],
     	}
     );
-
+    obtener_tipo();
     $("#add").click(function() {
-		abrirModal();    	
+		  abrirModal();    	
     });
 
     $( "#formulario-crear-tipo" ).submit(function( event ) {
@@ -28,19 +29,8 @@ $(document).ready(function() {
     
     $(".btn-secondary").addClass("btn-danger");
     $(".btn-danger").addClass("btn-secondary");
+    $(".fileinput-cancel").hide();
 });
-
-function format(input)
-{
-	var num = input.value.replace(/\./g,'');
-	if(!isNaN(num)){
-		num = num.toString().split('').reverse().join('').replace(/(?=\d*\.?)(\d{3})/g,'$1.');
-		num = num.split('').reverse().join('').replace(/^[\.]/,'');
-		input.value = num;
-	}else{ alert('Solo se permiten numeros');
-		input.value = input.value.replace(/[^\d\.]*/g,'');
-	}
-}
 
 function crear_tipo(action,datos) {
   var formData = new FormData();
@@ -54,10 +44,15 @@ function crear_tipo(action,datos) {
       success:function(e){
           var obj = JSON.parse(e);
           if(obj["error"]!=0){
-            check_todo_input_verificado();
-            validate_errores_peticion_ajax(obj);
+            if(obj["error"]!=3){
+              check_todo_input_verificado();
+              validate_errores_peticion_ajax(obj);
+            }else{
+              ohSnap('El tipo ya se encuentra registrado.',{color: 'red'});
+            }
           }else if(obj["error"]==0){
             ohSnap('Se guardo correctamente',{color: 'green'});
+            obtener_tipo();
             $(".modal").modal("hide");
           }else{
             ohSnap('Error desconocido.',{color: 'green'});
@@ -68,6 +63,32 @@ function crear_tipo(action,datos) {
       }
   });
 }
+
+function obtener_tipo() {
+  $.ajax({
+      url: "index.php?c=tipo_gasto&a=obtener",
+      type: "get",
+      success:function(e){
+          var obj = JSON.parse(e);
+          if(obj["error"]!=0){
+              ohSnap('Error desconocido.',{color: 'green'});
+          }else if(obj["error"]==0){
+            if(obj["data"].length>0){
+              $('#Tipo').html('<option>Seleciones un tipo</option>');
+              $.each(obj["data"], function(i, item) {
+                $('#Tipo').append("<option value="+obj['data'][i].id+">"+obj['data'][i].tipo+"</option>");
+              });
+            }
+          }else{
+            ohSnap('Error desconocido.',{color: 'green'});
+          }
+      },
+      error:function(){
+          ohSnap('Error ha iniciar session',{color: 'red'});
+      }
+  });
+}
+
 
 function crear_gasto(action,datos) {
   var formData = new FormData();
@@ -92,7 +113,9 @@ function crear_gasto(action,datos) {
           }else if(obj["error"]==0){
           	$("input").val('');
           	$("textarea").val('');
-          	$("select option[0]").attr("selected",true);
+            $('#Tipo').val('0'); 
+          	$('#Tipo').trigger('change');;
+            $('#input-b5').fileinput('clear');
             ohSnap('Se guardo correctamente',{color: 'green'});
           }else{
             ohSnap('Error desconocido.',{color: 'green'});

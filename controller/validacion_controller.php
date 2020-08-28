@@ -82,9 +82,18 @@ class validaciones_controller
     }
 
     public function validarRol($rol){
-        if($_SESSION["rol"]!=$rol){
-            require_once ACCESSO_DEGADO;
-            exit();
+        if(is_array($rol)){
+
+            if(!in_array($_SESSION["rol"],$rol)){
+                require_once ACCESSO_DEGADO;
+                exit();
+            }
+        }else{
+            if($_SESSION["rol"]!=$rol){
+                require_once ACCESSO_DEGADO;
+                exit();
+            }
         }
+        
     }
 }

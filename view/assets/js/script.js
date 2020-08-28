@@ -9,7 +9,33 @@ $( document ).ajaxComplete(function() {
     },1000);
 });
 
+function format(input)
+{
+  var num = input.value.replace(/\./g,'');
+  if(!isNaN(num)){
+    num = num.toString().split('').reverse().join('').replace(/(?=\d*\.?)(\d{3})/g,'$1.');
+    num = num.split('').reverse().join('').replace(/^[\.]/,'');
+    input.value = num;
+  } 
+  else{ alert('Solo se permiten numeros');
+    input.value = input.value.replace(/[^\d\.]*/g,'');
+  }
+}
 
+ /*configurar el Spinner*/
+/*var config = {
+  decrementButton: "<strong>-</strong>", // button text
+  incrementButton: "<strong>+</strong>", // ..
+  groupClass: "spiner-container", // css class of the resulting input-group
+  buttonsClass: "btn-outline-secondary",
+  buttonsWidth: "20px",
+  textAlign: "center",
+  autoDelay: 500, // ms holding before auto value change
+  autoInterval: 100, // speed of auto value change
+  boostThreshold: 10, // boost after these steps
+  boostMultiplier: "auto" // you can also set a constant number as multiplier
+}
+$(".Spinner").inputSpinner(config);*/
 
 function cambiar_vista_tabla(tipo,table){
   if(tipo==1){
