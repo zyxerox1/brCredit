@@ -26,6 +26,14 @@
       <li class="nav-item active">
         <a class="nav-link" href="#">Lista abonos <span class="sr-only">(current)</span></a>
       </li>
+      <li class="nav-item dropdown active">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Reporte<span class="sr-only">(current)</span>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="index.php?c=reporte_log_usuario">Reporte de log suarios</a>
+        </div>
+      </li>
       <?php } ?>
       <?php if($_SESSION["rol"]==1){?>
       <li class="nav-item active">
