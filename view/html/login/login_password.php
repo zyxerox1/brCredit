@@ -1,6 +1,6 @@
 <div class="col-md-12" id="pass_redes">
   <div class="card">
-    <h5 class="card-header card-header-primary text-center">Ingrese contraseña para iniciar session</h5>
+    <h5 class="card-header card-header-primary text-center">Ingrese contraseña para iniciar sesión</h5>
     <div class="card-body card-body-primary">
       <form class="form-signin" action="index.php?c=login&a=validatePassword" id="formulario-login" method="post">
       <br>

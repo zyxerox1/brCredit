@@ -6,10 +6,10 @@
           <form class="form-signin" action="index.php" id="formulario-login" method="post">
             <div class="card-header card-header-primary text-center">
               <img class="icon-login" src="./<?php echo(APP_ICON)?>">
-              <h4 class="card-title">Inicio de sesiòn</h4>
+              <h4 class="card-title">Inicio de sesión</h4>
             </div>
             <br>
-            <p class="description text-center text-color">ingrese tus datos (Correo o documento de identidad).</p>
+            <p class="description text-center text-color">Ingrese tus datos (Correo o documento de identidad).</p>
    
 
             <div class="card-body">
@@ -49,7 +49,7 @@
             </center>
             <br>
             <div class="footer text-center">
-              <button class="btn btn-primary" type="submit">Iniciar sesiòn<div class="ripple-container"></div></button>
+              <button class="btn btn-primary" type="submit">Iniciar sesión<div class="ripple-container"></div></button>
             </div>
 
             <br>

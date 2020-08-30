@@ -9,7 +9,7 @@
                     <span style="font-size: 1.3em;" aria-hidden="true">&times;</span>
                 </button>
 
-                <h4 class="card-title h-color">Registrate</h4>
+                <h4 class="card-title h-color">Regístrate</h4>
     
             </div>
             <form action="index.php?c=usuario&a=crear" id="formulario-crear-usuario" method="post" enctype="multipart/form-data">
@@ -28,7 +28,7 @@
                               </div>
                             </div>
                             <div class="kv-avatar-hint">
-                                <small><strong>Notas:</strong> Si seleciona un archivo con extecion diferente a "jpg", "png", "gif" no se gurdara, Archivo menores de 1500 KB. </small>
+                                <small><strong>Notas:</strong> Si seleciona un archivo con extesión diferente a "jpg", "png", "gif" no se guardará, Archivo menores de 1500 KB. </small>
                             </div>
                              <div id="kv-avatar-errors-2" class="center-block"></div>
 
@@ -56,14 +56,14 @@
                           <div class="row">
                             <div class="col-md-6">
                               <div class="form-group">
-                                <label for="primernombre" class="bmd-label-floating text-color">Primer nombre*</label>
+                                <label for="primernombre" class="bmd-label-floating text-color">Primer Nombre*</label>
                                 <input type="text" class="form-control" id="primernombre" name="primernombre" required="required">
                                 <span class="bmd-help">Este campo es obligatorio.</span>
                               </div>
                             </div>
                             <div class="col-md-6">
                               <div class="form-group">
-                                <label for="segundonombre" class="bmd-label-floating text-color">Segundo nombre</label>
+                                <label for="segundonombre" class="bmd-label-floating text-color">Segundo Nombre</label>
                                 <input type="text" class="form-control" id="segundonombre" name="segundonombre">
                                 <span class="bmd-help">Este campo es opcional.</span>
                               </div>
@@ -73,14 +73,14 @@
                           <div class="row">
                             <div class="col-md-6">
                               <div class="form-group">
-                                <label for="primernombre" class="bmd-label-floating text-color ">Primer apellido*</label>
+                                <label for="primernombre" class="bmd-label-floating text-color ">Primer Apellido*</label>
                                 <input type="text" class="form-control" id="primerapellido" name="primerapellido" required="required">
                                 <span class="bmd-help">Este campo es obligatorio.</span>
                               </div>
                             </div>
                             <div class="col-md-6">
                               <div class="form-group">
-                                <label for="segundonombre" class="bmd-label-floating text-color ">Segundo apellido</label>
+                                <label for="segundonombre" class="bmd-label-floating text-color ">Segundo Apellido</label>
                                 <input type="text" class="form-control" id="
                                 segundoapellido" name="segundoapellido">
                                 <span class="bmd-help">Este campo es opcional.</span>
@@ -91,7 +91,7 @@
                           <div class="row">
                             <div class="col-md-6">
                               <div class="form-group">
-                                <label for="Documento" class="text-color bmd-label-floating">Documento de indentidad*</label>
+                                <label for="Documento" class="text-color bmd-label-floating">Documento de Identidad*</label>
                                 <input type="number" class="form-control" id="Documento" name="Documento" required="required">
                                 <span class="bmd-help">Este campo es obligatorio.</span>
                               </div>
@@ -99,7 +99,7 @@
 
                             <div class="col-md-6 container-select2">
                               <div class="form-group pmd-textfield pmd-textfield-floating-label">
-                                <label for="Genero" class="text-color bmd-label-floating">Genero*</label>
+                                <label for="Genero" class="text-color bmd-label-floating">Género*</label>
                                 <select class="select2N form-control pmd-select2" id="Genero" name="Genero" required="required">
                                     <option></option>
                                     <option>Hombre</option>
@@ -119,7 +119,7 @@
                             </div>
                             <div class="col-md-6">
                               <div class="form-group">
-                                <label for="Telefono" class="text-color bmd-label-floating">Telefono</label>
+                                <label for="Telefono" class="text-color bmd-label-floating">Teléfono</label>
                                 <input type="number" class="form-control" id="Telefono" name="Telefono">
                                  <span class="bmd-help">Este campo es opcional.</span>
                               </div>
@@ -136,7 +136,7 @@
                             </div>
                             <div class="col-md-6">
                               <div class="form-group bmd-form-group is-filled">
-                                <label for="Fecha" class="text-color ">Fecha de nacimiento*</label>
+                                <label for="Fecha" class="text-color ">Fecha de Nacimiento*</label>
                                 <input type="text" class="form-control datetimepicker" id="Fecha" name="Fecha" required="required">
                                 <span class="bmd-help">Este campo es obligatorio.</span>
                               </div>
@@ -153,13 +153,13 @@
                   <div class="row row-card">
                     <div class="col-md-6">
                       <div class="card">
-                        <h5 class="card-header card-header-primary text-center card-title">Datos de localidad</h5>
+                        <h5 class="card-header card-header-primary text-center card-title">Datos de Localidad</h5>
                         <div class="card-body card-body-primary">
                           <br>
                           <div class="row">
                             <div class="col-md-12 container-select2">
                               <div class="form-group pmd-textfield pmd-textfield-floating-label">
-                                <label for="Pais" class="text-color bmd-label-floating">Pais*</label>
+                                <label for="Pais" class="text-color bmd-label-floating">País*</label>
                                 <select class="select2 form-control pmd-select2" id="Pais" name="Pais" required="required">
                                   <option></option>
                                   <?php foreach ($dataPaises as $dataPaises): ?>
@@ -174,7 +174,7 @@
                           <div class="row">
                             <div class="col-md-6 container-select2">
                               <div class="form-group pmd-textfield pmd-textfield-floating-label">
-                                <label for="Distrito" class="text-color bmd-label-floating">Distrito O departamento*</label>
+                                <label for="Distrito" class="text-color bmd-label-floating">Distrito o Departamento*</label>
                                 <select class="select2 form-control pmd-select2" id="Distrito" name="Distrito" required="required" disabled="disabled">
                                   <option></option>
                                   </select>
@@ -212,7 +212,7 @@
                             </div>
                             <div class="col-md-6">
                               <div class="form-group bmd-form-group is-filled">
-                                <label for="Correo" class="bmd-label-floating text-color">Correo electronico*</label>
+                                <label for="Correo" class="bmd-label-floating text-color">Correo Electrónico*</label>
                                 <input type="email" class="form-control" id="Correo" name="Correo" required="required">
                                 <span class="bmd-help">Este campo es obligatorio.</span>
                               </div>
@@ -227,7 +227,7 @@
                             </div>
                             <div class="col-md-6">
                               <div class="form-group bmd-form-group is-filled">
-                                <label for="contra2" class="bmd-label-floating text-color">Cofirmar*</label>
+                                <label for="contra2" class="bmd-label-floating text-color">Confirmar*</label>
                                 <div class="input-group">
                                   <input type="password" class="form-control" id="contra2" name="pas2" required="required">
                                   <div class="input-group-prepend visualizacion">

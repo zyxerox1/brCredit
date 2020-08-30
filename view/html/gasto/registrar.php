@@ -12,7 +12,7 @@
 		                	<label for="Tipo" class="text-color">Tipo de gasto*</label>
 		                	<select class="select2 form-control pmd-select2" id="Tipo" name="Tipo" required="required">
 
-		                    	<option>Seleciones un tipo</option>
+		                    	<option>Seleccione un tipo</option>
 		               
 		                	</select>
 		              	</div>
@@ -20,7 +20,7 @@
 		             <div class="col-md-3">
 		             	<div class="form-group">
 						   <label for="add" class="text-color">No encuentro el tipo.</label>
-		             		<button type="button" id="add" class="btn btn-warning"><i class="fas fa-plus"></i> Agragar tipo</button>
+		             		<button type="button" id="add" class="btn btn-warning"><i class="fas fa-plus"></i> Agregar tipo</button>
 		             	</div>
 		             </div>
 	              	<div class="col-md-4">
@@ -39,7 +39,7 @@
 	            <div class="row">
 	                <div class="col-md-12">
 	                  	<div class="form-group">
-						  <label for="nota">Deatalle:</label>
+						  <label for="nota">Detalle:</label>
 						  <textarea class="form-control" id="nota" name="nota"></textarea>
 						</div>
 	                </div>
@@ -55,7 +55,7 @@
 	            </div>
 	            <hr>
 	            <br>
-	            <center><button type="button" class="btn btn-danger" onClick="history.back()">Atras</button>
+	            <center><button type="button" class="btn btn-danger" onClick="history.back()">Atrás</button>
                 <button type="submit" class="btn btn-success btn-md">Guardar</button></center>
                 <br>
                 <br>

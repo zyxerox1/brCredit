@@ -26,9 +26,9 @@
                     </div>
                     <div class="col-md-6 container-select2">
                         <div class="form-group pmd-textfield pmd-textfield-floating-label">
-                            <label for="Cedula" class="text-color bmd-label-floating">Cedula</label>
+                            <label for="Cedula" class="text-color bmd-label-floating">Cédula</label>
                             <select class="select2 form-control pmd-select2" id="Cedula" name="Cedula" required="required">
-                                <option value="0" selected="selected">Busqueda por documento</option>
+                                <option value="0" selected="selected">Búsqueda por documento</option>
                                	<?php foreach ($data_filtro as $key => $Nombrevaluec) { ?>
                                		<option value="<?php echo $Nombrevaluec['documento_usu']; ?>"><?php echo $Nombrevaluec['documento_usu'] ?></option>
                                 	
@@ -58,14 +58,14 @@
 			    <div class="row">
 			        <div class="col-md-6">
                       <div class="form-group">
-                        <label for="Valor" class="text-color ">Valor minimo</label>
+                        <label for="Valor" class="text-color ">Valor mínimo</label>
                         <input type="text" class="form-control" name="Valor_mini" id="Valor" onkeyup="format(this)" onchange="format(this)">
                      
                       </div>
                     </div>
                      <div class="col-md-6">
                       <div class="form-group">
-                        <label for="Valor" class="text-color ">Valor maximo</label>
+                        <label for="Valor" class="text-color ">Valor máximo</label>
                         <input type="text" class="form-control" name="Valor_max" id="Valor" onkeyup="format(this)" onchange="format(this)">
                      
                       </div>
@@ -97,7 +97,7 @@
 			                <?php if($_SESSION["rol"]==1){ ?>
 			                	<th class="text-color all">CC</th>
 			                	<th class="text-color all">Nombres</th>
-				                <th class="text-color">Telefonos</th>
+				                <th class="text-color">Teléfonos</th>
 				                <th class="text-color">Correo</th>
 				                <th class="text-color">Valor</th>
 				                <th class="text-color">Tipo</th>

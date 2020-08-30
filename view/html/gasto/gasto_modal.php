@@ -15,7 +15,7 @@
                 <p><strong>Detalle del vendedor: </strong></p><p class="detalle"></p>
               </li>
               <li>
-                <p><strong>Fecha exacta donde se registro el gasto: </strong><label class="fecha_d"></label></p>
+                <p><strong>Fecha exacta donde se registró el gasto: </strong><label class="fecha_d"></label></p>
               </li>
               <li>
                 <p><strong>Estado actual del gasto: </strong><label class="estado"></label></p>
@@ -32,32 +32,32 @@
           <div class="col-mb-6">
             <ul>
               <li>
-                <p><strong>Nombre (s) del vendedor: </strong><label class="nombre"></label></p>
+                <p><strong>Nombre(s) del vendedor: </strong><label class="nombre"></label></p>
               </li>
               <li>
-                <p><strong>Apellido (s) del vendedor: </strong><label class="apellido"></label></p>
+                <p><strong>Apellido(s) del vendedor: </strong><label class="apellido"></label></p>
               </li>
               <li>
-                <p><strong>telefono1 del vendedor: </strong><label class="telefono1"></label></p>
+                <p><strong>teléfono1 del vendedor: </strong><label class="telefono1"></label></p>
               </li>
               <li>
-                <p><strong>telefono2 del vendedor: </strong><label class="telefono2"></label></p>
+                <p><strong>teléfono2 del vendedor: </strong><label class="telefono2"></label></p>
               </li>
             </ul>
           </div>
           <div class="col-mb-6">
             <ul>
               <li>
-                <p><strong>Cedula del vendedor: </strong><label class="cc"></label></p>
+                <p><strong>Cédula del vendedor: </strong><label class="cc"></label></p>
               </li>
               <li>
-                <p><strong>correo del vendedor: </strong><label class="correo"></label></p>
+                <p><strong>Correo del vendedor: </strong><label class="correo"></label></p>
               </li>
               <li>
-                <p><strong>direcion del vendedor: </strong><label class="direcion"></label></p>
+                <p><strong>Dirección del vendedor: </strong><label class="direcion"></label></p>
               </li>
               <li>
-                <p><strong>fecha de nacimiento del vendedor: </strong><label class="fecha"></label></p>
+                <p><strong>Fecha de nacimiento del vendedor: </strong><label class="fecha"></label></p>
               </li>
             </ul>
           </div>
@@ -90,7 +90,7 @@
           <div class="col-mb-6">
              <ul>
               </li>
-            <p><strong>Suma total de anulado: </strong><label class="anulado"></label></p>
+            <p><strong>Suma total de anulados: </strong><label class="anulado"></label></p>
             </li>
             </ul>
         </div>

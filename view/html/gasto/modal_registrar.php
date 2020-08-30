@@ -3,7 +3,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Agragar tipo de gasto</h5>
+          <h5 class="modal-title">Agregar tipo de gasto</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -11,9 +11,9 @@
         <div class="modal-body">
           <p><strong>Nota:</strong>
             <ul>
-              <li type="disc">Asegurese que no haya encontrado el tipo anteriormente.</li>
-              <li type="disc">Este tipo de gasto solo sera visible para usted y tu coordinador.</li>
-              <li type="disc">Sea coherennte a la hora de escribir el tipo.</li>
+              <li type="disc">Asegúrese que no haya encontrado el tipo anteriormente.</li>
+              <li type="disc">Este tipo de gasto solo será visible para usted y su coordinador.</li>
+              <li type="disc">Sea coherente a la hora de escribir el tipo.</li>
             </ul>
           </p>
           <div class="row">
@@ -27,7 +27,7 @@
               <div class="col-md-10 offset-md-1">
                 <div class="form-check">
                   <input type="checkbox" class="form-check-input" id="aceptar" name="aceptar">
-                  <label class="form-check-label" for="aceptar">Acepto mi responsibilidad y estoy deacuerdo que se elimine si el coordinador o administrador lo consideràn.</label>
+                  <label class="form-check-label" for="aceptar">Acepto mi responsibilidad y estoy de acuerdo que se elimine si el Coordinador o Administrador lo consideran.</label>
                 </div>
               </div>
             </div>

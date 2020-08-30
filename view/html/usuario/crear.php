@@ -16,7 +16,7 @@
                       </div>
                     </div>
                     <div class="kv-avatar-hint">
-                        <small><strong>Notas:</strong> Si seleciona un archivo con extecion diferente a "jpg", "png", "gif" no se gurdara, Archivo menores de 1500 KB. </small>
+                        <small><strong>Notas:</strong> Si selecciona un archivo con extesión diferente a "jpg", "png", "gif" no se gurdara, Archivo menores de 1500 KB. </small>
                     </div>
                      <div id="kv-avatar-errors-2" class="center-block"></div>
                 </div>
@@ -54,14 +54,14 @@
                           <div class="row">
                             <div class="col-md-6">
                               <div class="form-group">
-                                <label for="primernombre" class="text-color">Primer nombre*</label>
+                                <label for="primernombre" class="text-color">Primer Nombre*</label>
                                 <input type="text" class="form-control" id="primernombre" name="primernombre" required="required">
                                 
                               </div>
                             </div>
                             <div class="col-md-6">
                               <div class="form-group">
-                                <label for="segundonombre" class="text-color">Segundo nombre</label>
+                                <label for="segundonombre" class="text-color">Segundo Nombre</label>
                                 <input type="text" class="form-control" id="segundonombre" name="segundonombre">
                               </div>
                             </div>
@@ -70,13 +70,13 @@
                           <div class="row">
                             <div class="col-md-6">
                               <div class="form-group">
-                                <label for="primernombre" class=" text-color ">Primer apellido*</label>
+                                <label for="primernombre" class=" text-color ">Primer Apellido*</label>
                                 <input type="text" class="form-control" id="primerapellido" name="primerapellido" required="required">
                               </div>
                             </div>
                             <div class="col-md-6">
                               <div class="form-group">
-                                <label for="segundonombre" class="text-color ">Segundo apellido</label>
+                                <label for="segundonombre" class="text-color ">Segundo Apellido</label>
                                 <input type="text" class="form-control" id="
                                 segundoapellido" name="segundoapellido">
                               </div>
@@ -86,14 +86,14 @@
                           <div class="row">
                             <div class="col-md-6">
                               <div class="form-group">
-                                <label for="Documento" class="text-color">Documento de indentidad*</label>
+                                <label for="Documento" class="text-color">Documento de Identidad*</label>
                                 <input type="number" class="form-control" id="Documento" name="Documento" required="required">
                               </div>
                             </div>
 
                             <div class="col-md-6 container-select2">
                               <div class="form-group pmd-textfield pmd-textfield-floating-label">
-                                <label for="Genero" class="text-color bmd-label-floating">Genero*</label>
+                                <label for="Genero" class="text-color bmd-label-floating">Género*</label>
                                 <select class="select2 form-control pmd-select2" id="Genero" name="Genero" required="required">
                                     <option></option>
                                     <option>Hombre</option>
@@ -106,13 +106,13 @@
                           <div class="row">
                             <div class="col-md-6">
                               <div class="form-group">
-                                <label for="Celular" class="text-color">Telefono 1</label>
+                                <label for="Celular" class="text-color">Teléfono 1</label>
                                 <input type="number" class="form-control" id="Telefono_1" name="Telefono_1" required="required">
                               </div>
                             </div>
                             <div class="col-md-6">
                               <div class="form-group">
-                                <label for="Telefono" class="text-color">Telefono 2</label>
+                                <label for="Telefono" class="text-color">Teléfono 2</label>
                                 <input type="number" class="form-control" id="Telefono_2" name="Telefono_2">
                               </div>
                             </div>
@@ -127,7 +127,7 @@
                             </div>
                             <div class="col-md-6">
                               <div class="form-group is-filled">
-                                <label for="Fecha" class="text-color ">Fecha de nacimiento*</label>
+                                <label for="Fecha" class="text-color ">Fecha de Nacimiento*</label>
                                 <input type="text" class="form-control datetimepicker" id="Fecha" name="Fecha" required="required">
                               </div>
                             </div>
@@ -152,7 +152,7 @@
                               <div class="form-group">
                                 <label for="ciudades" class="text-color">Ciudades*</label>
                                 <select class="select2 form-control" id="ciudades" name="ciudades" required="required">
-                                    <option>Selecione un ciudad...</option>
+                                    <option>Seleccione un ciudad...</option>
                                    
                                 </select>
                               </div>
@@ -163,13 +163,12 @@
                      
                         <div class="col-md-6">
                           <div class="form-group">
-                            <label for="Direcion" class="text-color">Direcion de la residenta*</label>
-                            <input type="text" class="form-control" id="Direcion" name="Direcion" required="required">
+                            <label for="Direcion" class="text-color">Dirección de la residencia*</label>                            <input type="text" class="form-control" id="Direcion" name="Direcion" required="required">
                           </div>
                         </div>
                         <div class="col-md-6">
                           <div class="form-group">
-                            <label for="Correo" class="bmd-label-floating text-color">Correo electronico*</label>
+                            <label for="Correo" class="bmd-label-floating text-color">Correo Electrónico*</label>
                             <input type="email" class="form-control" id="Correo" name="Correo" required="required">
                           </div>
                         </div>
