@@ -32,6 +32,7 @@
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           <a class="dropdown-item" href="index.php?c=reporte_log_usuario">Reporte de log usuarios</a>
+          <a class="dropdown-item" href="index.php?c=reporte_log_gasto">Reporte de gasto</a>
           <a class="dropdown-item" href="index.php?c=reporte_errores">Reporte de errores</a>
         </div>
       </li>
