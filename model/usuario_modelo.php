@@ -66,7 +66,7 @@ class usuario_modelo
     }
 
     public function obtener_filtro_usuario(){
-        $query="CALL obtenerFiltroUsuario()";
+        $query="CALL obtenerUsuario()";
         $data=$this->DB_QUERY->query($query);
         return $data;
     }

@@ -20,6 +20,8 @@ class reporte_log_usuario_controller
         $p='reporte_log_usuario';//nombre del archivo js
 
         $data_filtro=$this->reporte->query_usuario($_REQUEST);
+        $data_filtro_autor=$this->reporte->query_usuario_autor();
+
         require_once HTML_DIR . 'overall/header.php';
         require_once HTML_DIR . 'overall/topNav.php';
         require_once HTML_DIR . 'reporte_log_usuario/reporte_log_usuario.php';

@@ -39,65 +39,25 @@
 			    </div>
 
 			    <div class="row">
-                    <div class="col-md-6 container-select2">
-                        <div class="form-group pmd-textfield pmd-textfield-floating-label">
-                            <label for="Nombre_au" class="text-color bmd-label-floating">Nombre del autor</label>
-                            <select class="select2 form-control pmd-select2" id="Nombre_au" name="Nombre_au" required="required">
-                                <option value="999" selected="selected">Busqueda por nombre</option>
-                                <option value="0">Usuario ingresado por base de datos</option>
-                               	<?php foreach ($data_filtro_autor as $key => $NombrevalueAutor) { ?>
-                               		<option value="<?php echo $NombrevalueAutor['id_usu']; ?>"><?php echo $NombrevalueAutor['primer_nombre_usu']." ".$NombrevalueAutor['segundo_nombre_usu']." ".$NombrevalueAutor['primer_apellido_usu']." ".$NombrevalueAutor['segundo_apellido_usu'] ?></option>
-                                	
-                               	<?php } ?>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-6 container-select2">
-                        <div class="form-group pmd-textfield pmd-textfield-floating-label">
-                            <label for="Cedula_au" class="text-color bmd-label-floating">Cédula del autor</label>
-                            <select class="select2 form-control pmd-select2" id="Cedula_au" name="Cedula_au" required="required">
-                                <option value="0" selected="selected">Búsqueda por documento</option>
-                               	<?php foreach ($data_filtro_autor as $key => $CCvalueAutor) { ?>
-                               		<option value="<?php echo $CCvalueAutor['documento_usu']; ?>"><?php echo $CCvalueAutor['documento_usu'] ?></option>
-                                	
-                               	<?php } ?>
-                            </select>
-                        </div>
-                    </div>
-			    </div>
-
-			    <div class="row">
 			        <div class="col-md-6">
                       <div class="form-group">
                         <label for="Fecha" class="text-color ">Fecha de inicio</label>
-                        <input type="text" class="form-control datetimepicker" name="Fecha_ini" id="Fecha_ini" name="Fecha">
+                        <input type="text" class="form-control datetimepicker" name="Fecha_ini" id="Fecha_ini" name="Fecha_ini">
                      
                       </div>
                     </div>
 			        <div class="col-md-6">
                       <div class="form-group">
                         <label for="Fecha" class="text-color ">Fecha de final</label>
-                        <input type="text" class="form-control datetimepicker" name="Fecha_fin" id="Fecha_fin" name="Fecha">
+                        <input type="text" class="form-control datetimepicker" name="Fecha_fin" id="Fecha_fin" name="Fecha_fin">
 
                       </div>
                     </div>
 			    </div>
-          <div class="row">
-            <div class="col-md-6 offset-md-3 container-select2">
-              <div class="form-group pmd-textfield pmd-textfield-floating-label">
-                <label for="Movimiento" class="text-color bmd-label-floating">Movimiento</label>
-                <select class="select2 form-control pmd-select2" id="Movimiento" name="Movimiento" required="required">
-                  <option value="999" selected="selected">Búsqueda por movimiento</option>
-                  <option value="0">Creacion</option>
-                  <option value="3">Cambio de estado</option>
-                  <option value="1">Actualizacion</option>
-                </select>
-              </div>
-            </div>
-          </div>
 				<br>
         		 <center>
 			          <button type="button" id="buscar" class="btn btn-primary btn-confirmar">Buscar</button>
+                <button type="button" id="Eliminar" class="btn btn-danger">Eliminar</button>
 			    </center>
             	<hr>
 	            <!--<div class="row">
@@ -110,15 +70,15 @@
 	            <div class="card-body card-body-primary">
 					<br>
 	        		<div class="table-responsive padding" >
-			            <table id="datausuarios" class="table table-bordred table-striped table-striped table-hover dt-responsive">
+			            <table id="dataerrores" class="table table-bordred table-striped table-striped table-hover dt-responsive">
 			              	<thead class="heade-table">
-			                	<th class="text-color all">Movimiento</th>
-			                	<th class="text-color all">Fecha</th>
+			                	<th class="text-color all">fecha</th>
+			                	<th class="text-color all">documento_suario</th>
 				                <th class="text-color">Usuario</th>
-				                <th class="text-color">Documento del usuario</th>
-				                <th class="text-color">Autor</th>
-				                
-				                <th class="text-color">Documento del autor</th>
+				                <th class="text-color">accion</th>
+				                <th class="text-color">descripcion</th>
+				                <th class="text-color">controller</th>
+                        <th class="text-color">function</th>
 			             	</thead>
 			                <tbody>
 			    

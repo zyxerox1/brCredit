@@ -15,28 +15,27 @@ $(document).ready(function() {
 	  }
 	});
   $('#buscar').on('click', function () {
-
     cargar_reporte();
+  });
+  $('#Eliminar').on('click', function () {
+    eliminar_cursos();
   });
   cargar_reporte();
 });
 
 function cargar_reporte(){
-  if ( $.fn.dataTable.isDataTable( '#datausuarios' ) ) {
-   $("#datausuarios").dataTable().fnDestroy();
+  if ( $.fn.dataTable.isDataTable( '#dataerrores' ) ) {
+   $("#dataerrores").dataTable().fnDestroy();
   }
-    var MY_AJAX_ACTION_URL = "index.php?c=reporte_log_usuario&a=cargar_reporte";
-    table = $('#datausuarios').DataTable({
+    var MY_AJAX_ACTION_URL = "index.php?c=reporte_errores&a=cargar_reporte";
+    table = $('#dataerrores').DataTable({
         "autoWidth": true,
         "ajax": {
           "data": {
             'Cedula':$('#Cedula').val(),
             'Nombre':$('#Nombre').val(),
             'Fecha_ini':$('#Fecha_ini').val(),
-            'Fecha_fin':$('#Fecha_fin').val(),
-            'Nombre_au':$('#Nombre_au').val(),
-            'Cedula_au':$('#Cedula_au').val(),
-            'Movimiento': $('#Movimiento').val()
+            'Fecha_fin':$('#Fecha_fin').val()
           },
           "url": MY_AJAX_ACTION_URL
         },
@@ -54,12 +53,13 @@ function cargar_reporte(){
         "sort": true,
         "stripeClasses": [ "odd nutzer_tr", "even nutzer_tr"],
         "columns": [
-          { data: 'movimiento' },
-          { data: 'fecha'},
+          { data: 'fecha' },
+          { data: 'documento_suario'},
           { data: 'usuario'},
-          { data: 'documento_suario' },
-          { data: 'autor' },
-          { data: 'documento_autor' }
+          { data: 'accion' },
+          { data: 'descripcion' },
+          { data: 'controller' },
+          { data: 'function' }
       ],
       "columnDefs": [],
         "processing": true,
@@ -71,3 +71,31 @@ function cargar_reporte(){
     });
    
   }
+
+function eliminar_cursos(){
+  $.ajax({
+    data: {
+      'Fecha_ini':$('#Fecha_ini').val(),
+      'Fecha_fin':$('#Fecha_fin').val()
+    },
+    url: "index.php?c=reporte_errores&a=eliminar_reporte",
+    type: "post",
+    success:function(e){
+      var data = JSON.parse(e);
+      if(data["error"]!=0){
+        check_todo_input_verificado();
+        validate_errores_peticion_ajax(data);
+      }else if(data["error"]==0){
+        $('#Fecha_ini').val('');
+        $('#Fecha_fin').val('');
+        cargar_reporte();
+        ohSnap('Se elimino correctamente',{color: 'green'});
+      }else{
+        error_501();
+      }
+    },
+    error:function(){
+        ohSnap('Error desconocido',{color: 'red'});
+    }
+  });
+}

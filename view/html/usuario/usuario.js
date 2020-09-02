@@ -30,7 +30,7 @@ function cargar_usuarios(){
           "zeroRecords": "Pagina no encontrada",
           "processing": 'Cargando...'
         },
-        "stateSave": true,
+        //"stateSave": true,
         "bLengthChange" : true,
         "info": false,
         "search": true,
