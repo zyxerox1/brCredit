@@ -28,15 +28,15 @@
       </li>
       <li class="nav-item dropdown active">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Reporte<span class="sr-only">(current)</span>
+          Reporte de auditoria<span class="sr-only">(current)</span>
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="index.php?c=reporte_log_usuario">Reporte de log usuarios</a>
-          <a class="dropdown-item" href="index.php?c=reporte_log_gasto">Reporte de gasto</a>
-          <a class="dropdown-item" href="index.php?c=reporte_errores">Reporte de errores</a>
+          <a class="dropdown-item" href="index.php?c=reporte_log_usuario">Reporte de auditoria de usuarios</a>
+          <a class="dropdown-item" href="index.php?c=reporte_log_gasto">Reporte de auditoria de gasto</a>
+          <a class="dropdown-item" href="index.php?c=reporte_errores">Reporte de auditoria de errores</a>
         </div>
       </li>
-      <?php } ?>
+      <?php } ?> 
       <?php if($_SESSION["rol"]==1){?>
       <li class="nav-item active">
         <a class="nav-link" href="#">Reasignar ruta <span class="sr-only">(current)</span></a>
