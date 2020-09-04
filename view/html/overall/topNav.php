@@ -54,7 +54,7 @@
 
       <?php if($_SESSION["rol"]==2){?>
       <li class="nav-item active">
-        <a class="nav-link" href="#">Clear clientes <span class="sr-only">(current)</span></a>
+        <a class="nav-link" href="index.php?c=cliente&a=crear">Clear clientes <span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item active">
         <a class="nav-link" href="#">Registrar abono <span class="sr-only">(current)</span></a>
