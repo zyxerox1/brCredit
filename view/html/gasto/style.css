@@ -1,0 +1,94 @@
+
+.btn-outline-secondary{
+    border-color: #6c757d !important;
+    border: 1 solid;
+    color: black !important;
+    background-color: transparent !important;
+    border-color: #6c757d !important;
+    display: inline-block !important;
+    transition: all 0.3s ease 0s !important;
+    font-size: 15px !important;
+    font-weight: normal !important;
+    width: 155px !important;
+
+}
+
+.btn-outline-secondary:hover {
+  color: #ffffff !important;
+  background: #6c757d !important;
+  -webkit-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
+  -moz-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
+  transition: all 0.3s ease-in !important;
+}
+
+.btn-outline-warning{
+    border-color: #ffc107 !important;
+    border: 1 solid;
+    color: black !important;
+    background-color: transparent !important;
+    border-color: #ffc107 !important;
+    display: inline-block !important;
+    transition: all 0.3s ease 0s !important;
+    font-size: 15px !important;
+    font-weight: normal !important;
+    width: 155px !important;
+
+}
+
+.btn-outline-warning:hover {
+  color: #ffffff !important;
+  background: #ffc107 !important;
+  -webkit-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
+  -moz-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
+  transition: all 0.3s ease-in !important;
+}
+
+.btn-outline-success {
+    border-color: #2E4D62 !important;
+    border: 1 solid;
+    color: #28a745 !important;
+    background-color: transparent !important;
+    border-color: #28a745 !important;
+    display: inline-block !important;
+    transition: all 0.3s ease 0s !important;
+    font-size: 15px !important;
+    font-weight: normal !important;
+    width: 155px !important;
+}
+
+.btn-outline-success:hover {
+  color: #ffffff !important;
+  background: #28a745 !important;
+  -webkit-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
+  -moz-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
+  transition: all 0.3s ease-in !important;
+}
+
+#titleGasto{
+	font-size: 20px !important;
+    font-weight: normal !important;
+    margin-left: auto;
+    /* margin-right: auto; */
+    display: block;
+    text-transform: uppercase;
+
+}
+
+.card-title-detalles{
+	font-size: 15px !important;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.detalle{
+	text-align: center;
+}
+
+.valor{
+	text-align: center;	
+}
+
+.fecha_d{
+	text-align: center;
+}

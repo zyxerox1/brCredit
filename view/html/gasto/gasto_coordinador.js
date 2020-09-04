@@ -1,6 +1,6 @@
 $(document).ready(function() {
-  $('.cambiar-vista-list').on('click', function () {cambiar_vista_tabla(1,"datausuarios")});
-  $('.cambiar-vista-cuad').on('click', function () {cambiar_vista_tabla(2,"datausuarios")}); 
+  $('.cambiar-vista-list').on('click', function () {cambiar_vista_tabla(1,"dataGasto")});
+  $('.cambiar-vista-cuad').on('click', function () {cambiar_vista_tabla(2,"dataGasto")}); 
 	$('.datetimepicker').datetimepicker({ 
 	format: 'YYYY-MM-DD',
 	icons: {
@@ -22,11 +22,11 @@ $(document).ready(function() {
 });
 
 function cargar_gasto(){
-  if ( $.fn.dataTable.isDataTable( '#datausuarios' ) ) {
-   $("#datausuarios").dataTable().fnDestroy();
+  if ( $.fn.dataTable.isDataTable( '#dataGasto' ) ) {
+   $("#dataGasto").dataTable().fnDestroy();
   }
     var MY_AJAX_ACTION_URL = "index.php?c=gasto&a=cargar_gasto";
-    table = $('#datausuarios').DataTable({
+    table = $('#dataGasto').DataTable({
         "autoWidth": true,
         "ajax": {
           "data": {

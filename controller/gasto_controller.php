@@ -21,16 +21,20 @@ class gasto_controller
        
         //variable necesaria para encontrar la ruta del script js--se utiliza en le footer de la app
         $c='gasto'; //carpeta;
-        $p='gasto';//nombre del archivo js
-
+        $p='';//nombre del archivo js
         $data_filtro="";
         if($_SESSION["rol"]==1){
+            $p='gasto_coordinador';
             $data_filtro=$this->gasto->query_usuario($_REQUEST);
+        }
+         if($_SESSION["rol"]==2){
+            $p='gasto_vendedor';
         }
         require_once HTML_DIR . 'overall/header.php';
         require_once HTML_DIR . 'overall/topNav.php';
         require_once HTML_DIR . 'gasto/gasto.php';
         require_once HTML_DIR . 'gasto/gasto_modal.php';
+        require_once HTML_DIR . 'gasto/modal_confirmacion.php';
         require_once HTML_DIR . 'overall/footer.php';
       
     }
@@ -90,14 +94,26 @@ class gasto_controller
 
     public function cambiarEstado(){
         $this->validacion->validarRol([2,1]);
-        $data=$this->gasto->cambiarEstado($_REQUEST);
-        $this->index();
+        if($_SESSION["rol"]==1){
+            $data=$this->gasto->cambiarEstado($_POST,1);
+        }
+         if($_SESSION["rol"]==2){
+            $data=$this->gasto->cambiarEstado($_POST,3);
+        }
+        echo json_encode($data);
     }
     
 
     public function cargar_gasto(){
         $this->validacion->validarRol([2,1]);
-        $data=$this->gasto->cargarGastos($_REQUEST);
+        $data=array();
+        if($_SESSION["rol"]==1){
+            $data=$this->gasto->cargarGastos($_REQUEST);
+        }
+         if($_SESSION["rol"]==2){
+            $data=$this->gasto->cargarMiGastos($_REQUEST);
+        }
+        
         echo json_encode($data);
     }
 

@@ -10,7 +10,7 @@
             <br>
             <div class="container">
             	<br>
-            	
+            	<?php if($_SESSION["rol"]==1){ ?>
             	<div class="row">
                     <div class="col-md-6 container-select2">
                         <div class="form-group pmd-textfield pmd-textfield-floating-label">
@@ -37,7 +37,7 @@
                         </div>
                     </div>
 			    </div>
-
+			    <?php } ?>
 			    <div class="row">
 			        <div class="col-md-6">
                       <div class="form-group">
@@ -86,12 +86,12 @@
 	            <div class="card-body card-body-primary">
 	            	<div class="row">
 						<div class="col-md-6">
-							<button type="button" id="buscar" onclick="window.location.href = 'index.php?c=usuario&a=crear'" class="btn btn-primary btn-confirmar">Calculador</button>
+							<button type="button" id="buscar" onclick="window.location.href = ''" class="btn btn-primary btn-confirmar">Calculador</button>
 						</div>
 					</div>
 					<br>
 	        		<div class="table-responsive padding" >
-			            <table id="datausuarios" class="table table-bordred table-striped table-striped table-hover dt-responsive">
+			            <table id="dataGasto" class="table table-bordred table-striped table-striped table-hover dt-responsive">
 			              <thead class="heade-table">
 			                
 			                <?php if($_SESSION["rol"]==1){ ?>
@@ -107,7 +107,12 @@
 				                <th class="text-color all">Opciones</th>
 			                <?php } ?>
 			                <?php if($_SESSION["rol"]==2){ ?>
-			                	<th class="text-color all">Editar</th>
+				                <th class="text-color">Valor</th>
+				                <th class="text-color">Tipo</th>
+				                <th class="text-color">Detalle</th>
+				                <th class="text-color">Fecha</th>
+				                <th class="text-color all">Evidencia</th>
+				                <th class="text-color all">Opciones</th>
 			            	<?php } ?>
 			              </thead>
 			                <tbody>
