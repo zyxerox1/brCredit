@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 28-08-2020 a las 19:57:59
+-- Tiempo de generación: 04-09-2020 a las 20:04:38
 -- Versión del servidor: 10.4.11-MariaDB
 -- Versión de PHP: 7.4.4
 
@@ -28,6 +28,11 @@ DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `buscarUsuario` (IN `id` BIGINT)  NO SQL
 BEGIN
 SELECT * FROM tbl_usuarios WHERE id_usu=id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `eliminarLogErrores` (IN `fecha_ini` TEXT, IN `fecha_fin` TEXT)  NO SQL
+BEGIN
+DELETE FROM tbl_log_errores WHERE date_fecha_loge <= fecha_fin AND date_fecha_loge >= fecha_ini;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `logErrores` (IN `accion` TEXT, IN `descripcion` TEXT, IN `id_usu` BIGINT, IN `controller` TEXT, IN `accion_func` TEXT)  NO SQL
@@ -61,9 +66,14 @@ DECLARE query_p VARCHAR(100);
 INSERT INTO tbl_log_usuarios (id_logu,movimiento_logu,fecha_logu,id_usu,id_autor_usu,controller_logu,accion_func_logu) VALUES (NULL, movimiento,now(),id,autor,controller,accion_func);
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `obtenerFiltroUsuario` ()  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `obtenerAdministradores` ()  NO SQL
 BEGIN
-SELECT id_usu,primer_nombre_usu,segundo_nombre_usu,primer_apellido_usu,segundo_apellido_usu, documento_usu FROM tbl_usuarios;
+	SELECT id_usu,primer_nombre_usu,segundo_nombre_usu,primer_apellido_usu,segundo_apellido_usu, documento_usu FROM tbl_usuarios WHERE rol_usu = 0;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `obtenerCoordinadores` ()  NO SQL
+BEGIN
+	SELECT id_usu,primer_nombre_usu,segundo_nombre_usu,primer_apellido_usu,segundo_apellido_usu, documento_usu FROM tbl_usuarios WHERE rol_usu = 1;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `obtenerGasto` (IN `id` BIGINT)  NO SQL
@@ -83,12 +93,56 @@ WHERE tbl_gasto.id_usu=id
 GROUP BY tbl_gasto.estado_gas;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `obtenerUsuario` ()  NO SQL
+BEGIN
+	SELECT id_usu,primer_nombre_usu,segundo_nombre_usu,primer_apellido_usu,segundo_apellido_usu, documento_usu FROM tbl_usuarios;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `obtenerUsuarioCoordinador` (IN `coordinador` BIGINT)  NO SQL
 BEGIN
 SELECT id_usu,primer_nombre_usu,segundo_nombre_usu,primer_apellido_usu,segundo_apellido_usu, documento_usu FROM tbl_usuarios WHERE id_coordinador_usu = coordinador;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `obtenerVendedores` ()  NO SQL
+BEGIN
+	SELECT id_usu,primer_nombre_usu,segundo_nombre_usu,primer_apellido_usu,segundo_apellido_usu, documento_usu FROM tbl_usuarios WHERE rol_usu = 2;
+END$$
+
 DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tbl_cliente`
+--
+
+CREATE TABLE `tbl_cliente` (
+  `id_usu` bigint(20) NOT NULL,
+  `documento_usu` bigint(20) NOT NULL,
+  `primer_nombre_usu` text COLLATE utf8mb4_swedish_ci NOT NULL,
+  `segundo_nombre_usu` text COLLATE utf8mb4_swedish_ci DEFAULT NULL,
+  `primer_apellido_usu` text COLLATE utf8mb4_swedish_ci NOT NULL,
+  `segundo_apellido_usu` text COLLATE utf8mb4_swedish_ci DEFAULT NULL,
+  `telefono_1_usu` bigint(20) NOT NULL DEFAULT 0,
+  `telefono_2_usu` bigint(20) NOT NULL DEFAULT 0,
+  `direcion_usu` text COLLATE utf8mb4_swedish_ci NOT NULL,
+  `sexo_usu` int(11) NOT NULL,
+  `correo_usu` text COLLATE utf8mb4_swedish_ci NOT NULL,
+  `fecha_nacimineto_usu` datetime NOT NULL,
+  `foto_usu` text COLLATE utf8mb4_swedish_ci DEFAULT 'usuario.jpg',
+  `estado_usu` int(11) NOT NULL DEFAULT 1,
+  `rol_usu` int(11) NOT NULL COMMENT '0-administrador,1-coordinador,2-cliente',
+  `estado_localidad_usu` text COLLATE utf8mb4_swedish_ci NOT NULL DEFAULT 'No tiene',
+  `ciudad_localidad_usu` text COLLATE utf8mb4_swedish_ci NOT NULL DEFAULT 'No tiene',
+  `id_coordinador_usu` bigint(20) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_swedish_ci;
+
+--
+-- Volcado de datos para la tabla `tbl_cliente`
+--
+
+INSERT INTO `tbl_cliente` (`id_usu`, `documento_usu`, `primer_nombre_usu`, `segundo_nombre_usu`, `primer_apellido_usu`, `segundo_apellido_usu`, `telefono_1_usu`, `telefono_2_usu`, `direcion_usu`, `sexo_usu`, `correo_usu`, `fecha_nacimineto_usu`, `foto_usu`, `estado_usu`, `rol_usu`, `estado_localidad_usu`, `ciudad_localidad_usu`, `id_coordinador_usu`) VALUES
+(1, 12412443423, 'asde', 'fdsf', 'fdsf', 'nbnbdf', 4324234324234, 32432432433, 'fdsfsdfdfsf', 0, 'j.a@dfsd.com', '2007-08-25 00:00:00', 'usuario.jpg', 1, 2, '5', '284', 0);
 
 -- --------------------------------------------------------
 
@@ -112,14 +166,14 @@ CREATE TABLE `tbl_gasto` (
 --
 
 INSERT INTO `tbl_gasto` (`id_gas`, `valor_gas`, `fecha_gas`, `evidencia_gas`, `nota_gas`, `id_usu`, `id_tipo_tipog`, `estado_gas`) VALUES
-(1, 1, '2020-08-28 01:26:19', '20200828082619_3.png', 'no', 3, 1, 1),
+(1, 1, '2020-08-28 01:26:19', '20200828082619_3.png', 'no', 3, 1, 3),
 (2, 2344, '2020-08-28 01:43:29', '20200828084329_3.png', 'no', 3, 2, 1),
-(3, 1333, '2020-08-28 01:47:37', '20200828084737_3.png', 'hola', 3, 3, 0),
+(3, 1333, '2020-08-28 01:47:37', '20200828084737_3.png', 'hola', 3, 3, 3),
 (4, 133, '2020-08-28 01:48:31', '20200828084831_3.png', '223', 3, 4, 0),
-(5, 4234, '2020-08-28 01:49:12', '20200828084912_3.png', '312321', 3, 3, 0),
+(5, 4234, '2020-08-28 01:49:12', '20200828084912_3.png', '312321', 3, 3, 3),
 (24, 332, '2020-08-28 07:44:38', '20200828144438_4.pdf', 'prueba', 4, 5, 0),
 (25, 13, '2020-08-28 07:45:16', '20200828144516_4.pdf', 'fdsf', 4, 5, 0),
-(26, 1111111, '2020-08-28 12:26:18', '20200828192618_3.jpg', 'No hay', 3, 6, 1);
+(26, 1111111, '2020-08-28 12:26:18', '20200828192618_3.jpg', 'No hay', 3, 6, 3);
 
 -- --------------------------------------------------------
 
@@ -158,7 +212,11 @@ INSERT INTO `tbl_log_errores` (`int_id_loge`, `text_accion_loge`, `text_descripc
 (14, 'c= a= /-/ consulta=CALL obtenerGasto(4)', 'Unknown column \'tbl_tipo_gasto.id_tipog\' in \'on clause\'', '2020-08-28 06:51:11', 2, 'gasto', 'obtenerGasto'),
 (15, 'c= a= /-/ consulta=CALL obtenerGasto(4)', 'Unknown column \'tbl_tipo_gasto.id_tipog\' in \'on clause\'', '2020-08-28 06:55:03', 2, 'gasto', 'obtenerGasto'),
 (16, 'c= a= /-/ consulta=CALL obtenerSumaGastosUsuario(3)', 'Commands out of sync; you can\'t run this command now', '2020-08-28 07:00:53', 2, 'gasto', 'obtenerGasto'),
-(17, 'c= a= /-/ consulta=CALL obtenerSumaGastosUsuario()', 'Incorrect number of arguments for PROCEDURE bd_sistema_ruta.obtenerSumaGastosUsuario; expected 1, got 0', '2020-08-28 07:08:12', 2, 'gasto', 'obtenerGasto');
+(17, 'c= a= /-/ consulta=CALL obtenerSumaGastosUsuario()', 'Incorrect number of arguments for PROCEDURE bd_sistema_ruta.obtenerSumaGastosUsuario; expected 1, got 0', '2020-08-28 07:08:12', 2, 'gasto', 'obtenerGasto'),
+(26, 'Consulta de dataTable => SELECT CASE\r\n               WHEN log.movimiento_logg = 0 THEN \'Gasto propio del vendedor\'\r\n               WHEN log.movimiento_logg = 1 THEN \'Cancelado por el coordinador\'\r\n               WHEN log.movimiento_logg = 2 THEN \'Abono del coordinador\'\r\n               WHEN log.movimiento_logg = 3 THEN \'Anulado por el vendedor\'\r\n               ELSE \'Movimiento descodocido por el sistema.\'\r\n               END as movimiento,\r\n               log.fecha_logg as fecha,\r\n               CONCAT_WS(\'\', usu.primer_nombre_usu, usu.segundo_nombre_usu, usu.primer_apellido_usu, usu.segundo_apellido_usu ) as usuario,\r\n                usu.documento_usu as documento_suario,\r\n                gas.valor_gas as valor,\r\n                tipo.nombre_tipog as tipo\r\n            FROM tbl_log_gasto as log\r\n            INNER JOIN tbl_usuarios AS usu ON (usu.id_usu=log.id_autor_gas)\r\n            INNER JOIN tbl_gasto AS gas ON (gas.id_gas=log.id_gas)\r\n            INNER JOIN tbl_tipo_gasto AS tipo ON (tipo.id_tipog=gas.id_tipo_tipog)\r\n            WHERE 1 AND log.id_autor_usu = 2', 'Unknown column \'log.id_autor_usu\' in \'where clause\'', '2020-09-02 04:12:49', 1, 'reporte_log_gasto', 'cargar_reporte'),
+(27, 'Consulta de dataTable => SELECT CASE\r\n               WHEN log.movimiento_logg = 0 THEN \'Gasto propio del vendedor\'\r\n               WHEN log.movimiento_logg = 1 THEN \'Cancelado por el coordinador\'\r\n               WHEN log.movimiento_logg = 2 THEN \'Abono del coordinador\'\r\n               WHEN log.movimiento_logg = 3 THEN \'Anulado por el vendedor\'\r\n               ELSE \'Movimiento descodocido por el sistema.\'\r\n               END as movimiento,\r\n               log.fecha_logg as fecha,\r\n               CONCAT_WS(\'\', usu.primer_nombre_usu, usu.segundo_nombre_usu, usu.primer_apellido_usu, usu.segundo_apellido_usu ) as usuario,\r\n                usu.documento_usu as documento_suario,\r\n                gas.valor_gas as valor,\r\n                tipo.nombre_tipog as tipo\r\n            FROM tbl_log_gasto as log\r\n            INNER JOIN tbl_usuarios AS usu ON (usu.id_usu=log.id_autor_gas)\r\n            INNER JOIN tbl_gasto AS gas ON (gas.id_gas=log.id_gas)\r\n            INNER JOIN tbl_tipo_gasto AS tipo ON (tipo.id_tipog=gas.id_tipo_tipog)\r\n            WHERE 1 AND log.fecha_logu >= \'2020-09-02\'', 'Unknown column \'log.fecha_logu\' in \'where clause\'', '2020-09-02 04:13:27', 1, 'reporte_log_gasto', 'cargar_reporte'),
+(28, 'Consulta de dataTable => SELECT CASE\r\n               WHEN log.movimiento_logg = 0 THEN \'Gasto propio del vendedor\'\r\n               WHEN log.movimiento_logg = 1 THEN \'Cancelado por el coordinador\'\r\n               WHEN log.movimiento_logg = 2 THEN \'Abono del coordinador\'\r\n               WHEN log.movimiento_logg = 3 THEN \'Anulado por el vendedor\'\r\n               ELSE \'Movimiento descodocido por el sistema.\'\r\n               END as movimiento,\r\n               log.fecha_logg as fecha,\r\n               CONCAT_WS(\'\', usu.primer_nombre_usu, usu.segundo_nombre_usu, usu.primer_apellido_usu, usu.segundo_apellido_usu ) as usuario,\r\n                usu.documento_usu as documento_suario,\r\n                gas.valor_gas as valor,\r\n                tipo.nombre_tipog as tipo\r\n            FROM tbl_log_gasto as log\r\n            INNER JOIN tbl_usuarios AS usu ON (usu.id_usu=log.id_autor_gas)\r\n            INNER JOIN tbl_gasto AS gas ON (gas.id_gas=log.id_gas)\r\n            INNER JOIN tbl_tipo_gasto AS tipo ON (tipo.id_tipog=gas.id_tipo_tipog)\r\n            WHERE 1 AND log.fecha_logu >= \'2020-09-02\'', 'Unknown column \'log.fecha_logu\' in \'where clause\'', '2020-09-02 04:13:40', 1, 'reporte_log_gasto', 'cargar_reporte'),
+(29, 'creacion de usuarios. => INSERT INTO tbl_cliente (id_usu, documento_usu, primer_nombre_usu,segundo_nombre_usu, primer_apellido_usu, segundo_apellido_usu, telefono_1_usu, telefono_2_usu, direcion_usu, sexo_usu, correo_usu, fecha_nacimineto_usu, foto_usu,rol_usu,estado_localidad_usu,ciudad_localidad_usu) VALUES (NULL, 12412443423,\'asde\',\'fdsf\',\'fdsf\',\'nbnbdf\', 4324234324234, 32432432433, \'fdsfsdfdfsf\', \'Hombre\', \'j.a@dfsd.com\', \'2007-08-25\', \'usuario.jpg\',2,5,284)', 'Column \'id_usu\' cannot be null', '2020-09-03 22:27:01', 3, 'cliente', 'save');
 
 -- --------------------------------------------------------
 
@@ -206,7 +264,11 @@ INSERT INTO `tbl_log_gasto` (`id_logg`, `movimiento_logg`, `fecha_logg`, `id_gas
 (24, 0, '2020-08-28 07:39:14', 23, 'gasto', 4, 'save'),
 (25, 0, '2020-08-28 07:44:38', 24, 'gasto', 4, 'save'),
 (26, 0, '2020-08-28 07:45:16', 25, 'gasto', 4, 'save'),
-(27, 0, '2020-08-28 12:26:18', 26, 'gasto', 3, 'save');
+(27, 0, '2020-08-28 12:26:18', 26, 'gasto', 3, 'save'),
+(28, 3, '2020-09-03 19:18:38', 3, 'gasto', 3, 'cambiarEstado'),
+(29, 3, '2020-09-03 19:27:18', 5, 'gasto', 3, 'cambiarEstado'),
+(30, 3, '2020-09-03 20:05:12', 26, 'gasto', 3, 'cambiarEstado'),
+(31, 3, '2020-09-03 20:05:58', 1, 'gasto', 3, 'cambiarEstado');
 
 -- --------------------------------------------------------
 
@@ -341,6 +403,12 @@ INSERT INTO `tbl_usuarios` (`id_usu`, `documento_usu`, `primer_nombre_usu`, `seg
 --
 
 --
+-- Indices de la tabla `tbl_cliente`
+--
+ALTER TABLE `tbl_cliente`
+  ADD PRIMARY KEY (`id_usu`);
+
+--
 -- Indices de la tabla `tbl_gasto`
 --
 ALTER TABLE `tbl_gasto`
@@ -393,6 +461,12 @@ ALTER TABLE `tbl_usuarios`
 --
 
 --
+-- AUTO_INCREMENT de la tabla `tbl_cliente`
+--
+ALTER TABLE `tbl_cliente`
+  MODIFY `id_usu` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT de la tabla `tbl_gasto`
 --
 ALTER TABLE `tbl_gasto`
@@ -402,13 +476,13 @@ ALTER TABLE `tbl_gasto`
 -- AUTO_INCREMENT de la tabla `tbl_log_errores`
 --
 ALTER TABLE `tbl_log_errores`
-  MODIFY `int_id_loge` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `int_id_loge` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT de la tabla `tbl_log_gasto`
 --
 ALTER TABLE `tbl_log_gasto`
-  MODIFY `id_logg` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id_logg` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT de la tabla `tbl_log_tipo_gasto`
@@ -420,7 +494,7 @@ ALTER TABLE `tbl_log_tipo_gasto`
 -- AUTO_INCREMENT de la tabla `tbl_log_usuarios`
 --
 ALTER TABLE `tbl_log_usuarios`
-  MODIFY `id_logu` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id_logu` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT de la tabla `tbl_tipo_gasto`
@@ -432,7 +506,7 @@ ALTER TABLE `tbl_tipo_gasto`
 -- AUTO_INCREMENT de la tabla `tbl_usuarios`
 --
 ALTER TABLE `tbl_usuarios`
-  MODIFY `id_usu` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_usu` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Restricciones para tablas volcadas
