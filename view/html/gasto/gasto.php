@@ -59,14 +59,14 @@
 			        <div class="col-md-6">
                       <div class="form-group">
                         <label for="Valor" class="text-color ">Valor mínimo</label>
-                        <input type="text" class="form-control" name="Valor_mini" id="Valor" onkeyup="format(this)" onchange="format(this)">
+                        <input type="text" class="form-control" name="Valor_mini" id="Valor_mini" onkeyup="format(this)" onchange="format(this)">
                      
                       </div>
                     </div>
                      <div class="col-md-6">
                       <div class="form-group">
                         <label for="Valor" class="text-color ">Valor máximo</label>
-                        <input type="text" class="form-control" name="Valor_max" id="Valor" onkeyup="format(this)" onchange="format(this)">
+                        <input type="text" class="form-control" name="Valor_max" id="Valor_max" onkeyup="format(this)" onchange="format(this)">
                      
                       </div>
                     </div>

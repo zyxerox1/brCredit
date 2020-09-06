@@ -135,16 +135,19 @@ class gasto_modelo
         if(isset($params['Fecha_ini']) && $params['Fecha_ini']!=""){
             $query.=" AND gasto.fecha_gas >= '".$params['Fecha_ini']."'";
         }
+
         if(isset($params['Valor_max']) && $params['Valor_max']!=""){
-            $query.=" AND gasto.valor_gas <= '".$params['Fecha_fin']."'";
+            $params['Valor_max']= preg_replace('/[.,]/', '', $params['Valor_max']);
+            $query.=" AND gasto.valor_gas <= '".$params['Valor_max']."'";
         }
         if(isset($params['Valor_mini']) && $params['Valor_mini']!=""){
-            $query.=" AND gasto.valor_gas >= '".$params['Fecha_ini']."'";
+            $params['Valor_mini']= preg_replace('/[.,]/', '', $params['Valor_mini']);
+            $query.=" AND gasto.valor_gas >= '".$params['Valor_mini']."'";
         }
 
 
         //$tablaSearch="AND int_documento_usu LIKE '%".$params['search']['value']."%'";
-
+      
         $data=$this->DB_QUERY->queryDatatable($params,$query);
         return $data;
     }
