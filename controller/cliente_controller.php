@@ -15,7 +15,7 @@ class cliente_controller
 
     public function index()
     {
-        $this->validacion->validarRol(3);
+        $this->validacion->validarRol(2);
         $c='cliente';//variable necesaria para encontrar la ruta del script js--se utiliza en le footer de la app
         $p='cliente';
         $data_filtro=$this->cliente->obtener_filtro_cliente();
@@ -40,22 +40,23 @@ class cliente_controller
 
     public function editar()
     {   
-        $this->validacion->validarRol(0);
+        $this->validacion->validarRol(2);
         //variable necesaria para encontrar la ruta del script js--se utiliza en le footer de la app
-        $c='usuario';
+        $c='cliente';
         $p='editar';
         ////////////////////////////////////////////////////////////////////////////////////////////
-        $data=$this->usuario->query_usuario($_REQUEST);
+        $data=$this->cliente->query_cliente($_REQUEST);
+
         $_SESSION['id_update']=$_REQUEST['i'];
         require_once HTML_DIR . 'overall/header.php';
         require_once HTML_DIR . 'overall/topNav.php';
-        require_once HTML_DIR . 'usuario/editar.php';
+        require_once HTML_DIR . 'cliente/editar.php';
         require_once HTML_DIR . 'overall/footer.php'; 
     }
 
     public function cargar(){
-        $this->validacion->validarRol(0);
-        $data=$this->usuario->obtener_usuarios($_REQUEST);
+        $this->validacion->validarRol(2);
+        $data=$this->cliente->obtener_cliente($_REQUEST);
         echo json_encode($data);
     }
 
@@ -87,7 +88,17 @@ class cliente_controller
         if($this->validacion->soloNumeros($_POST['Documento'])==false){
           $errores[] = array('control' =>"Documento" ,'error' =>"El campo Documento solo debe contener numeros");
         }
+
         if(strlen($_POST['Documento'])<7){
+          $errores[] = array('control' =>"Documento" ,'error' =>"El campo Documento es corto");
+        }
+
+
+        if($this->validacion->soloNumeros($_POST['ccr'])==false){
+          $errores[] = array('control' =>"Documento" ,'error' =>"El campo Documento solo debe contener numeros");
+        }
+        
+        if(strlen($_POST['ccr'])<7){
           $errores[] = array('control' =>"Documento" ,'error' =>"El campo Documento es corto");
         }
 
@@ -145,10 +156,10 @@ class cliente_controller
 
 
         if(count($errores)==0){
-            $result_editar_usuario=  $this->cliente->crear_usuario($_POST['primernombre'], $_POST['segundonombre'], $_POST['primerapellido'], $_POST['segundoapellido'], $_POST['Documento'], $_POST['Genero'], $_POST['Telefono_1'], $_POST['Telefono_2'], $_POST['Fecha'], $_POST['Direcion'], $_POST['Correo'], $_POST['img_name'],$img_name,$_POST['perfil'],$_POST['estados'],$_POST['ciudades']);
+            $result_editar_usuario=  $this->cliente->crear_usuario($_POST['primernombre'], $_POST['segundonombre'], $_POST['primerapellido'], $_POST['segundoapellido'], $_POST['Documento'], $_POST['Genero'], $_POST['Telefono_1'], $_POST['Telefono_2'], $_POST['Fecha'], $_POST['Direcion'], $_POST['Correo'],$img_name,$_POST['estados'],$_POST['ciudades'],$_POST['ccr'],$_POST['Direcionc']);
 
             if (isset($result_editar_usuario["control"]) && $result_editar_usuario["control"] !=1) {
-              move_uploaded_file($_FILES['img']['tmp_name'], "view/assets/imagenes_usuario/".$result_editar_usuario["control"]);
+              move_uploaded_file($_FILES['img']['tmp_name'], "view/assets/imagenes_cliente/".$result_editar_usuario["control"]);
             }
           $errores=array('control' =>0 ,'error' => 0);
         }
@@ -157,7 +168,7 @@ class cliente_controller
 
     public function update()
     {   
-        $this->validacion->validarRol(0);
+        $this->validacion->validarRol(2);
         $errores=[];
         $img_name=0;
 
@@ -212,6 +223,14 @@ class cliente_controller
             $_POST['Telefono_2']=0;
         }
 
+        if($this->validacion->soloNumeros($_POST['ccr'])==false){
+          $errores[] = array('control' =>"Documento" ,'error' =>"El campo Documento solo debe contener numeros");
+        }
+        
+        if(strlen($_POST['ccr'])<7){
+          $errores[] = array('control' =>"Documento" ,'error' =>"El campo Documento es corto");
+        }
+
         if($this->validacion->muyJoven($_POST['Fecha'])==false){
           $errores[] = array('control' =>"Fecha" ,'error' =>"La fecha es muy cercana a la actual.");
           $errores[] = array('control' =>"Edad" ,'error' =>"La edad es muy joven");
@@ -231,40 +250,13 @@ class cliente_controller
 
 
         if(count($errores)==0){
-            $result_editar_usuario=  $this->usuario->atualizar_usuario($_POST['primernombre'], $_POST['segundonombre'], $_POST['primerapellido'], $_POST['segundoapellido'], $_POST['Genero'], $_POST['Telefono_1'], $_POST['Telefono_2'], $_POST['Fecha'], $_POST['Direcion'], $_POST['Correo'],$img_name,$_SESSION['id_update'],$_POST['estados'],$_POST['ciudades']);
-            if (isset($result_editar_usuario["text_img_perfil_usu"]) && $result_editar_usuario["text_img_perfil_usu"] !=1) {
-              move_uploaded_file($_FILES['img']['tmp_name'], "view/assets/imagenes_usuario/".$result_editar_usuario["text_img_perfil_usu"]);
+            $result_editar_usuario=  $this->cliente->atualizar_cliente($_POST['primernombre'], $_POST['segundonombre'], $_POST['primerapellido'], $_POST['segundoapellido'], $_POST['Genero'], $_POST['Telefono_1'], $_POST['Telefono_2'], $_POST['Fecha'], $_POST['Direcion'], $_POST['Correo'],$img_name,$_SESSION['id_update'],$_POST['estados'],$_POST['ciudades'],$_POST['ccr'],$_POST['Direcioncobro']);
+
+            if (isset($result_editar_usuario["control"]) && $result_editar_usuario["control"] !=1) {
+              move_uploaded_file($_FILES['img']['tmp_name'], "view/assets/imagenes_cliente/".$result_editar_usuario["control"]);
             }
           $errores=array('control' =>0 ,'error' => 0);
         }
         echo json_encode($errores);  
-    }
-
-    function encriptar($cadena)
-    {   
-        $this->validacion->validarRol(0);
-        $timeTarget = 0.05; // 50 milisegundos 
-        $coste = 8;
-        $pass="";
-        do {
-            $coste++;
-            $inicio = microtime(true);
-            $pass=password_hash($cadena, PASSWORD_BCRYPT, ["cost" => $coste]);
-            $fin = microtime(true);
-        } while (($fin - $inicio) < $timeTarget);
-
-        return $pass;
-    }
-
-     public function cambiar_estado(){
-        $this->validacion->validarRol(0);
-        $errores=[];
-        if(!isset($_POST['id']) || !isset($_POST['estado'])){
-            $errores[]=array('control' =>"1" ,'error' =>"Algo salio mal");
-        }else{
-            $_POST['estado'] = (1 == $_POST['estado']) ? 0 : 1;
-            $errores=$this->usuario->cambiar_estado($_POST);
-        }
-        echo json_encode($errores);
     }
 }

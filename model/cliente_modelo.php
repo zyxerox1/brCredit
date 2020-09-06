@@ -12,7 +12,7 @@ class cliente_modelo
     }
 
     /*/////////////////////////////////////////////guardar///////////////////////////////////*/
-    public function log_usuario($movimiento="",$id="",$nota=""){
+    public function log_cliente($movimiento="",$id="",$nota=""){
         /*parametro de errores{*/
         $controller="";
         $accion_func="";
@@ -23,40 +23,50 @@ class cliente_modelo
             $accion_func=$_REQUEST['a'];
         }
 
-        $query = "CALL logUsuarios('$movimiento','$id',".$_SESSION["id_usu_credit"].",'$accion_func','$controller')";
+        $query = "CALL logCliente('$movimiento','$id',".$_SESSION["id_usu_credit"].",'$accion_func','$controller')";
 
         $this->DB_QUERY->save($query);
     }
 
-    public function crear_usuario($primernombre, $segundonombre, $primerapellido, $segundoapellido, $Documento, $Genero, $Telefono_1, $Telefono_2, $Fecha, $Direcion, $Correo, $img_name_name, $img_name,$perfil,$estados,$ciudades){
+    public function crear_usuario($primernombre, $segundonombre, $primerapellido, $segundoapellido, $Documento, $Genero, $Telefono_1, $Telefono_2, $Fecha, $Direcion, $Correo, $img_name,$estados,$ciudades,$ccr,$Direcionc){
 
         $user = array();
 
         if($img_name==1){
-            $img_name=date("YmdHis")."_".$_SESSION["id_usu_credit"].".png";
+            $img_name=date("YmdHis")."_".rand(0, 9).$_SESSION["id_usu_credit"].".png";
             $user["text_img_perfil_usu"]=$img_name;
         }else{
             $img_name='usuario.jpg';
             $user["text_img_perfil_usu"]=1;
         }
-
-    	$query = "INSERT INTO tbl_cliente (id_usu, documento_usu, primer_nombre_usu,segundo_nombre_usu, primer_apellido_usu, segundo_apellido_usu, telefono_1_usu, telefono_2_usu, direcion_usu, sexo_usu, correo_usu, fecha_nacimineto_usu, foto_usu,rol_usu,estado_localidad_usu,ciudad_localidad_usu) VALUES (NULL, $Documento,'$primernombre','$segundonombre','$primerapellido','$segundoapellido', $Telefono_1, $Telefono_2, '$Direcion', '$Genero', '$Correo', '$Fecha', '$img_name',$perfil,$estados,$ciudades)";
-        $id=$this->DB_QUERY->save($query,'creacion de usuarios.');
-        //$this->log_usuario(0,$id);
+    	$query = "INSERT INTO tbl_cliente (id_clie, documento_clie, documento_ref_clie, primer_nombre_clie, segundo_nombre_clie, primer_apellido_clie, segundo_apellido_clie, telefono_1_clie, telefono_2_clie, direcion_clie, direcion_cobro_clie, sexo_clie, correo_clie, fecha_nacimineto_clie, foto_clie, estado_localidad_clie, ciudad_localidad_clie, id_usu) VALUES (NULL, $Documento, $ccr,'$primernombre', '$segundonombre', '$primerapellido', '$segundoapellido', $Telefono_1, $Telefono_2, '$Direcion', '$Direcionc','$Genero', '$Correo', '$Fecha','$img_name',$estados,$ciudades,".$_SESSION["id_usu_credit"].");";
+        $id=$this->DB_QUERY->save($query,'creacion de cliente.');
+        $this->log_cliente(0,$id);
         return array('control' =>$user["text_img_perfil_usu"] ,'error' => 0,'resp'=>$id);
     }
 
     /*////////////////////////////////consulta//////////////////////////////////////////////////*/
-    public function obtener_usuarios($params){
+    public function obtener_cliente($params){
 
-        $query="SELECT id_usu as id, documento_usu as CC, concat(primer_nombre_usu,' ',segundo_nombre_usu) as Nombre, concat(primer_apellido_usu,' ',segundo_apellido_usu) as Apellido, telefono_1_usu as t1, telefono_2_usu as t2,correo_usu as Correo, fecha_nacimineto_usu as fecha, estado_usu as Estado FROM tbl_usuarios WHERE 1 ";
+        $query="SELECT clien.id_clie as id, 
+                       clien.documento_clie as CC, 
+                      CONCAT_WS (' ',clien.primer_nombre_clie,clien.segundo_nombre_clie,clien.primer_apellido_clie,clien.segundo_apellido_clie) as nombre,
+                      clien.telefono_1_clie as t1, 
+                      clien.telefono_2_clie as t2,
+                      clien.correo_clie as Correo,
+                      clien.documento_clie as Direcionr,
+                      clien.documento_ref_clie as Direcionc, 
+                      clien.fecha_nacimineto_clie as fecha_cobro, 
+                      clien.id_clie as id_cobro  
+                      FROM tbl_cliente as clien  
+                      WHERE 1 ";
 
      
         if(isset($params['Nombre']) && $params['Nombre']!=0){
-          $query.=" AND id_usu = ".$params['Nombre'];
+          $query.=" AND clien.id_clie = ".$params['Nombre'];
         }
         if(isset($params['Cedula']) && $params['Cedula']!=0){
-            $query.=" AND documento_usu = ".$params['Cedula'];
+            $query.=" AND clien.documento_clie = ".$params['Cedula'];
         }
 
         //$tablaSearch="AND int_documento_usu LIKE '%".$params['search']['value']."%'";
@@ -65,66 +75,63 @@ class cliente_modelo
         return $data;
     }
 
-    public function obtener_filtro_usuario(){
-        $query="CALL obtenerUsuario()";
+    public function obtener_filtro_cliente(){
+        $query="CALL obtenerCliente()";
         $data=$this->DB_QUERY->query($query);
         return $data;
     }
 
 
-    public function query_usuario($params){
-        $query="CALL buscarUsuario(".$params['i'].")";
+    public function query_cliente($params){
+        $query="CALL buscarCliente(".$params['i'].")";
         $data=$this->DB_QUERY->query($query);
         return $data;
     }
 
     /*////////////////////////////////atualizar//////////////////////////////////////////////////*/
-    public function cambiar_estado($params){
-        $query="UPDATE `tbl_usuarios` SET `estado_usu` = ".$params['estado']." WHERE `tbl_usuarios`.`id_usu` = '".$params['id']."'";
-        $id=$this->DB_QUERY->save($query,'cambiar estado de usuarios.');
-        $this->log_usuario(3,$params['id']);
-        return array('control' =>0 ,'error' => 0);
-    }
-
-    public function atualizar_usuario($primernombre, $segundonombre, $primerapellido, $segundoapellido,$Genero, $Telefono_1, $Telefono_2, $Fecha, $Direcion, $Correo, $img_name,$id,$estados,$ciudad){
+    
+    public function atualizar_cliente($primernombre, $segundonombre, $primerapellido, $segundoapellido,$Genero, $Telefono_1, $Telefono_2, $Fecha, $Direcion, $Correo, $img_name,$id,$estados,$ciudad,$ccr,$Direcioncobro){
 
         $user = array();
 
-        $text_img_perfil_usu="";
+        $img="";
+        $correo="";
         if($img_name==1){
-            $query="SELECT foto_usu FROM tbl_usuarios WHERE id_usu=".$id;
+            $query="SELECT foto_clie FROM tbl_cliente WHERE id_clie=".$id;
             $data=$this->DB_QUERY->query($query);
-            if($data[0]['foto_usu']=='usuario.jpg'){
-               $user["text_img_perfil_usu"]=date("YmdHis")."_".$id.".png";
-               $text_img_perfil_usu=",foto_usu='".$user["text_img_perfil_usu"]."'";
+            if($data[0]['foto_clie']=='usuario.jpg'){
+               $user["control"]=date("YmdHis")."_".$id.".png";
+               $img=",foto_clie='".$user["control"]."'";
             }else{
-                $user["text_img_perfil_usu"]=$data[0]['foto_usu'];
+                $user["control"]=$data[0]['foto_clie'];
             }
             
         }else{
             $img_name='usuario.jpg';
-            $user["text_img_perfil_usu"]=1;
+            $user["control"]=1;
         }
 
-        $query = "UPDATE `tbl_usuarios` 
+        $query = "UPDATE tbl_cliente 
                   SET 
-                    primer_nombre_usu='$primernombre',
-                    segundo_nombre_usu='$segundonombre',
-                    primer_apellido_usu='$primerapellido',
-                    segundo_apellido_usu='$segundoapellido',
-                    telefono_1_usu=$Telefono_1,
-                    telefono_2_usu=$Telefono_2,
-                    direcion_usu='$Direcion',
-                    sexo_usu='$Genero',
-                    correo_usu='$Correo',
-                    fecha_nacimineto_usu='$Fecha',
-                    estado_localidad_usu='$estados',
-                    ciudad_localidad_usu='$ciudad'
-                    $text_img_perfil_usu
-                  WHERE `tbl_usuarios`.`id_usu` =".$id;
+                    primer_nombre_clie='$primernombre',
+                    segundo_nombre_clie='$segundonombre',
+                    primer_apellido_clie='$primerapellido',
+                    segundo_apellido_clie='$segundoapellido',
+                    telefono_1_clie=$Telefono_1,
+                    telefono_2_clie=$Telefono_2,
+                    direcion_clie='$Direcion',
+                    sexo_clie='$Genero',
+                    fecha_nacimineto_clie='$Fecha',
+                    estado_localidad_clie='$estados',
+                    ciudad_localidad_clie='$ciudad',
+                    documento_ref_clie='$ccr',
+                    direcion_cobro_clie='$Direcioncobro',
+                    correo_clie='$Correo'
+                    $img
+                  WHERE tbl_cliente.id_clie =".$id;
 
-        $this->DB_QUERY->save($query,'atualizar usuarios.');
-        $this->log_usuario(1,$id);
+        $this->DB_QUERY->save($query,'atualizar cliente.');
+        $this->log_cliente(1,$id);
         return $user;
     }
 }

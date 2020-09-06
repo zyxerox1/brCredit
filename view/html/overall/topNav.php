@@ -52,10 +52,17 @@
       </li>
       <?php } ?>
 
-      <?php if($_SESSION["rol"]==2){?>
-      <li class="nav-item active">
-        <a class="nav-link" href="index.php?c=cliente&a=crear">Clear clientes <span class="sr-only">(current)</span></a>
+      <?php if($_SESSION["rol"]==2){ ?>
+
+      <li class="nav-item dropdown active">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Clientes<span class="sr-only">(current)</span>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="index.php?c=cliente">Mis clientes</a>
+          <a class="dropdown-item" href="index.php?c=cliente&a=crear">Crear clientes</a>
+        </div>
       </li>
+
       <li class="nav-item active">
         <a class="nav-link" href="#">Registrar abono <span class="sr-only">(current)</span></a>
       </li>

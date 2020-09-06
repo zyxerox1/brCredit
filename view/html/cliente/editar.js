@@ -18,14 +18,13 @@ $(document).ready(function() {
       removeTitle: 'Cancel or reset changes',
       elErrorContainer: '#kv-avatar-errors-2',
       msgErrorClass: 'alert alert-block alert-danger',
-      defaultPreviewContent: '<img src="./view/assets/imagenes_app/usuario.jpg" class="img-perfil-login rounded-circle" alt="Your Avatar"><h6 class="text-muted">Arrastre Ò haga clic para seleccionar</h6>',
+      defaultPreviewContent: '<img src="'+$("#avatar-2").attr('data-src')+'" class="img-perfil-login rounded-circle" alt="Your Avatar"><h6 class="text-muted">Arrastre Ò haga clic para seleccionar</h6>',
       layoutTemplates: {main2: '{preview} ' +  btnCust + ' {remove} {browse}'},
       allowedFileExtensions: ["jpg", "png", "gif"],
       autoOrientImage:false
   });
 
-  var fecha_edad=new Date();
-  fecha_edad.setTime(fecha_edad.getTime() - (13 * 366 * 24 * 60 * 60 * 1000));
+  fecha_edad=$("#Fecha").val();
   $('.datetimepicker').datetimepicker({ 
     defaultDate: fecha_edad,
     format: 'YYYY-MM-DD',
@@ -48,22 +47,24 @@ $(document).ready(function() {
     var edad=calcularEdad($(this).val());
   });
 
-   $(".visualizacion").click(function() {
-    if ($("#visualizacion_crear").attr("class") == "fas fa-eye") {
-      $('input[name=pas1]').prop("type", "text");
-      $('input[name=pas2]').prop("type", "text");
-      $('#visualizacion_crear').removeClass("fa-eye");
-      $('#visualizacion_crear').addClass("fa-eye-slash");
-    } else {
-      $('input[name=pas1]').prop("type", "password");
-      $('input[name=pas2]').prop("type", "password");
-      $('#visualizacion_crear').addClass("fa-eye");
-      $('#visualizacion_crear').removeClass("fa-eye-slash");
-    }
+  $("#estados").change(function() {
+    cargarCiudades();
+  })
+
+  readTextFile("view/assets/plugins/localidad/Estados.json", function(text){
+    var arrayEstados = JSON.parse(text);
+    arrayEstados.forEach(data =>dibujarEstado(data.ID,data.Nome));
+    cargarCiudades();
   });
 
-  $("#estados").change(function() {
-    var id=$(this).val();
+  $( "#formulario-editar-cliente" ).submit(function( event ) {
+      event.preventDefault();
+      editar_cliente($(this).attr('action'),$(this).serializeArray());
+  });
+});
+
+function cargarCiudades(){
+  var id=$("#estados").val();
     $("#ciudades").html("<option value='0'>Selecione un ciudad...</option>");
     readTextFile("view/assets/plugins/localidad/Cidades.json", function(text){
       var arrayCiudad = JSON.parse(text);
@@ -71,28 +72,30 @@ $(document).ready(function() {
       arrayCiudad.forEach(element => dibujarCiudades(element,id));
       $(".loader").fadeOut('slow');
     });
-  })
-
-  readTextFile("view/assets/plugins/localidad/Estados.json", function(text){
-    var arrayEstados = JSON.parse(text);
-    arrayEstados.forEach(data => $("#estados").append("<option value="+data.ID+">"+data.Nome+"</option>"));
-  });
-
-  $( "#formulario-crear-cliente" ).submit(function( event ) {
-      event.preventDefault();
-      registrar_cliente($(this).attr('action'),$(this).serializeArray());
-  });
-
-});
-
-function dibujarCiudades(data,id){
-  if(data.Estado==id){
-    $("#ciudades").append("<option value="+data.ID+">"+data.Nome+"</option>")
-  }
 }
 
 
-function registrar_cliente(action,datos) {
+function dibujarEstado(id,nome){
+
+  if($("#estados").attr("data-id")==id){
+    //console.log($("#estados").attr("data-id")+"----"+id);
+    $("#estados").append("<option value="+id+" selected='selected'>"+nome+"</option>")
+  }else{
+    $("#estados").append("<option value="+id+">"+nome+"</option>")
+  }
+}
+
+function dibujarCiudades(data,id){
+  if(data.Estado==id){
+    if($("#ciudades").attr("data-id")==data.ID){
+      $("#ciudades").append("<option selected='selected' value="+data.ID+">"+data.Nome+"</option>");
+    }else{
+      $("#ciudades").append("<option value="+data.ID+">"+data.Nome+"</option>");
+    }
+  }
+}
+
+function editar_cliente(action,datos) {
   var formData = new FormData();
   formData=crearObjetoFormData(datos);
   if($('#avatar-2').val() !== undefined){
@@ -115,7 +118,7 @@ function registrar_cliente(action,datos) {
           }else if(obj["error"]==0){
             setTimeout(function() {window.location.href = 'index.php?c=cliente' },1000);
             //setTimeout(function() {window.history.go(-1) },1000);
-            ohSnap('Se guardo correctamente',{color: 'green'});
+            ohSnap('Se actualizo correctamente',{color: 'green'});
           }else{
             ohSnap('Error desconocido.',{color: 'green'});
           }

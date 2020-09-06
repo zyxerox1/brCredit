@@ -8,7 +8,7 @@
 	    <center><h5 class="card-title">Crear nuevo cliente.</h5>
 	    <h6 class="card-subtitle mb-2 text-muted">Ingrese datos del cliente.</h6></center>
 	    <hr>
-	    <form action="index.php?c=cliente&a=save" id="formulario-crear-usuario" method="post" enctype="multipart/form-data">
+	    <form action="index.php?c=cliente&a=save" id="formulario-crear-cliente" method="post" enctype="multipart/form-data">
 
 	    	<div class="row">
                 <div class="col-sm-5 contenedor-img-registro">
@@ -30,29 +30,8 @@
                                 <center><label for="primernombre" class="text-color">Perfil del usuario*</label></center>
                               </div>
                           </div>
-                            <div class="row">
-                                <div class="col-md-3 offset-md-3">
-                                  <div class="form-check">
-                                    <label class="form-check-label">
-                                      <input class="form-check-input" type="radio" name="perfil" id="perfil1" value="1"> Nuevo cliente
-                                      <span class="circle">
-                                        <span class="check"></span>
-                                      </span>
-                                    </label>
-                                  </div>
-                                </div>
-                                <div class="col-md-3">
-                                  <div class="form-check">
-                                    <label class="form-check-label">
-                                      <input class="form-check-input" type="radio" name="perfil" id="perfil2" value="2" checked> Editar cliente
-                                      <span class="circle">
-                                        <span class="check"></span>
-                                      </span>
-                                    </label>
-                                  </div>
-                                </div>
-                              </div>
-                              <br>
+                            
+                          <br>
                           <div class="row">
                             <div class="col-md-6">
                               <div class="form-group">
@@ -170,7 +149,8 @@
                         </div>
                           <div class="col-md-6">
                           <div class="form-group">
-                            <label for="Direcionc" class="text-color">Dirección de cobro*</label>                            <input type="text" class="form-control" id="Direcionc" name="Direcionc" required="required">
+                            <label for="Direcionc" class="text-color">Dirección de cobro*</label>     
+                            <input type="text" class="form-control" id="Direcionc" name="Direcionc" required="required">
                           </div>
                         </div>                  
                     </div>
@@ -184,7 +164,7 @@
                         </div>
                       <div class="col-md-6">
                           <div class="form-group">
-                            <label for="ccr" class="bmd-label-floating text-color">Cedula de referencia*</label>
+                            <label for="ccr" class="bmd-label-floating text-color">Documento de identificacion de referencia*</label>
                             <input type="text" class="form-control" id="ccr" name="ccr" required="required">
                           </div>
                         </div>
