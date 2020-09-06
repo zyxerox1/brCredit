@@ -1,0 +1,30 @@
+.card-prestamo-usu{
+	width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    display: none;
+}
+
+#desplegue-cliente{
+	float: right; 
+	height: 14px;
+}
+
+.btn-depliegue{  
+	float: right;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+ }
+
+.img-cliente{
+ 	height: 300px;
+ }
+
+ .valorDebeTable{
+ 	background-color: red;
+    color: white;
+    text-align: center;
+    border-radius: 10px;
+    padding-bottom: 6px;
+    padding-top: 2px;
+ }

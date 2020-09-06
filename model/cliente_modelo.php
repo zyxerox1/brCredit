@@ -56,12 +56,12 @@ class cliente_modelo
                       clien.correo_clie as Correo,
                       clien.documento_clie as Direcionr,
                       clien.documento_ref_clie as Direcionc, 
-                      clien.fecha_nacimineto_clie as fecha_cobro, 
-                      clien.id_clie as id_cobro  
-                      FROM tbl_cliente as clien  
+                      clien.fecha_nacimineto_clie as fecha_cobro,
+                      if(pres.valor_pres IS NOT NULL,pres.valor_pres,0) as valorDeuda,
+                      if(pres.id_pres IS NOT NULL,pres.id_pres,0) as id_cobro
+                      FROM tbl_cliente as clien 
+                      LEFT JOIN tbl_prestamo as pres on (pres.id_clie=clien.id_clie AND (pres.valor_pres>0)) 
                       WHERE 1 ";
-
-     
         if(isset($params['Nombre']) && $params['Nombre']!=0){
           $query.=" AND clien.id_clie = ".$params['Nombre'];
         }
@@ -86,6 +86,24 @@ class cliente_modelo
         $query="CALL buscarCliente(".$params['i'].")";
         $data=$this->DB_QUERY->query($query);
         return $data;
+    }
+
+    public function DataCliente($params){
+        $query="SELECT CONCAT_WS(' ',client.primer_nombre_clie,client.segundo_nombre_clie,client.primer_apellido_clie,client.segundo_apellido_clie) as nombre,client.foto_clie as foto,
+            client.documento_clie as cc,
+            client.documento_ref_clie as ccr,
+            client.telefono_1_clie as telefono1,
+            client.telefono_2_clie as telefono2,
+            client.direcion_cobro_clie as direcionc,
+            client.direcion_clie as direcion,
+            client.correo_clie as correo,
+            client.fecha_nacimineto_clie as fecha,
+            if(pres.valor_pres IS NOT NULL,pres.valor_pres,0) as valorDeuda
+        FROM tbl_cliente as client 
+        LEFT JOIN tbl_prestamo as pres on (pres.id_clie=client.id_clie AND (pres.valor_pres>0)) 
+        WHERE client.id_clie=".$params['id'];
+        $data=$this->DB_QUERY->query($query);
+        return array('error' => 0,'data'=>$data);
     }
 
     /*////////////////////////////////atualizar//////////////////////////////////////////////////*/
