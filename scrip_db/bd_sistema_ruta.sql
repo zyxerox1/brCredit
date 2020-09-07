@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 04-09-2020 a las 20:04:38
+-- Tiempo de generación: 07-09-2020 a las 02:40:44
 -- Versión del servidor: 10.4.11-MariaDB
 -- Versión de PHP: 7.4.4
 
@@ -25,6 +25,11 @@ DELIMITER $$
 --
 -- Procedimientos
 --
+CREATE DEFINER=`root`@`localhost` PROCEDURE `buscarCliente` (IN `id` BIGINT)  NO SQL
+BEGIN
+SELECT * FROM tbl_cliente WHERE id_clie=id;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `buscarUsuario` (IN `id` BIGINT)  NO SQL
 BEGIN
 SELECT * FROM tbl_usuarios WHERE id_usu=id;
@@ -33,6 +38,11 @@ END$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `eliminarLogErrores` (IN `fecha_ini` TEXT, IN `fecha_fin` TEXT)  NO SQL
 BEGIN
 DELETE FROM tbl_log_errores WHERE date_fecha_loge <= fecha_fin AND date_fecha_loge >= fecha_ini;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `logCliente` (IN `movimiento` INT, IN `id` BIGINT, IN `autor` BIGINT, IN `accion_func` TEXT, IN `controller` TEXT)  NO SQL
+BEGIN
+INSERT INTO tbl_log_cliente (id_logc,movimiento_logc,fecha_logc,id_usu,controller_logc,id_autor_usu,accion_func_logc) VALUES (NULL, movimiento,now(),id,controller,autor,accion_func);
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `logErrores` (IN `accion` TEXT, IN `descripcion` TEXT, IN `id_usu` BIGINT, IN `controller` TEXT, IN `accion_func` TEXT)  NO SQL
@@ -62,13 +72,17 @@ END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `logUsuarios` (IN `movimiento` TEXT, IN `id` BIGINT, IN `autor` BIGINT, IN `accion_func` TEXT, IN `controller` TEXT)  NO SQL
 BEGIN
-DECLARE query_p VARCHAR(100);
 INSERT INTO tbl_log_usuarios (id_logu,movimiento_logu,fecha_logu,id_usu,id_autor_usu,controller_logu,accion_func_logu) VALUES (NULL, movimiento,now(),id,autor,controller,accion_func);
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `obtenerAdministradores` ()  NO SQL
 BEGIN
 	SELECT id_usu,primer_nombre_usu,segundo_nombre_usu,primer_apellido_usu,segundo_apellido_usu, documento_usu FROM tbl_usuarios WHERE rol_usu = 0;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `obtenerCliente` ()  NO SQL
+BEGIN
+	SELECT id_clie,primer_nombre_clie,segundo_nombre_clie,primer_apellido_clie,segundo_apellido_clie, documento_clie FROM tbl_cliente;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `obtenerCoordinadores` ()  NO SQL
@@ -117,32 +131,35 @@ DELIMITER ;
 --
 
 CREATE TABLE `tbl_cliente` (
-  `id_usu` bigint(20) NOT NULL,
-  `documento_usu` bigint(20) NOT NULL,
-  `primer_nombre_usu` text COLLATE utf8mb4_swedish_ci NOT NULL,
-  `segundo_nombre_usu` text COLLATE utf8mb4_swedish_ci DEFAULT NULL,
-  `primer_apellido_usu` text COLLATE utf8mb4_swedish_ci NOT NULL,
-  `segundo_apellido_usu` text COLLATE utf8mb4_swedish_ci DEFAULT NULL,
-  `telefono_1_usu` bigint(20) NOT NULL DEFAULT 0,
-  `telefono_2_usu` bigint(20) NOT NULL DEFAULT 0,
-  `direcion_usu` text COLLATE utf8mb4_swedish_ci NOT NULL,
-  `sexo_usu` int(11) NOT NULL,
-  `correo_usu` text COLLATE utf8mb4_swedish_ci NOT NULL,
-  `fecha_nacimineto_usu` datetime NOT NULL,
-  `foto_usu` text COLLATE utf8mb4_swedish_ci DEFAULT 'usuario.jpg',
-  `estado_usu` int(11) NOT NULL DEFAULT 1,
-  `rol_usu` int(11) NOT NULL COMMENT '0-administrador,1-coordinador,2-cliente',
-  `estado_localidad_usu` text COLLATE utf8mb4_swedish_ci NOT NULL DEFAULT 'No tiene',
-  `ciudad_localidad_usu` text COLLATE utf8mb4_swedish_ci NOT NULL DEFAULT 'No tiene',
-  `id_coordinador_usu` bigint(20) NOT NULL DEFAULT 0
+  `id_clie` bigint(20) NOT NULL,
+  `documento_clie` bigint(20) NOT NULL,
+  `documento_ref_clie` bigint(20) NOT NULL,
+  `primer_nombre_clie` text COLLATE utf8mb4_swedish_ci NOT NULL,
+  `segundo_nombre_clie` text COLLATE utf8mb4_swedish_ci DEFAULT NULL,
+  `primer_apellido_clie` text COLLATE utf8mb4_swedish_ci NOT NULL,
+  `segundo_apellido_clie` text COLLATE utf8mb4_swedish_ci DEFAULT NULL,
+  `telefono_1_clie` bigint(20) NOT NULL DEFAULT 0,
+  `telefono_2_clie` bigint(20) NOT NULL DEFAULT 0,
+  `direcion_clie` text COLLATE utf8mb4_swedish_ci NOT NULL,
+  `direcion_cobro_clie` text COLLATE utf8mb4_swedish_ci NOT NULL,
+  `sexo_clie` text COLLATE utf8mb4_swedish_ci NOT NULL,
+  `correo_clie` text COLLATE utf8mb4_swedish_ci NOT NULL,
+  `fecha_nacimineto_clie` datetime NOT NULL,
+  `foto_clie` text COLLATE utf8mb4_swedish_ci DEFAULT '\'usuario.jpg\'',
+  `estado_clie` int(11) NOT NULL DEFAULT 1,
+  `estado_localidad_clie` text COLLATE utf8mb4_swedish_ci NOT NULL DEFAULT 'No tiene',
+  `ciudad_localidad_clie` text COLLATE utf8mb4_swedish_ci NOT NULL DEFAULT 'No tiene',
+  `id_usu` bigint(20) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_swedish_ci;
 
 --
 -- Volcado de datos para la tabla `tbl_cliente`
 --
 
-INSERT INTO `tbl_cliente` (`id_usu`, `documento_usu`, `primer_nombre_usu`, `segundo_nombre_usu`, `primer_apellido_usu`, `segundo_apellido_usu`, `telefono_1_usu`, `telefono_2_usu`, `direcion_usu`, `sexo_usu`, `correo_usu`, `fecha_nacimineto_usu`, `foto_usu`, `estado_usu`, `rol_usu`, `estado_localidad_usu`, `ciudad_localidad_usu`, `id_coordinador_usu`) VALUES
-(1, 12412443423, 'asde', 'fdsf', 'fdsf', 'nbnbdf', 4324234324234, 32432432433, 'fdsfsdfdfsf', 0, 'j.a@dfsd.com', '2007-08-25 00:00:00', 'usuario.jpg', 1, 2, '5', '284', 0);
+INSERT INTO `tbl_cliente` (`id_clie`, `documento_clie`, `documento_ref_clie`, `primer_nombre_clie`, `segundo_nombre_clie`, `primer_apellido_clie`, `segundo_apellido_clie`, `telefono_1_clie`, `telefono_2_clie`, `direcion_clie`, `direcion_cobro_clie`, `sexo_clie`, `correo_clie`, `fecha_nacimineto_clie`, `foto_clie`, `estado_clie`, `estado_localidad_clie`, `ciudad_localidad_clie`, `id_usu`) VALUES
+(2, 12312333344, 423432423324, 'pruebacliente', 'pruebacliente', 'pruebacliente', '', 3423423444, 4324234444, 'fsdfds', 'fdsfsddddddd', 'Mujer', 'j.a@dfsd.com', '2002-01-07 00:00:00', '20200906035141_13.png', 1, '3', '222', 3),
+(3, 1111111111, 423432423324, 'yeison', 'sanchez', 'arley', '', 3423423444, 4324234444, 'fsdfds', 'fdsfsddddddd', 'Mujer', 'dj.a@dfsd.com', '2002-01-07 00:00:00', '20200906035514_43.png', 1, '3', '222', 3),
+(4, 22222222222, 423432423324, 'yeison', 'sanchez', 'arley', '', 3423423444, 4324234444, 'fsdfds', 'fdsfsddddddd', 'Mujer', 'dej.a@dfsd.com', '2002-01-07 00:00:00', '20200906040010_73.png', 1, '3', '223', 3);
 
 -- --------------------------------------------------------
 
@@ -174,6 +191,38 @@ INSERT INTO `tbl_gasto` (`id_gas`, `valor_gas`, `fecha_gas`, `evidencia_gas`, `n
 (24, 332, '2020-08-28 07:44:38', '20200828144438_4.pdf', 'prueba', 4, 5, 0),
 (25, 13, '2020-08-28 07:45:16', '20200828144516_4.pdf', 'fdsf', 4, 5, 0),
 (26, 1111111, '2020-08-28 12:26:18', '20200828192618_3.jpg', 'No hay', 3, 6, 3);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tbl_log_cliente`
+--
+
+CREATE TABLE `tbl_log_cliente` (
+  `id_logc` bigint(20) NOT NULL,
+  `movimiento_logc` int(11) NOT NULL COMMENT '0-CREAR, 1-UPDATE,3-DESACTIVAR',
+  `fecha_logc` datetime NOT NULL,
+  `id_usu` bigint(20) NOT NULL,
+  `controller_logc` text COLLATE utf8_swedish_ci DEFAULT NULL,
+  `id_autor_usu` bigint(20) NOT NULL,
+  `accion_func_logc` text COLLATE utf8_swedish_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
+
+--
+-- Volcado de datos para la tabla `tbl_log_cliente`
+--
+
+INSERT INTO `tbl_log_cliente` (`id_logc`, `movimiento_logc`, `fecha_logc`, `id_usu`, `controller_logc`, `id_autor_usu`, `accion_func_logc`) VALUES
+(1, 0, '2020-09-05 20:51:41', 2, '3', 0, 'save'),
+(2, 0, '2020-09-05 20:55:14', 3, 'cliente', 3, 'save'),
+(3, 0, '2020-09-05 21:00:10', 4, 'cliente', 3, 'save'),
+(4, 1, '2020-09-05 23:41:32', 2, 'cliente', 3, 'update'),
+(5, 1, '2020-09-05 23:43:51', 2, 'cliente', 3, 'update'),
+(6, 1, '2020-09-06 00:04:47', 2, 'cliente', 3, 'update'),
+(7, 1, '2020-09-06 00:05:50', 2, 'cliente', 3, 'update'),
+(8, 1, '2020-09-06 00:07:24', 2, 'cliente', 3, 'update'),
+(9, 1, '2020-09-06 00:08:42', 2, 'cliente', 3, 'update'),
+(10, 1, '2020-09-06 00:09:21', 2, 'cliente', 3, 'update');
 
 -- --------------------------------------------------------
 
@@ -216,7 +265,20 @@ INSERT INTO `tbl_log_errores` (`int_id_loge`, `text_accion_loge`, `text_descripc
 (26, 'Consulta de dataTable => SELECT CASE\r\n               WHEN log.movimiento_logg = 0 THEN \'Gasto propio del vendedor\'\r\n               WHEN log.movimiento_logg = 1 THEN \'Cancelado por el coordinador\'\r\n               WHEN log.movimiento_logg = 2 THEN \'Abono del coordinador\'\r\n               WHEN log.movimiento_logg = 3 THEN \'Anulado por el vendedor\'\r\n               ELSE \'Movimiento descodocido por el sistema.\'\r\n               END as movimiento,\r\n               log.fecha_logg as fecha,\r\n               CONCAT_WS(\'\', usu.primer_nombre_usu, usu.segundo_nombre_usu, usu.primer_apellido_usu, usu.segundo_apellido_usu ) as usuario,\r\n                usu.documento_usu as documento_suario,\r\n                gas.valor_gas as valor,\r\n                tipo.nombre_tipog as tipo\r\n            FROM tbl_log_gasto as log\r\n            INNER JOIN tbl_usuarios AS usu ON (usu.id_usu=log.id_autor_gas)\r\n            INNER JOIN tbl_gasto AS gas ON (gas.id_gas=log.id_gas)\r\n            INNER JOIN tbl_tipo_gasto AS tipo ON (tipo.id_tipog=gas.id_tipo_tipog)\r\n            WHERE 1 AND log.id_autor_usu = 2', 'Unknown column \'log.id_autor_usu\' in \'where clause\'', '2020-09-02 04:12:49', 1, 'reporte_log_gasto', 'cargar_reporte'),
 (27, 'Consulta de dataTable => SELECT CASE\r\n               WHEN log.movimiento_logg = 0 THEN \'Gasto propio del vendedor\'\r\n               WHEN log.movimiento_logg = 1 THEN \'Cancelado por el coordinador\'\r\n               WHEN log.movimiento_logg = 2 THEN \'Abono del coordinador\'\r\n               WHEN log.movimiento_logg = 3 THEN \'Anulado por el vendedor\'\r\n               ELSE \'Movimiento descodocido por el sistema.\'\r\n               END as movimiento,\r\n               log.fecha_logg as fecha,\r\n               CONCAT_WS(\'\', usu.primer_nombre_usu, usu.segundo_nombre_usu, usu.primer_apellido_usu, usu.segundo_apellido_usu ) as usuario,\r\n                usu.documento_usu as documento_suario,\r\n                gas.valor_gas as valor,\r\n                tipo.nombre_tipog as tipo\r\n            FROM tbl_log_gasto as log\r\n            INNER JOIN tbl_usuarios AS usu ON (usu.id_usu=log.id_autor_gas)\r\n            INNER JOIN tbl_gasto AS gas ON (gas.id_gas=log.id_gas)\r\n            INNER JOIN tbl_tipo_gasto AS tipo ON (tipo.id_tipog=gas.id_tipo_tipog)\r\n            WHERE 1 AND log.fecha_logu >= \'2020-09-02\'', 'Unknown column \'log.fecha_logu\' in \'where clause\'', '2020-09-02 04:13:27', 1, 'reporte_log_gasto', 'cargar_reporte'),
 (28, 'Consulta de dataTable => SELECT CASE\r\n               WHEN log.movimiento_logg = 0 THEN \'Gasto propio del vendedor\'\r\n               WHEN log.movimiento_logg = 1 THEN \'Cancelado por el coordinador\'\r\n               WHEN log.movimiento_logg = 2 THEN \'Abono del coordinador\'\r\n               WHEN log.movimiento_logg = 3 THEN \'Anulado por el vendedor\'\r\n               ELSE \'Movimiento descodocido por el sistema.\'\r\n               END as movimiento,\r\n               log.fecha_logg as fecha,\r\n               CONCAT_WS(\'\', usu.primer_nombre_usu, usu.segundo_nombre_usu, usu.primer_apellido_usu, usu.segundo_apellido_usu ) as usuario,\r\n                usu.documento_usu as documento_suario,\r\n                gas.valor_gas as valor,\r\n                tipo.nombre_tipog as tipo\r\n            FROM tbl_log_gasto as log\r\n            INNER JOIN tbl_usuarios AS usu ON (usu.id_usu=log.id_autor_gas)\r\n            INNER JOIN tbl_gasto AS gas ON (gas.id_gas=log.id_gas)\r\n            INNER JOIN tbl_tipo_gasto AS tipo ON (tipo.id_tipog=gas.id_tipo_tipog)\r\n            WHERE 1 AND log.fecha_logu >= \'2020-09-02\'', 'Unknown column \'log.fecha_logu\' in \'where clause\'', '2020-09-02 04:13:40', 1, 'reporte_log_gasto', 'cargar_reporte'),
-(29, 'creacion de usuarios. => INSERT INTO tbl_cliente (id_usu, documento_usu, primer_nombre_usu,segundo_nombre_usu, primer_apellido_usu, segundo_apellido_usu, telefono_1_usu, telefono_2_usu, direcion_usu, sexo_usu, correo_usu, fecha_nacimineto_usu, foto_usu,rol_usu,estado_localidad_usu,ciudad_localidad_usu) VALUES (NULL, 12412443423,\'asde\',\'fdsf\',\'fdsf\',\'nbnbdf\', 4324234324234, 32432432433, \'fdsfsdfdfsf\', \'Hombre\', \'j.a@dfsd.com\', \'2007-08-25\', \'usuario.jpg\',2,5,284)', 'Column \'id_usu\' cannot be null', '2020-09-03 22:27:01', 3, 'cliente', 'save');
+(29, 'creacion de usuarios. => INSERT INTO tbl_cliente (id_usu, documento_usu, primer_nombre_usu,segundo_nombre_usu, primer_apellido_usu, segundo_apellido_usu, telefono_1_usu, telefono_2_usu, direcion_usu, sexo_usu, correo_usu, fecha_nacimineto_usu, foto_usu,rol_usu,estado_localidad_usu,ciudad_localidad_usu) VALUES (NULL, 12412443423,\'asde\',\'fdsf\',\'fdsf\',\'nbnbdf\', 4324234324234, 32432432433, \'fdsfsdfdfsf\', \'Hombre\', \'j.a@dfsd.com\', \'2007-08-25\', \'usuario.jpg\',2,5,284)', 'Column \'id_usu\' cannot be null', '2020-09-03 22:27:01', 3, 'cliente', 'save'),
+(30, 'creacion de cliente. => INSERT INTO `tbl_cliente` (`id_clie`, `documento_clie`, `documento_ref_clie`, `primer_nombre_clie`, `segundo_nombre_clie`, `primer_apellido_clie`, `segundo_apellido_clie`, `telefono_1_clie`, `telefono_2_clie`, `direcion_clie`, `direcion_cobro_clie`, `sexo_clie`, `correo_clie`, `fecha_nacimineto_clie`, `foto_clie`, `estado_localidad_clie`, `ciudad_localidad_clie`, `id_usu`) VALUES (NULL, 12312322333, 123213233,\'yeison\', \'sanchez\', \'arley\', \'\', 12344234333, 234234234333, \'123fdsfdsf\', \'dsfsdf\',Hombre, \'dsf@ffff.com\', \'2007-08-27\',\'20200906034009_13.png\',4,207,20200906034009_13.png);', 'Unknown column \'Hombre\' in \'field list\'', '2020-09-05 20:40:09', 3, 'cliente', 'save'),
+(31, 'creacion de cliente. => INSERT INTO `tbl_cliente` (`id_clie`, `documento_clie`, `documento_ref_clie`, `primer_nombre_clie`, `segundo_nombre_clie`, `primer_apellido_clie`, `segundo_apellido_clie`, `telefono_1_clie`, `telefono_2_clie`, `direcion_clie`, `direcion_cobro_clie`, `sexo_clie`, `correo_clie`, `fecha_nacimineto_clie`, `foto_clie`, `estado_localidad_clie`, `ciudad_localidad_clie`, `id_usu`) VALUES (NULL, 12312333213, 423432423324,\'yeison\', \'sanchez\', \'arley\', \'\', 3423423444, 4324234444, \'fsdfds\', \'fdsfsddddddd\',\'Mujer\', \'j.a@dfsd.com\', \'2002-01-07\',\'20200906034526_33.png\',3,222,20200906034526_33.png);', 'Unknown column \'20200906034526_33.png\' in \'field list\'', '2020-09-05 20:45:26', 3, 'cliente', 'save'),
+(32, 'creacion de cliente. => INSERT INTO `tbl_cliente` (`id_clie`, `documento_clie`, `documento_ref_clie`, `primer_nombre_clie`, `segundo_nombre_clie`, `primer_apellido_clie`, `segundo_apellido_clie`, `telefono_1_clie`, `telefono_2_clie`, `direcion_clie`, `direcion_cobro_clie`, `sexo_clie`, `correo_clie`, `fecha_nacimineto_clie`, `foto_clie`, `estado_localidad_clie`, `ciudad_localidad_clie`, `id_usu`) VALUES (NULL, 12312333213, 423432423324,\'yeison\', \'sanchez\', \'arley\', \'\', 3423423444, 4324234444, \'fsdfds\', \'fdsfsddddddd\',\'Mujer\', \'j.a@dfsd.com\', \'2002-01-07\',\'20200906035010_93.png\',3,222,);', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \')\' at line 1', '2020-09-05 20:50:10', 3, 'cliente', 'save'),
+(33, 'c= a= /-/ consulta=CALL obtenerCliente()', 'Unknown column \'primer_nombre_usu\' in \'field list\'', '2020-09-05 21:37:43', 3, 'cliente', ''),
+(34, 'Consulta de dataTable => SELECT clien.id_clie as id, \r\n                       clien.documento_clie as CC, \r\n                      CONCAT_WS (\' \',clien.primer_nombre_clie,clien.segundo_nombre_clie,clien.primer_apellido_clie,clien.segundo_apellido_clie) as nombre,\r\n                      clien.telefono_1_usu as t1, \r\n                      clien.telefono_2_usu as t2,\r\n                      clien.correo_usu as Correo,\r\n                      clien.documento_clie as Direcionr,\r\n                      clien.documento_ref_clie as Direcionc, \r\n                      clien.fecha_nacimineto_usu as fecha_cobro, \r\n                      clien.id_clie as id_cobro  \r\n                      FROM tbl_cliente as clien  \r\n                      WHERE 1 ', 'Unknown column \'clien.telefono_1_usu\' in \'field list\'', '2020-09-05 21:46:48', 3, 'cliente', 'cargar'),
+(35, 'c= a= /-/ consulta=SELECT CONCAT_WS(\' \',client.primer_nombre_clie,client.segundo_nombre_clie,client.primer_apellido_clie,client.segundo_apellido_clie) as nombre FROM tbl_cliente as client WHERE id_clie=', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'\' at line 1', '2020-09-06 02:26:38', 3, 'cliente', 'obtenerDataCliente'),
+(36, 'c= a= /-/ consulta=SELECT CONCAT_WS(\' \',client.primer_nombre_clie,client.segundo_nombre_clie,client.primer_apellido_clie,client.segundo_apellido_clie) as nombre,clie.foto_clie as foto FROM tbl_cliente as client WHERE id_clie=2', 'Unknown column \'clie.foto_clie\' in \'field list\'', '2020-09-06 02:48:33', 3, 'cliente', 'obtenerDataCliente'),
+(37, 'c= a= /-/ consulta=SELECT CONCAT_WS(\' \',client.primer_nombre_clie,client.segundo_nombre_clie,client.primer_apellido_clie,client.segundo_apellido_clie) as nombre,clie.foto_clie as foto FROM tbl_cliente as client WHERE id_clie=2', 'Unknown column \'clie.foto_clie\' in \'field list\'', '2020-09-06 02:50:26', 3, 'cliente', 'obtenerDataCliente'),
+(38, 'c= a= /-/ consulta=SELECT CONCAT_WS(\' \',client.primer_nombre_clie,client.segundo_nombre_clie,client.primer_apellido_clie,client.segundo_apellido_clie) as nombre,client.foto_clie as foto \r\n            client.documento_clie as cc,\r\n            client.documento_ref_clie as ccr,\r\n            client.telefono_1_clie as telefono1,\r\n            client.telefono_2_clie as telefono2,\r\n            client.direcion_cobro_clie as direcionc,\r\n            client.direcion_clie as direcion,\r\n            client.correo_clie as correo,\r\n            client.fecha_nacimineto_clie as fecha\r\n        FROM tbl_cliente as client WHERE id_clie=2', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'client.documento_clie as cc,\r\n            client.documento_ref_clie as ccr,\r\n   \' at line 2', '2020-09-06 03:25:21', 3, 'cliente', 'obtenerDataCliente'),
+(39, 'c= a= /-/ consulta=SELECT CONCAT_WS(\' \',client.primer_nombre_clie,client.segundo_nombre_clie,client.primer_apellido_clie,client.segundo_apellido_clie) as nombre,client.foto_clie as foto \r\n            client.documento_clie as cc,\r\n            client.documento_ref_clie as ccr,\r\n            client.telefono_1_clie as telefono1,\r\n            client.telefono_2_clie as telefono2,\r\n            client.direcion_cobro_clie as direcionc,\r\n            client.direcion_clie as direcion,\r\n            client.correo_clie as correo,\r\n            client.fecha_nacimineto_clie as fecha\r\n        FROM tbl_cliente as client WHERE id_clie=2', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'client.documento_clie as cc,\r\n            client.documento_ref_clie as ccr,\r\n   \' at line 2', '2020-09-06 03:25:28', 3, 'cliente', 'obtenerDataCliente'),
+(40, 'c= a= /-/ consulta=SELECT CONCAT_WS(\' \',client.primer_nombre_clie,client.segundo_nombre_clie,client.primer_apellido_clie,client.segundo_apellido_clie) as nombre,client.foto_clie as foto,\r\n            client.documento_clie as cc,\r\n            client.documento_ref_clie as ccr,\r\n            client.telefono_1_clie as telefono1,\r\n            client.telefono_2_clie as telefono2,\r\n            client.direcion_cobro_clie as direcionc,\r\n            client.direcion_clie as direcion,\r\n            client.correo_clie as correo,\r\n            client.fecha_nacimineto_clie as fecha\r\n        FROM tbl_cliente as client \r\n        INNER JOIN tbl_prestamo as pres on (pres.id_clie=clien.id_clie AND (pres.valor_pres<=0)) \r\n        WHERE id_clie=2', 'Column \'id_clie\' in where clause is ambiguous', '2020-09-06 03:31:03', 3, 'cliente', 'obtenerDataCliente'),
+(41, 'c= a= /-/ consulta=SELECT CONCAT_WS(\' \',client.primer_nombre_clie,client.segundo_nombre_clie,client.primer_apellido_clie,client.segundo_apellido_clie) as nombre,client.foto_clie as foto,\r\n            client.documento_clie as cc,\r\n            client.documento_ref_clie as ccr,\r\n            client.telefono_1_clie as telefono1,\r\n            client.telefono_2_clie as telefono2,\r\n            client.direcion_cobro_clie as direcionc,\r\n            client.direcion_clie as direcion,\r\n            client.correo_clie as correo,\r\n            client.fecha_nacimineto_clie as fecha,\r\n            if(pres.valor_pres IS NOT NULL,pres.valor_pres,0) as valorDeuda,\r\n        FROM tbl_cliente as client \r\n        LEFT JOIN tbl_prestamo as pres on (pres.id_clie=client.id_clie AND (pres.valor_pres>0)) \r\n        WHERE id_clie=2', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'FROM tbl_cliente as client \r\n        LEFT JOIN tbl_prestamo as pres on (pres.id_\' at line 11', '2020-09-06 03:35:15', 3, 'cliente', 'obtenerDataCliente'),
+(42, 'c= a= /-/ consulta=SELECT CONCAT_WS(\' \',client.primer_nombre_clie,client.segundo_nombre_clie,client.primer_apellido_clie,client.segundo_apellido_clie) as nombre,client.foto_clie as foto,\r\n            client.documento_clie as cc,\r\n            client.documento_ref_clie as ccr,\r\n            client.telefono_1_clie as telefono1,\r\n            client.telefono_2_clie as telefono2,\r\n            client.direcion_cobro_clie as direcionc,\r\n            client.direcion_clie as direcion,\r\n            client.correo_clie as correo,\r\n            client.fecha_nacimineto_clie as fecha,\r\n            if(pres.valor_pres IS NOT NULL,pres.valor_pres,0) as valorDeuda\r\n        FROM tbl_cliente as client \r\n        LEFT JOIN tbl_prestamo as pres on (pres.id_clie=client.id_clie AND (pres.valor_pres>0)) \r\n        WHERE id_clie=2', 'Column \'id_clie\' in where clause is ambiguous', '2020-09-06 03:35:41', 3, 'cliente', 'obtenerDataCliente');
 
 -- --------------------------------------------------------
 
@@ -338,6 +400,30 @@ INSERT INTO `tbl_log_usuarios` (`id_logu`, `movimiento_logu`, `fecha_logu`, `id_
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `tbl_prestamo`
+--
+
+CREATE TABLE `tbl_prestamo` (
+  `id_pres` bigint(20) NOT NULL,
+  `id_clie` bigint(20) NOT NULL,
+  `fecha_limite_pres` datetime NOT NULL,
+  `valor_pres` double NOT NULL,
+  `forma_pago_pres` int(11) NOT NULL COMMENT '1-diario, 2-diapormedio,3-semanal,4-quincedal,5-cada-dos-semanas,6-mensual',
+  `numero_cuota_pres` int(11) NOT NULL,
+  `valor_cuotas_pres` double NOT NULL,
+  `intereses_press` text COLLATE utf8_swedish_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
+
+--
+-- Volcado de datos para la tabla `tbl_prestamo`
+--
+
+INSERT INTO `tbl_prestamo` (`id_pres`, `id_clie`, `fecha_limite_pres`, `valor_pres`, `forma_pago_pres`, `numero_cuota_pres`, `valor_cuotas_pres`, `intereses_press`) VALUES
+(1, 2, '2020-09-06 00:00:00', 22, 0, 2, 2, '1');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `tbl_tipo_gasto`
 --
 
@@ -406,7 +492,7 @@ INSERT INTO `tbl_usuarios` (`id_usu`, `documento_usu`, `primer_nombre_usu`, `seg
 -- Indices de la tabla `tbl_cliente`
 --
 ALTER TABLE `tbl_cliente`
-  ADD PRIMARY KEY (`id_usu`);
+  ADD PRIMARY KEY (`id_clie`);
 
 --
 -- Indices de la tabla `tbl_gasto`
@@ -414,6 +500,13 @@ ALTER TABLE `tbl_cliente`
 ALTER TABLE `tbl_gasto`
   ADD PRIMARY KEY (`id_gas`),
   ADD KEY `FK_USUARIO` (`id_usu`);
+
+--
+-- Indices de la tabla `tbl_log_cliente`
+--
+ALTER TABLE `tbl_log_cliente`
+  ADD PRIMARY KEY (`id_logc`),
+  ADD KEY `FK_CLIENTE-LOG` (`id_usu`);
 
 --
 -- Indices de la tabla `tbl_log_errores`
@@ -444,6 +537,12 @@ ALTER TABLE `tbl_log_usuarios`
   ADD KEY `FK_USUARIO-LOG` (`id_usu`);
 
 --
+-- Indices de la tabla `tbl_prestamo`
+--
+ALTER TABLE `tbl_prestamo`
+  ADD PRIMARY KEY (`id_pres`);
+
+--
 -- Indices de la tabla `tbl_tipo_gasto`
 --
 ALTER TABLE `tbl_tipo_gasto`
@@ -464,7 +563,7 @@ ALTER TABLE `tbl_usuarios`
 -- AUTO_INCREMENT de la tabla `tbl_cliente`
 --
 ALTER TABLE `tbl_cliente`
-  MODIFY `id_usu` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_clie` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `tbl_gasto`
@@ -473,10 +572,16 @@ ALTER TABLE `tbl_gasto`
   MODIFY `id_gas` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
+-- AUTO_INCREMENT de la tabla `tbl_log_cliente`
+--
+ALTER TABLE `tbl_log_cliente`
+  MODIFY `id_logc` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
 -- AUTO_INCREMENT de la tabla `tbl_log_errores`
 --
 ALTER TABLE `tbl_log_errores`
-  MODIFY `int_id_loge` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `int_id_loge` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- AUTO_INCREMENT de la tabla `tbl_log_gasto`
@@ -495,6 +600,12 @@ ALTER TABLE `tbl_log_tipo_gasto`
 --
 ALTER TABLE `tbl_log_usuarios`
   MODIFY `id_logu` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+
+--
+-- AUTO_INCREMENT de la tabla `tbl_prestamo`
+--
+ALTER TABLE `tbl_prestamo`
+  MODIFY `id_pres` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `tbl_tipo_gasto`
