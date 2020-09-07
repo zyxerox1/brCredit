@@ -3,6 +3,7 @@ class validacion_modelo
 {
     private $DB;
     private $user;
+    private $valores;
 
     public function __construct()
     {
@@ -28,5 +29,12 @@ class validacion_modelo
         return $this->user;
     }
 
-    
+    public function valorMaximoMinimo($id){
+        $this->valores = array();
+        $query = $this->DB->query("SELECT prestamo_minimo_client,prestamo_maximo_client FROM tbl_cliente WHERE id_clie  = '$id'");
+        while ($fila = $query->fetch_assoc()) {
+            $this->valores[] = $fila;
+        }
+        return $this->valores;
+    }
 }

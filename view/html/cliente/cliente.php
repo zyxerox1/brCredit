@@ -4,17 +4,17 @@
 <br>
 <div class="container">
   <br>
+
     <div class="card">
             <h5 class="card-header card-header-primary text-center">Clientes</h5>
             <br>
             <br>
             <div class="container">
               <br>
-              
               <div class="row">
                     <div class="col-md-6 container-select2">
-                        <div class="form-group pmd-textfield pmd-textfield-floating-label">
-                            <label for="Nombre" class="text-color bmd-label-floating">Nombre</label>
+                        <div class="form-group">
+                            <label for="Nombre" class="text-color">Nombre</label>
                             <select class="select2 form-control pmd-select2" id="Nombre" name="Nombre" required="required">
                                 <option value="0" selected="selected">Busqueda por nombre</option>
                                 <?php foreach ($data_filtro as $key => $Nombrevalue) { ?>
@@ -36,7 +36,7 @@
                             </select>
                         </div>
                     </div>
-          </div>
+                </div>
   
              <center>
                 <button type="button" id="buscar" class="btn btn-primary btn-confirmar">Buscar</button>
@@ -61,13 +61,11 @@
                       <th class="text-color all">CC</th>
                       <th class="text-color all">Nombre completo</th>
                       <th class="text-color">Telefono 1</th>
-                      <th class="text-color">Telefono 2</th>
                       <th class="text-color">Direcion de residencia</th>
                       <th class="text-color">Direcion de cobro</th>
-                      <th class="text-color">Correo</th>
-                      <th class="text-color">Fecha de cobro</th>
                       <th class="text-color all">Prestamos</th>
                       <th class="text-color all">Editar</th>
+                      <th class="text-color all">Orden</th>
                     </thead>
                       <tbody>
           

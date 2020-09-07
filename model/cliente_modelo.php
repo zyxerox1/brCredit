@@ -8,11 +8,15 @@ class cliente_modelo
     {
         $this->DB   = conexion::getConnection();
         $this->DB_QUERY   = new query_modelo;
+        $this->DB_QUERY1   = new query_modelo;
+        $this->DB_QUERY2   = new query_modelo;
+        $this->DB_QUERY3   = new query_modelo;
         $this->user = array();
     }
 
     /*/////////////////////////////////////////////guardar///////////////////////////////////*/
     public function log_cliente($movimiento="",$id="",$nota=""){
+        /*movimineto 0-crear,1-editar,3-cambiar estado,2-orden*/
         /*parametro de errores{*/
         $controller="";
         $accion_func="";
@@ -39,7 +43,7 @@ class cliente_modelo
             $img_name='usuario.jpg';
             $user["text_img_perfil_usu"]=1;
         }
-    	$query = "INSERT INTO tbl_cliente (id_clie, documento_clie, documento_ref_clie, primer_nombre_clie, segundo_nombre_clie, primer_apellido_clie, segundo_apellido_clie, telefono_1_clie, telefono_2_clie, direcion_clie, direcion_cobro_clie, sexo_clie, correo_clie, fecha_nacimineto_clie, foto_clie, estado_localidad_clie, ciudad_localidad_clie, id_usu) VALUES (NULL, $Documento, $ccr,'$primernombre', '$segundonombre', '$primerapellido', '$segundoapellido', $Telefono_1, $Telefono_2, '$Direcion', '$Direcionc','$Genero', '$Correo', '$Fecha','$img_name',$estados,$ciudades,".$_SESSION["id_usu_credit"].");";
+    	$query = "INSERT INTO tbl_cliente (id_clie, documento_clie, documento_ref_clie, primer_nombre_clie, segundo_nombre_clie, primer_apellido_clie, segundo_apellido_clie, telefono_1_clie, telefono_2_clie, direcion_clie, direcion_cobro_clie, sexo_clie, correo_clie, fecha_nacimineto_clie, foto_clie, estado_localidad_clie, ciudad_localidad_clie, id_usu,prestamo_minimo_client,prestamo_maximo_client) VALUES (NULL, $Documento, $ccr,'$primernombre', '$segundonombre', '$primerapellido', '$segundoapellido', $Telefono_1, $Telefono_2, '$Direcion', '$Direcionc','$Genero', '$Correo', '$Fecha','$img_name',$estados,$ciudades,".$_SESSION["id_usu_credit"].",".PRESTAMO_MINIMO.",".PRESTAMO_MAXIMO.");";
         $id=$this->DB_QUERY->save($query,'creacion de cliente.');
         $this->log_cliente(0,$id);
         return array('control' =>$user["text_img_perfil_usu"] ,'error' => 0,'resp'=>$id);
@@ -58,7 +62,8 @@ class cliente_modelo
                       clien.documento_ref_clie as Direcionc, 
                       clien.fecha_nacimineto_clie as fecha_cobro,
                       if(pres.valor_pres IS NOT NULL,pres.valor_pres,0) as valorDeuda,
-                      if(pres.id_pres IS NOT NULL,pres.id_pres,0) as id_cobro
+                      if(pres.id_pres IS NOT NULL,pres.id_pres,0) as id_cobro,
+                      clien.orden_ruta_clie as orden
                       FROM tbl_cliente as clien 
                       LEFT JOIN tbl_prestamo as pres on (pres.id_clie=clien.id_clie AND (pres.valor_pres>0)) 
                       WHERE 1 ";
@@ -68,6 +73,8 @@ class cliente_modelo
         if(isset($params['Cedula']) && $params['Cedula']!=0){
             $query.=" AND clien.documento_clie = ".$params['Cedula'];
         }
+
+        $query.="ORDER BY clien.orden_ruta_clie ASC";
 
         //$tablaSearch="AND int_documento_usu LIKE '%".$params['search']['value']."%'";
 
@@ -98,7 +105,9 @@ class cliente_modelo
             client.direcion_clie as direcion,
             client.correo_clie as correo,
             client.fecha_nacimineto_clie as fecha,
-            if(pres.valor_pres IS NOT NULL,pres.valor_pres,0) as valorDeuda
+            if(pres.valor_pres IS NOT NULL,pres.valor_pres,0) as valorDeuda,
+            client.prestamo_minimo_client as prestamo_minimo,
+            client.prestamo_maximo_client as prestamo_maximo
         FROM tbl_cliente as client 
         LEFT JOIN tbl_prestamo as pres on (pres.id_clie=client.id_clie AND (pres.valor_pres>0)) 
         WHERE client.id_clie=".$params['id'];
@@ -152,4 +161,42 @@ class cliente_modelo
         $this->log_cliente(1,$id);
         return $user;
     }
+
+    public function cambiarOrdenRutero($params){
+        $DataClienteModifica=0;
+        $query="SELECT orden_ruta_clie FROM tbl_cliente WHERE id_clie=".$params['id'];
+        $DataCliente=$this->DB_QUERY->query($query);
+
+        if($params["pos"]==0){
+            $DataClienteModifica=$DataCliente[0]['orden_ruta_clie']+1;
+        }else if($params["pos"]==1){
+            $DataClienteModifica=$DataCliente[0]['orden_ruta_clie']-1;
+        }
+
+        $query="SELECT id_clie,orden_ruta_clie FROM tbl_cliente WHERE orden_ruta_clie=".$DataClienteModifica." AND id_usu=".$_SESSION["id_usu_credit"];
+        $DataClienteModifica=$this->DB_QUERY1->query($query);
+
+        if(count($DataClienteModifica)==0){
+            return array('error' => 1);
+        }
+        
+        $query = "UPDATE tbl_cliente 
+                  SET 
+                    orden_ruta_clie=".$DataCliente[0]['orden_ruta_clie']."
+                  WHERE tbl_cliente.id_clie =".$DataClienteModifica[0]['id_clie'];
+
+        $this->DB_QUERY2->save($query,'cambiar orden cliente.');
+        $this->log_cliente(2,$DataClienteModifica[0]['id_clie']);
+
+          $query = "UPDATE tbl_cliente 
+                  SET 
+                    orden_ruta_clie=".$DataClienteModifica[0]['orden_ruta_clie']."
+                  WHERE tbl_cliente.id_clie =".$params['id'];
+         $this->DB_QUERY3->save($query,'cambiar orden cliente.');
+        $this->log_cliente(2,$params['id']);
+
+        return array('error' => 0);
+
+    }
+    
 }

@@ -55,6 +55,15 @@ class validaciones_controller
         return $resultado;
     }
 
+    public function valorMaximoMinimo($valor,$id){
+        $resultado=false;
+        $valores = $this->model_l->valorMaximoMinimo($id);
+        if($valores[0]["prestamo_minimo_client"]<=$valor && $valores[0]["prestamo_maximo_client"]>=$valor){
+            $resultado=true;
+        }
+        return $resultado;
+    }
+
     public function validar_correo($cadena){
         $resultado=false;
         $nickname = $this->model_l->validar_correo($cadena);

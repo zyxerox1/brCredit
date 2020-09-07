@@ -55,15 +55,56 @@
         </div>
         <hr>
         <form action="index.php?c=prestamo&a=save" id="formulario-crear-prestamo" method="post">
+          <center><h5 class="modal-title">La forma de pago es diaria</h5></center>
+          <br>
           <div class="row">
+            <div class="col-md-6">
+              <label for="Valor" class="text-color">Valor de prestamo*</label>
+              <div class="input-group form-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">$</span>
+                </div>
+                <input type="text" class="form-control Spinner" name="Valor" id="Valor" onkeyup="format(this)" onchange="format(this)" min="0" max="" value="" step="1" required="required">
+                <div class="input-group-append">
+                  <span class="input-group-text">.00</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 ">
+              <div class="form-group">
+                <label for="ncoutas" class="text-color ">Numero de coutas*</label>
+                <input type="number" class="form-control" value="1" name="ncoutas" id="ncoutas" required="required">
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <label for="inter" class="text-color">Intereses*</label>
+              <div class="input-group form-group">
+                <input type="text" class="form-control Spinner" name="inter" id="inter" onkeyup="format(this)" onchange="format(this)" min="0" max="" value="1" step="1" required="required">
+                <div class="input-group-append">
+                  <span class="input-group-text">%</span>
+                </div>
+              </div>
+            </div>
             <div class="col-md-6">
               <div class="form-group">
                 <label for="FechaLimit" class="text-color ">Fecha de limite*</label>
                 <input type="text" class="form-control datetimepicker" name="FechaLimit" id="FechaLimit" required="required">
               </div>
             </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 offset-md-3">
+              <label for="Valorc" class="text-color">Valor de cada couta*</label>
+              <div class="form-control" id="Valorc">
+                
+              </div>
+            </div>
             
-            <div class="col-md-6 container-select2">
+            <!--<div class="col-md-6 container-select2">
               <div class="form-group pmd-textfield pmd-textfield-floating-label">
                 <label for="Formap" class="text-color bmd-label-floating">Forma de pago*</label>
                 <select class="select2 form-control pmd-select2" id="Formap" name="Formap" required="required">
@@ -75,50 +116,7 @@
                   <option value="5">Mensual</option>
                 </select>
               </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6">
-              <label for="Valor" class="text-color">Valor de prestamo*</label>
-              <div class="input-group form-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text">$</span>
-                </div>
-                <input type="text" class="form-control Spinner" name="Valor" id="Valor" onkeyup="format(this)" onchange="format(this)" min="0" max="" value="1" step="1" required="required">
-                <div class="input-group-append">
-                  <span class="input-group-text">.00</span>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6 ">
-              <div class="form-group">
-                <label for="ncoutas" class="text-color ">Numero de coutas*</label>
-                <input type="number" class="form-control" name="ncoutas" id="ncoutas" required="required">
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6">
-              <label for="Valorc" class="text-color">Valor de cada couta*</label>
-              <div class="input-group form-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text">$</span>
-                </div>
-                <input type="text" class="form-control Spinner" name="Valorc" id="Valorc" onkeyup="format(this)" onchange="format(this)" min="0" max="" value="1" step="1" required="required">
-                <div class="input-group-append">
-                  <span class="input-group-text">.00</span>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <label for="inter" class="text-color">Intereses*</label>
-              <div class="input-group form-group">
-                <input type="text" class="form-control Spinner" name="inter" id="inter" onkeyup="format(this)" onchange="format(this)" min="0" max="" value="1" step="1" required="required">
-                <div class="input-group-append">
-                  <span class="input-group-text">%</span>
-                </div>
-              </div>
-            </div>
+            </div>-->
           </div>
         </form>
       </div>

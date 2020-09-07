@@ -29,10 +29,10 @@ class prestamo_modelo
         $this->DB_QUERY->save($query);
     }
 
-    public function crear_prestamo($FechaLimit,$Formap,$Valor,$ncoutas,$Valorc,$inter,$id){
-        $query = "INSERT INTO tbl_prestamo (id_pres, id_clie, fecha_limite_pres, valor_pres, forma_pago_pres, numero_cuota_pres, valor_cuotas_pres, intereses_press) VALUES (NULL, $id, '$FechaLimit', $Valor, $Formap, $ncoutas,$Valorc,$inter)";
+    public function crear_prestamo($FechaLimit,$Formap,$Valor,$ncoutas,$Valorc,$inter,$id,$valorInteres){
+        $query = "INSERT INTO tbl_prestamo (id_pres, id_clie, fecha_limite_pres, valor_pres, forma_pago_pres, numero_cuota_pres, valor_cuotas_pres, intereses_press,valor_neto_clie) VALUES (NULL, $id, '$FechaLimit', $valorInteres, $Formap, $ncoutas,$Valorc,$inter,$Valor)";
         $id=$this->DB_QUERY->save($query,'Registrar prestamo');
-        //$this->log_tipo_gasto(0,$id);
+        $this->log_prestamo(0,$id);
         return array('control' =>0 ,'error' => 0);
     }
 }

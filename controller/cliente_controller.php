@@ -21,8 +21,8 @@ class cliente_controller
         $data_filtro=$this->cliente->obtener_filtro_cliente();
         require_once HTML_DIR . 'overall/header.php';
         require_once HTML_DIR . 'overall/topNav.php';
-        require_once HTML_DIR . 'cliente/cliente.php';
         require_once HTML_DIR . 'cliente/modal_prestamo.php';
+        require_once HTML_DIR . 'cliente/cliente.php';
         require_once HTML_DIR . 'overall/footer.php';
     }
 
@@ -259,6 +259,12 @@ class cliente_controller
           $errores=array('control' =>0 ,'error' => 0);
         }
         echo json_encode($errores);  
+    }
+
+    public function orden(){
+      $this->validacion->validarRol(2);
+      $data=$this->cliente->cambiarOrdenRutero($_POST);
+      echo json_encode($data);
     }
 
     public function obtenerDataCliente(){

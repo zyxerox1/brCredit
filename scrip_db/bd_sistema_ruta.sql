@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 07-09-2020 a las 02:40:44
+-- Tiempo de generación: 07-09-2020 a las 10:34:32
 -- Versión del servidor: 10.4.11-MariaDB
 -- Versión de PHP: 7.4.4
 
@@ -63,6 +63,11 @@ END$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `loginDocumento` (IN `dataUsuario` TEXT)  NO SQL
 BEGIN
 	SELECT * FROM tbl_usuarios WHERE documento_usu = dataUsuario and estado_usu=1;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `logPrestamo` (IN `movimiento` TEXT, IN `id_pres` BIGINT, IN `controller` TEXT, IN `autor` BIGINT, IN `accion` TEXT)  NO SQL
+BEGIN
+	INSERT INTO `tbl_log_prestamo` (`id_logp`, `movimiento_logp`, `fecha_logp`, `id_pres`, `controller_logp`, `id_autor_usu`, `accion_func_logp`) VALUES (NULL, movimiento, now(), id_pres, controller, autor, accion);
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `logTipoGasto` (IN `movimiento` TEXT, IN `id_gasto` BIGINT, IN `controller` TEXT, IN `autor` BIGINT, IN `accion` INT)  NO SQL
@@ -149,17 +154,20 @@ CREATE TABLE `tbl_cliente` (
   `estado_clie` int(11) NOT NULL DEFAULT 1,
   `estado_localidad_clie` text COLLATE utf8mb4_swedish_ci NOT NULL DEFAULT 'No tiene',
   `ciudad_localidad_clie` text COLLATE utf8mb4_swedish_ci NOT NULL DEFAULT 'No tiene',
-  `id_usu` bigint(20) NOT NULL DEFAULT 0
+  `id_usu` bigint(20) NOT NULL DEFAULT 0,
+  `prestamo_minimo_client` int(11) NOT NULL,
+  `prestamo_maximo_client` int(11) NOT NULL,
+  `orden_ruta_clie` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_swedish_ci;
 
 --
 -- Volcado de datos para la tabla `tbl_cliente`
 --
 
-INSERT INTO `tbl_cliente` (`id_clie`, `documento_clie`, `documento_ref_clie`, `primer_nombre_clie`, `segundo_nombre_clie`, `primer_apellido_clie`, `segundo_apellido_clie`, `telefono_1_clie`, `telefono_2_clie`, `direcion_clie`, `direcion_cobro_clie`, `sexo_clie`, `correo_clie`, `fecha_nacimineto_clie`, `foto_clie`, `estado_clie`, `estado_localidad_clie`, `ciudad_localidad_clie`, `id_usu`) VALUES
-(2, 12312333344, 423432423324, 'pruebacliente', 'pruebacliente', 'pruebacliente', '', 3423423444, 4324234444, 'fsdfds', 'fdsfsddddddd', 'Mujer', 'j.a@dfsd.com', '2002-01-07 00:00:00', '20200906035141_13.png', 1, '3', '222', 3),
-(3, 1111111111, 423432423324, 'yeison', 'sanchez', 'arley', '', 3423423444, 4324234444, 'fsdfds', 'fdsfsddddddd', 'Mujer', 'dj.a@dfsd.com', '2002-01-07 00:00:00', '20200906035514_43.png', 1, '3', '222', 3),
-(4, 22222222222, 423432423324, 'yeison', 'sanchez', 'arley', '', 3423423444, 4324234444, 'fsdfds', 'fdsfsddddddd', 'Mujer', 'dej.a@dfsd.com', '2002-01-07 00:00:00', '20200906040010_73.png', 1, '3', '223', 3);
+INSERT INTO `tbl_cliente` (`id_clie`, `documento_clie`, `documento_ref_clie`, `primer_nombre_clie`, `segundo_nombre_clie`, `primer_apellido_clie`, `segundo_apellido_clie`, `telefono_1_clie`, `telefono_2_clie`, `direcion_clie`, `direcion_cobro_clie`, `sexo_clie`, `correo_clie`, `fecha_nacimineto_clie`, `foto_clie`, `estado_clie`, `estado_localidad_clie`, `ciudad_localidad_clie`, `id_usu`, `prestamo_minimo_client`, `prestamo_maximo_client`, `orden_ruta_clie`) VALUES
+(2, 12312333344, 423432423324, 'pruebacliente', 'pruebacliente', 'pruebacliente', '', 3423423444, 4324234444, 'fsdfds', 'fdsfsddddddd', 'Mujer', 'j.a@dfsd.com', '2002-01-07 00:00:00', '20200906035141_13.png', 1, '3', '222', 3, 200, 300, 1),
+(3, 1111111111, 423432423324, 'yeison', 'sanchez', 'arley', '', 3423423444, 4324234444, 'fsdfds', 'fdsfsddddddd', 'Mujer', 'dj.a@dfsd.com', '2002-01-07 00:00:00', '20200906035514_43.png', 1, '3', '222', 3, 200, 300, 2),
+(4, 22222222222, 423432423324, 'yeison', 'sanchez', 'arley', '', 3423423444, 4324234444, 'fsdfds', 'fdsfsddddddd', 'Mujer', 'dej.a@dfsd.com', '2002-01-07 00:00:00', '20200906040010_73.png', 1, '3', '223', 3, 200, 300, 3);
 
 -- --------------------------------------------------------
 
@@ -222,7 +230,51 @@ INSERT INTO `tbl_log_cliente` (`id_logc`, `movimiento_logc`, `fecha_logc`, `id_u
 (7, 1, '2020-09-06 00:05:50', 2, 'cliente', 3, 'update'),
 (8, 1, '2020-09-06 00:07:24', 2, 'cliente', 3, 'update'),
 (9, 1, '2020-09-06 00:08:42', 2, 'cliente', 3, 'update'),
-(10, 1, '2020-09-06 00:09:21', 2, 'cliente', 3, 'update');
+(10, 1, '2020-09-06 00:09:21', 2, 'cliente', 3, 'update'),
+(11, 2, '2020-09-07 03:08:24', 0, 'cliente', 3, 'orden'),
+(12, 2, '2020-09-07 03:15:50', 4, 'cliente', 3, 'orden'),
+(13, 2, '2020-09-07 03:16:58', 4, 'cliente', 3, 'orden'),
+(14, 2, '2020-09-07 03:16:58', 3, 'cliente', 3, 'orden'),
+(15, 2, '2020-09-07 03:19:10', 2, 'cliente', 3, 'orden'),
+(16, 2, '2020-09-07 03:19:10', 4, 'cliente', 3, 'orden'),
+(17, 2, '2020-09-07 03:21:42', 2, 'cliente', 3, 'orden'),
+(18, 2, '2020-09-07 03:21:42', 4, 'cliente', 3, 'orden'),
+(19, 2, '2020-09-07 03:22:53', 2, 'cliente', 3, 'orden'),
+(20, 2, '2020-09-07 03:22:53', 4, 'cliente', 3, 'orden'),
+(21, 2, '2020-09-07 03:24:55', 2, 'cliente', 3, 'orden'),
+(22, 2, '2020-09-07 03:24:56', 4, 'cliente', 3, 'orden'),
+(23, 2, '2020-09-07 03:25:47', 4, 'cliente', 3, 'orden'),
+(24, 2, '2020-09-07 03:25:48', 2, 'cliente', 3, 'orden'),
+(25, 2, '2020-09-07 03:25:53', 2, 'cliente', 3, 'orden'),
+(26, 2, '2020-09-07 03:25:53', 4, 'cliente', 3, 'orden'),
+(27, 2, '2020-09-07 03:25:58', 3, 'cliente', 3, 'orden'),
+(28, 2, '2020-09-07 03:25:58', 2, 'cliente', 3, 'orden'),
+(29, 2, '2020-09-07 03:28:17', 3, 'cliente', 3, 'orden'),
+(30, 2, '2020-09-07 03:28:17', 4, 'cliente', 3, 'orden'),
+(31, 2, '2020-09-07 03:28:32', 2, 'cliente', 3, 'orden'),
+(32, 2, '2020-09-07 03:28:32', 3, 'cliente', 3, 'orden'),
+(33, 2, '2020-09-07 03:28:37', 2, 'cliente', 3, 'orden'),
+(34, 2, '2020-09-07 03:28:37', 3, 'cliente', 3, 'orden'),
+(35, 2, '2020-09-07 03:28:41', 4, 'cliente', 3, 'orden'),
+(36, 2, '2020-09-07 03:28:41', 3, 'cliente', 3, 'orden'),
+(37, 2, '2020-09-07 03:29:29', 3, 'cliente', 3, 'orden'),
+(38, 2, '2020-09-07 03:29:30', 4, 'cliente', 3, 'orden'),
+(39, 2, '2020-09-07 03:29:33', 2, 'cliente', 3, 'orden'),
+(40, 2, '2020-09-07 03:29:33', 4, 'cliente', 3, 'orden'),
+(41, 2, '2020-09-07 03:29:37', 2, 'cliente', 3, 'orden'),
+(42, 2, '2020-09-07 03:29:37', 4, 'cliente', 3, 'orden'),
+(43, 2, '2020-09-07 03:29:40', 3, 'cliente', 3, 'orden'),
+(44, 2, '2020-09-07 03:29:41', 4, 'cliente', 3, 'orden'),
+(45, 2, '2020-09-07 03:30:07', 3, 'cliente', 3, 'orden'),
+(46, 2, '2020-09-07 03:30:07', 4, 'cliente', 3, 'orden'),
+(47, 2, '2020-09-07 03:33:41', 3, 'cliente', 3, 'orden'),
+(48, 2, '2020-09-07 03:33:41', 4, 'cliente', 3, 'orden'),
+(49, 2, '2020-09-07 03:33:51', 3, 'cliente', 3, 'orden'),
+(50, 2, '2020-09-07 03:33:52', 4, 'cliente', 3, 'orden'),
+(51, 2, '2020-09-07 03:33:55', 2, 'cliente', 3, 'orden'),
+(52, 2, '2020-09-07 03:33:55', 4, 'cliente', 3, 'orden'),
+(53, 2, '2020-09-07 03:33:59', 2, 'cliente', 3, 'orden'),
+(54, 2, '2020-09-07 03:33:59', 3, 'cliente', 3, 'orden');
 
 -- --------------------------------------------------------
 
@@ -278,7 +330,28 @@ INSERT INTO `tbl_log_errores` (`int_id_loge`, `text_accion_loge`, `text_descripc
 (39, 'c= a= /-/ consulta=SELECT CONCAT_WS(\' \',client.primer_nombre_clie,client.segundo_nombre_clie,client.primer_apellido_clie,client.segundo_apellido_clie) as nombre,client.foto_clie as foto \r\n            client.documento_clie as cc,\r\n            client.documento_ref_clie as ccr,\r\n            client.telefono_1_clie as telefono1,\r\n            client.telefono_2_clie as telefono2,\r\n            client.direcion_cobro_clie as direcionc,\r\n            client.direcion_clie as direcion,\r\n            client.correo_clie as correo,\r\n            client.fecha_nacimineto_clie as fecha\r\n        FROM tbl_cliente as client WHERE id_clie=2', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'client.documento_clie as cc,\r\n            client.documento_ref_clie as ccr,\r\n   \' at line 2', '2020-09-06 03:25:28', 3, 'cliente', 'obtenerDataCliente'),
 (40, 'c= a= /-/ consulta=SELECT CONCAT_WS(\' \',client.primer_nombre_clie,client.segundo_nombre_clie,client.primer_apellido_clie,client.segundo_apellido_clie) as nombre,client.foto_clie as foto,\r\n            client.documento_clie as cc,\r\n            client.documento_ref_clie as ccr,\r\n            client.telefono_1_clie as telefono1,\r\n            client.telefono_2_clie as telefono2,\r\n            client.direcion_cobro_clie as direcionc,\r\n            client.direcion_clie as direcion,\r\n            client.correo_clie as correo,\r\n            client.fecha_nacimineto_clie as fecha\r\n        FROM tbl_cliente as client \r\n        INNER JOIN tbl_prestamo as pres on (pres.id_clie=clien.id_clie AND (pres.valor_pres<=0)) \r\n        WHERE id_clie=2', 'Column \'id_clie\' in where clause is ambiguous', '2020-09-06 03:31:03', 3, 'cliente', 'obtenerDataCliente'),
 (41, 'c= a= /-/ consulta=SELECT CONCAT_WS(\' \',client.primer_nombre_clie,client.segundo_nombre_clie,client.primer_apellido_clie,client.segundo_apellido_clie) as nombre,client.foto_clie as foto,\r\n            client.documento_clie as cc,\r\n            client.documento_ref_clie as ccr,\r\n            client.telefono_1_clie as telefono1,\r\n            client.telefono_2_clie as telefono2,\r\n            client.direcion_cobro_clie as direcionc,\r\n            client.direcion_clie as direcion,\r\n            client.correo_clie as correo,\r\n            client.fecha_nacimineto_clie as fecha,\r\n            if(pres.valor_pres IS NOT NULL,pres.valor_pres,0) as valorDeuda,\r\n        FROM tbl_cliente as client \r\n        LEFT JOIN tbl_prestamo as pres on (pres.id_clie=client.id_clie AND (pres.valor_pres>0)) \r\n        WHERE id_clie=2', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'FROM tbl_cliente as client \r\n        LEFT JOIN tbl_prestamo as pres on (pres.id_\' at line 11', '2020-09-06 03:35:15', 3, 'cliente', 'obtenerDataCliente'),
-(42, 'c= a= /-/ consulta=SELECT CONCAT_WS(\' \',client.primer_nombre_clie,client.segundo_nombre_clie,client.primer_apellido_clie,client.segundo_apellido_clie) as nombre,client.foto_clie as foto,\r\n            client.documento_clie as cc,\r\n            client.documento_ref_clie as ccr,\r\n            client.telefono_1_clie as telefono1,\r\n            client.telefono_2_clie as telefono2,\r\n            client.direcion_cobro_clie as direcionc,\r\n            client.direcion_clie as direcion,\r\n            client.correo_clie as correo,\r\n            client.fecha_nacimineto_clie as fecha,\r\n            if(pres.valor_pres IS NOT NULL,pres.valor_pres,0) as valorDeuda\r\n        FROM tbl_cliente as client \r\n        LEFT JOIN tbl_prestamo as pres on (pres.id_clie=client.id_clie AND (pres.valor_pres>0)) \r\n        WHERE id_clie=2', 'Column \'id_clie\' in where clause is ambiguous', '2020-09-06 03:35:41', 3, 'cliente', 'obtenerDataCliente');
+(42, 'c= a= /-/ consulta=SELECT CONCAT_WS(\' \',client.primer_nombre_clie,client.segundo_nombre_clie,client.primer_apellido_clie,client.segundo_apellido_clie) as nombre,client.foto_clie as foto,\r\n            client.documento_clie as cc,\r\n            client.documento_ref_clie as ccr,\r\n            client.telefono_1_clie as telefono1,\r\n            client.telefono_2_clie as telefono2,\r\n            client.direcion_cobro_clie as direcionc,\r\n            client.direcion_clie as direcion,\r\n            client.correo_clie as correo,\r\n            client.fecha_nacimineto_clie as fecha,\r\n            if(pres.valor_pres IS NOT NULL,pres.valor_pres,0) as valorDeuda\r\n        FROM tbl_cliente as client \r\n        LEFT JOIN tbl_prestamo as pres on (pres.id_clie=client.id_clie AND (pres.valor_pres>0)) \r\n        WHERE id_clie=2', 'Column \'id_clie\' in where clause is ambiguous', '2020-09-06 03:35:41', 3, 'cliente', 'obtenerDataCliente'),
+(43, ' => CALL logPrestamo(\'0\',\'4\',\'prestamo\',3,\'save\')', 'Unknown column \'controller_logg\' in \'field list\'', '2020-09-07 01:33:55', 3, 'prestamo', 'save'),
+(44, ' => CALL logPrestamo(\'0\',\'5\',\'prestamo\',3,\'save\')', 'Unknown column \'accion_func_logu\' in \'field list\'', '2020-09-07 01:36:10', 3, 'prestamo', 'save'),
+(45, 'Consulta de dataTable => SELECT clien.id_clie as id, \r\n                       clien.documento_clie as CC, \r\n                      CONCAT_WS (\' \',clien.primer_nombre_clie,clien.segundo_nombre_clie,clien.primer_apellido_clie,clien.segundo_apellido_clie) as nombre,\r\n                      clien.telefono_1_clie as t1, \r\n                      clien.telefono_2_clie as t2,\r\n                      clien.correo_clie as Correo,\r\n                      clien.documento_clie as Direcionr,\r\n                      clien.documento_ref_clie as Direcionc, \r\n                      clien.fecha_nacimineto_clie as fecha_cobro,\r\n                      if(pres.valor_pres IS NOT NULL,pres.valor_pres,0) as valorDeuda,\r\n                      if(pres.id_pres IS NOT NULL,pres.id_pres,0) as id_cobro\r\n                      FROM tbl_cliente as clien \r\n                      LEFT JOIN tbl_prestamo as pres on (pres.id_clie=clien.id_clie AND (pres.valor_pres>0)) \r\n                      WHERE 1 ORDER BY clien.orden_ruta_clie ASC', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'ORDER BY  1 asc LIMIT 0 ,10\' at line 14', '2020-09-07 01:55:03', 3, 'cliente', 'cargar'),
+(46, 'cambiar orden cliente. => UPDATE tbl_cliente \r\n                  SET \r\n                    orden_ruta_clie=Array\r\n                  WHERE tbl_cliente.id_clie =2', 'Unknown column \'Array\' in \'field list\'', '2020-09-07 03:08:24', 3, 'cliente', 'orden'),
+(47, 'cambiar orden cliente. => UPDATE tbl_cliente \r\n                  SET \r\n                    orden_ruta_clie=1\r\n                  WHERE tbl_cliente.id_clie =', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'\' at line 4', '2020-09-07 03:10:12', 3, 'cliente', 'orden'),
+(48, 'cambiar orden cliente. => UPDATE tbl_cliente \r\n                  SET \r\n                    orden_ruta_clie=1\r\n                  WHERE tbl_cliente.id_clie =', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'\' at line 4', '2020-09-07 03:13:34', 3, 'cliente', 'orden'),
+(49, 'cambiar orden cliente. => UPDATE tbl_cliente \r\n                  SET \r\n                    orden_ruta_clie=1\r\n                  WHERE tbl_cliente.id_clie =', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'\' at line 4', '2020-09-07 03:14:05', 3, 'cliente', 'orden'),
+(50, 'cambiar orden cliente. => UPDATE tbl_cliente \r\n                  SET \r\n                    orden_ruta_clie=1\r\n                  WHERE tbl_cliente.id_clie =', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'\' at line 4', '2020-09-07 03:14:47', 3, 'cliente', 'orden'),
+(51, 'cambiar orden cliente. => UPDATE tbl_cliente \r\n                  SET \r\n                    orden_ruta_clie=1\r\n                  WHERE tbl_cliente.id_clie =', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'\' at line 4', '2020-09-07 03:15:10', 3, 'cliente', 'orden'),
+(52, 'cambiar orden cliente. => UPDATE tbl_cliente \r\n                  SET \r\n                    orden_ruta_clie=Array\r\n                  WHERE tbl_cliente.id_clie =3', 'Unknown column \'Array\' in \'field list\'', '2020-09-07 03:15:50', 3, 'cliente', 'orden'),
+(53, 'cambiar orden cliente. => UPDATE tbl_cliente \r\n                  SET \r\n                    orden_ruta_clie=3\r\n                  WHERE tbl_cliente.id_clie =', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'\' at line 4', '2020-09-07 03:17:28', 3, 'cliente', 'orden'),
+(54, 'cambiar orden cliente. => UPDATE tbl_cliente \r\n                  SET \r\n                    orden_ruta_clie=3\r\n                  WHERE tbl_cliente.id_clie =', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'\' at line 4', '2020-09-07 03:17:41', 3, 'cliente', 'orden'),
+(55, 'cambiar orden cliente. => UPDATE tbl_cliente \r\n                  SET \r\n                    orden_ruta_clie=3\r\n                  WHERE tbl_cliente.id_clie =', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'\' at line 4', '2020-09-07 03:18:12', 3, 'cliente', 'orden'),
+(56, 'cambiar orden cliente. => UPDATE tbl_cliente \r\n                  SET \r\n                    orden_ruta_clie=3\r\n                  WHERE tbl_cliente.id_clie =', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'\' at line 4', '2020-09-07 03:18:39', 3, 'cliente', 'orden'),
+(57, 'cambiar orden cliente. => UPDATE tbl_cliente \r\n                  SET \r\n                    orden_ruta_clie=2\r\n                  WHERE tbl_cliente.id_clie =', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'\' at line 4', '2020-09-07 03:20:28', 3, 'cliente', 'orden'),
+(58, 'cambiar orden cliente. => UPDATE tbl_cliente \r\n                  SET \r\n                    orden_ruta_clie=1\r\n                  WHERE tbl_cliente.id_clie =', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'\' at line 4', '2020-09-07 03:21:12', 3, 'cliente', 'orden'),
+(59, 'cambiar orden cliente. => UPDATE tbl_cliente \r\n                  SET \r\n                    orden_ruta_clie=1\r\n                  WHERE tbl_cliente.id_clie =', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'\' at line 4', '2020-09-07 03:25:25', 3, 'cliente', 'orden'),
+(60, 'cambiar orden cliente. => UPDATE tbl_cliente \r\n                  SET \r\n                    orden_ruta_clie=\r\n                  WHERE tbl_cliente.id_clie =', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'WHERE tbl_cliente.id_clie =\' at line 4', '2020-09-07 03:27:57', 3, 'cliente', 'orden'),
+(61, 'cambiar orden cliente. => UPDATE tbl_cliente \r\n                  SET \r\n                    orden_ruta_clie=\r\n                  WHERE tbl_cliente.id_clie =', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'WHERE tbl_cliente.id_clie =\' at line 4', '2020-09-07 03:28:44', 3, 'cliente', 'orden'),
+(62, 'cambiar orden cliente. => UPDATE tbl_cliente \r\n                  SET \r\n                    orden_ruta_clie=1\r\n                  WHERE tbl_cliente.id_clie =', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'\' at line 4', '2020-09-07 03:30:27', 3, 'cliente', 'orden'),
+(63, 'cambiar orden cliente. => UPDATE tbl_cliente \r\n                  SET \r\n                    orden_ruta_clie=1\r\n                  WHERE tbl_cliente.id_clie =', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'\' at line 4', '2020-09-07 03:30:58', 3, 'cliente', 'orden');
 
 -- --------------------------------------------------------
 
@@ -331,6 +404,32 @@ INSERT INTO `tbl_log_gasto` (`id_logg`, `movimiento_logg`, `fecha_logg`, `id_gas
 (29, 3, '2020-09-03 19:27:18', 5, 'gasto', 3, 'cambiarEstado'),
 (30, 3, '2020-09-03 20:05:12', 26, 'gasto', 3, 'cambiarEstado'),
 (31, 3, '2020-09-03 20:05:58', 1, 'gasto', 3, 'cambiarEstado');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tbl_log_prestamo`
+--
+
+CREATE TABLE `tbl_log_prestamo` (
+  `id_logp` bigint(20) NOT NULL,
+  `movimiento_logp` int(11) NOT NULL COMMENT '0-CREAR, 1-ABONAR,3-CANCELAR',
+  `fecha_logp` datetime NOT NULL,
+  `id_pres` bigint(20) NOT NULL,
+  `controller_logp` text COLLATE utf8_swedish_ci DEFAULT NULL,
+  `id_autor_usu` bigint(20) NOT NULL,
+  `accion_func_logp` text COLLATE utf8_swedish_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
+
+--
+-- Volcado de datos para la tabla `tbl_log_prestamo`
+--
+
+INSERT INTO `tbl_log_prestamo` (`id_logp`, `movimiento_logp`, `fecha_logp`, `id_pres`, `controller_logp`, `id_autor_usu`, `accion_func_logp`) VALUES
+(1, 0, '2020-09-07 01:38:52', 6, 'prestamo', 3, 'save'),
+(2, 0, '2020-09-07 01:40:30', 7, 'prestamo', 3, 'save'),
+(3, 0, '2020-09-07 01:56:33', 8, 'prestamo', 3, 'save'),
+(4, 0, '2020-09-07 01:57:41', 9, 'prestamo', 3, 'save');
 
 -- --------------------------------------------------------
 
@@ -411,15 +510,17 @@ CREATE TABLE `tbl_prestamo` (
   `forma_pago_pres` int(11) NOT NULL COMMENT '1-diario, 2-diapormedio,3-semanal,4-quincedal,5-cada-dos-semanas,6-mensual',
   `numero_cuota_pres` int(11) NOT NULL,
   `valor_cuotas_pres` double NOT NULL,
-  `intereses_press` text COLLATE utf8_swedish_ci NOT NULL
+  `intereses_press` text COLLATE utf8_swedish_ci NOT NULL,
+  `valor_neto_clie` double NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
 
 --
 -- Volcado de datos para la tabla `tbl_prestamo`
 --
 
-INSERT INTO `tbl_prestamo` (`id_pres`, `id_clie`, `fecha_limite_pres`, `valor_pres`, `forma_pago_pres`, `numero_cuota_pres`, `valor_cuotas_pres`, `intereses_press`) VALUES
-(1, 2, '2020-09-06 00:00:00', 22, 0, 2, 2, '1');
+INSERT INTO `tbl_prestamo` (`id_pres`, `id_clie`, `fecha_limite_pres`, `valor_pres`, `forma_pago_pres`, `numero_cuota_pres`, `valor_cuotas_pres`, `intereses_press`, `valor_neto_clie`) VALUES
+(8, 2, '2020-09-07 00:00:00', 202, 1, 1, 202, '1', 200),
+(9, 3, '2020-09-07 00:00:00', 360, 1, 20, 18, '20', 300);
 
 -- --------------------------------------------------------
 
@@ -523,6 +624,12 @@ ALTER TABLE `tbl_log_gasto`
   ADD KEY `FK_GASTO` (`id_gas`);
 
 --
+-- Indices de la tabla `tbl_log_prestamo`
+--
+ALTER TABLE `tbl_log_prestamo`
+  ADD PRIMARY KEY (`id_logp`);
+
+--
 -- Indices de la tabla `tbl_log_tipo_gasto`
 --
 ALTER TABLE `tbl_log_tipo_gasto`
@@ -575,19 +682,25 @@ ALTER TABLE `tbl_gasto`
 -- AUTO_INCREMENT de la tabla `tbl_log_cliente`
 --
 ALTER TABLE `tbl_log_cliente`
-  MODIFY `id_logc` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id_logc` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
 
 --
 -- AUTO_INCREMENT de la tabla `tbl_log_errores`
 --
 ALTER TABLE `tbl_log_errores`
-  MODIFY `int_id_loge` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `int_id_loge` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
 
 --
 -- AUTO_INCREMENT de la tabla `tbl_log_gasto`
 --
 ALTER TABLE `tbl_log_gasto`
   MODIFY `id_logg` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+
+--
+-- AUTO_INCREMENT de la tabla `tbl_log_prestamo`
+--
+ALTER TABLE `tbl_log_prestamo`
+  MODIFY `id_logp` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `tbl_log_tipo_gasto`
@@ -605,7 +718,7 @@ ALTER TABLE `tbl_log_usuarios`
 -- AUTO_INCREMENT de la tabla `tbl_prestamo`
 --
 ALTER TABLE `tbl_prestamo`
-  MODIFY `id_pres` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_pres` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `tbl_tipo_gasto`

@@ -38,8 +38,44 @@ $(document).ready(function() {
     registrar_prestamo($("#formulario-crear-prestamo").attr('action'),$("#formulario-crear-prestamo").serializeArray());
   });
 
+  $("#Valor").on('keyup', function () {
+    var valor=$(this).val().replace('.', "");
+    valor=parseInt(valor);
+    if($(this).attr("min")<=valor && $(this).attr("max")>=valor){
+      calcularValorCoutaDia();
+    }
+  });
+
+  $("#Valor").on('blur', function () {
+    var valor=$(this).val().replace('.', "");
+    valor=parseInt(valor);
+    if($(this).attr("min")>valor || $(this).attr("max")<valor){
+      ohSnap('Error de valor no esta en le rango correcto',{color: 'yellow'});
+    }
+  });
+
+  
+
+  $("#ncoutas").on('keyup', function () {
+    calcularValorCoutaDia();
+  });
+
+  $("#inter").on('keyup', function () {
+    calcularValorCoutaDia();
+  });
+  
 });
 
+function calcularValorCoutaDia(){
+  if($("#ncoutas").val()!="" && $("#inter").val()!="" && $("#Valor").val()!=""){
+    var valor = $("#Valor").val();
+    var numeroCouta = $("#ncoutas").val();
+    var interes = $("#inter").val();
+    interes=(interes*valor)/100;
+    valor=parseInt(valor)+parseInt(interes);
+    $("#Valorc").html("$"+parseInt(valor)/parseInt(numeroCouta)+".00");
+  }
+}
 
 function cargar_cliente(){
   if ( $.fn.dataTable.isDataTable( '#datacliente' ) ) {
@@ -58,7 +94,7 @@ function cargar_cliente(){
         "type": "get",
         "paging": true,
         "searching": false,
-        "ordering": true,
+        "ordering": false,
         "language": {
           "zeroRecords": "Pagina no encontrada",
           "processing": 'Cargando...'
@@ -73,16 +109,14 @@ function cargar_cliente(){
           { data: 'CC' },
           { data: 'nombre'},
           { data: 't1' },
-          { data: 't2' },
           { data: 'Direcionr' },
           { data: 'Direcionc' },
-          { data: 'Correo' },
-          { data: 'fecha_cobro'},
           { data: 'id_cobro'},
           { data: 'id' },
+          { data: 'orden' },
       ],
       "columnDefs": [ {
-           "targets": 8,
+           "targets": 5,
            "data": "id_cobro",
            "render": function ( data, type, row, meta ) {
               if(row.valorDeuda<0){
@@ -98,10 +132,20 @@ function cargar_cliente(){
            }
          },
          {
-           "targets": 9,
+           "targets": 6,
            "data": "id",
            "render": function ( data, type, row, meta ) {
               return '<button class="btn btn-outline-primary edit" data-usu="'+row.id+'"><i class="fas fa-user-edit"></i></button>';
+           }
+          },
+         {
+           "targets": 7,
+           "data": "orden",
+           "render": function ( data, type, row, meta ) {
+              var html="";
+              html+='<button class="btn btn-outline-primary arriba" style="float:left" id="arriba" data-cliente="'+row.id+'"><i class="fas fa-arrow-up"></i></button>';
+              html+='<button class="btn btn-outline-primary abajo" style="float:right" id="abajo" data-cliente="'+row.id+'"><i class="fas fa-arrow-down"></i></button>';
+              return html;
            }
          }],
         "processing": true,
@@ -117,15 +161,23 @@ function cargar_cliente(){
             var i=$(this).attr('data-usu');
             window.location.href="index.php?c=cliente&a=editar&i="+i;
           });
+
+          $('.arriba').on('click', function () {
+            var i=$(this).attr('data-cliente');
+            cambiarOrden(i,1);
+          });
+
+          $('.abajo').on('click', function () {
+            var i=$(this).attr('data-cliente');
+            cambiarOrden(i,0);
+          });
         }
     });
   }
 
 
 function abrirPrestamoModal(id){
-  console.log(ip);
   ip=id;
-  console.log(ip);
   $.ajax({
     data: {
       'id':id
@@ -139,6 +191,10 @@ function abrirPrestamoModal(id){
           ohSnap('Este usuario no puede tener prestamo, Por favor comuniquese con el admindistrador',{color: 'red'});
           return false;
         }
+
+        $("#Valor").attr("min",data["data"][0].prestamo_minimo);
+        $("#Valor").attr("max",data["data"][0].prestamo_maximo);
+        $("#Valor").val(data["data"][0].prestamo_minimo);
         $(".tittle").html("Registrar prestamo al cliente "+data["data"][0].nombre);
         $(".img-cliente").attr("src","./view/assets/imagenes_cliente/"+data["data"][0].foto);
         $(".cc").html(data["data"][0].cc);
@@ -155,6 +211,31 @@ function abrirPrestamoModal(id){
     error:function(){
         ohSnap('Error desconocido',{color: 'red'});
     }
+  });
+}
+
+function cambiarOrden(id,posicion) {
+  $.ajax({
+      data: {
+        "id":id,
+        "pos":posicion
+      },
+      url: "index.php?c=cliente&a=orden",
+      type: "post",
+      success:function(e){
+          var obj = JSON.parse(e);
+          if(obj["error"]==1){
+            ohSnap('No puede completar esta opcion.',{color: 'red'});
+          }else if(obj["error"]==0){
+            cargar_cliente();
+            ohSnap('Se cambio correctamente',{color: 'green'});
+          }else{
+            ohSnap('Error desconocido.',{color: 'red'});
+          }
+      },
+      error:function(){
+          ohSnap('Error desconocido.',{color: 'red'});
+      }
   });
 }
 
@@ -179,13 +260,14 @@ function registrar_prestamo(action,datos) {
             validate_errores_peticion_ajax(obj);
           }else if(obj["error"]==0){
             cargar_cliente();
+            $('#modalPrestamo').modal("hide");
             ohSnap('Se guardo correctamente',{color: 'green'});
           }else{
             ohSnap('Error desconocido.',{color: 'green'});
           }
       },
       error:function(){
-          ohSnap('Error ha iniciar session',{color: 'red'});
+          ohSnap('Error desconocido.',{color: 'red'});
       }
   });
 }
