@@ -74,6 +74,9 @@
           <a class="dropdown-item" href="index.php?c=gasto&a=registrar">Registrar gasto propio <span class="sr-only">(current)</span></a>
         </div>
       </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="index.php?c=historial">Historial de abono <span class="sr-only">(current)</span></a>
+      </li>
       <!--<li class="nav-item active">
         <a class="nav-link" href="#">Aumenta saldo cliente <span class="sr-only">(current)</span></a>
       </li>-->
