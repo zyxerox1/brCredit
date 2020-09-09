@@ -1,0 +1,188 @@
+var ip=0;
+var tipo=99;
+$(document).ready(function() {
+  cargar_cliente();
+  $('#buscar').on('click', function () {
+    cargar_cliente();
+  });
+
+  $(".btn-depliegue").on('click', function () {
+    if($('#desplegue-cliente').hasClass('fa-chevron-down')){
+      $(".card-prestamo-usu").show("slow");
+      $('#desplegue-cliente').removeClass('fa-chevron-down');
+      $('#desplegue-cliente').addClass('fa-chevron-up');
+    }else if($('#desplegue-cliente').hasClass('fa-chevron-up')){
+      $(".card-prestamo-usu").hide("slow");
+      $('#desplegue-cliente').addClass('fa-chevron-down');
+      $('#desplegue-cliente').removeClass('fa-chevron-up');
+    }
+  });
+
+  $("#guardarAbono").on('click', function () {
+    registrar_abono($("#formulario-crear-abonar").attr('action'),$("#formulario-crear-abonar").serializeArray());
+  });
+
+});
+
+function cargar_cliente(){
+  if ( $.fn.dataTable.isDataTable( '#datacliente' ) ) {
+   $("#datacliente").dataTable().fnDestroy();
+  }
+    var MY_AJAX_ACTION_URL = "index.php?c=abono&a=cargar";
+    table = $('#datacliente').DataTable({
+        "autoWidth": true,
+        "ajax": {
+          "data": {
+            'Cedula':$('#Cedula').val(),
+            'Nombre':$('#Nombre').val()
+          },
+          "url": MY_AJAX_ACTION_URL
+        },
+        "type": "get",
+        "paging": true,
+        "searching": false,
+        "ordering": false,
+        "language": {
+          "zeroRecords": "Pagina no encontrada",
+          "processing": 'Cargando...'
+        },
+        //"stateSave": true,
+        "bLengthChange" : true,
+        "info": false,
+        "search": true,
+        "sort": true,
+        "stripeClasses": [ "odd nutzer_tr", "even nutzer_tr"],
+        "columns": [
+          { data: 'CC' },
+          { data: 'nombre'},
+          { data: 't1' },
+          { data: 'Direcionc' },
+          { data: 'Direcionr' },
+          { data: 'valorDeuda'},
+          { data: 'id' },
+          { data: 'id' },
+      ],
+      "columnDefs": [ {
+           "targets": 5,
+           "data": "id_cobro",
+           "render": function ( data, type, row, meta ) {
+              if(row.valorDeuda<0){
+                   return "<h4 style='background-color:red;color:white'>Hubo un error concultando este usuario.</h4>";
+              }
+              var html="";
+              html="<h4 class='valorDebeTable'>$"+row.valorDeuda+".00</h4>";
+              return html;
+           }
+         },
+         {
+           "targets": 6,
+           "data": "orden",
+           "render": function ( data, type, row, meta ) {
+              var html="";
+              html+='<button class="btn btn-outline-primary auto" style="float:left" id="auto" data-cliente="'+row.id+'" data-prestamo="'+row.idPres+'"><i class="fas fa-cogs"></i> Automatico</button>';
+              return html;
+           }
+         },
+         {
+           "targets": 7,
+           "data": "orden",
+           "render": function ( data, type, row, meta ) {
+              var html="";
+              html+='<button class="btn btn-outline-primary manual" style="float:right" id="manual" data-cliente="'+row.id+'" data-prestamo="'+row.idPres+'"><i class="fas fa-hands-wash"></i> Manual</button>';
+              return html;
+           }
+         }],
+        "processing": true,
+        "serverSide": true,
+        "pageLength" : 100,
+        drawCallback: function () {
+          $('.auto').on('click', function () {
+            var i=$(this).attr('data-cliente');
+            var prestamo=$(this).attr('data-prestamo');
+            tipo=0;
+            modalAbonoAuto(i,0,prestamo);
+          });
+
+          $('.manual').on('click', function () {
+            var i=$(this).attr('data-cliente');
+            var prestamo=$(this).attr('data-prestamo');
+            tipo=1;
+            modalAbonoAuto(i,1,prestamo);
+          });
+        }
+    });
+  }
+
+
+function modalAbonoAuto(id,tipo,prestamo){
+  ip=prestamo;
+  $.ajax({
+    data: {
+      'id':id
+    },
+    url: "index.php?c=abono&a=obtenerDataCliente",
+    type: "post",
+    success:function(e){
+      var data = JSON.parse(e);
+      if(data["error"]==0){
+        $(".tittle").html("Registrar abono al cliente "+data["data"][0].nombre);
+        $(".img-cliente").attr("src","./view/assets/imagenes_cliente/"+data["data"][0].foto);
+        $(".nPres").html(data["data"][0].nPrestamo);
+        $(".totalV").html(data["data"][0].totalVenta);
+        $(".totalP").html(data["data"][0].totalPagado);
+        $(".totalD").html(data["data"][0].debe);
+        $(".numeroCouta").html(data["data"][0].nCouta);
+        $(".valor").html(data["data"][0].valorPagar);
+        $("#guardarAbono").html("<i class='fas fa-check'></i> Hacer pago de "+data["data"][0].valorPagar);
+        if(tipo==0){
+          $(".valorManual").hide();
+        }else{
+          $(".valorManual").show();
+        }
+        $('#modalAbono').modal("show");
+      }
+    },
+    error:function(){
+        ohSnap('Error desconocido',{color: 'red'});
+    }
+  });
+}
+
+
+
+function registrar_abono(action,datos) {
+  if(ip==0){
+    ohSnap('Error desconocido.',{color: 'red'});
+    return false;
+  }
+  var formData = new FormData();
+  formData=crearObjetoFormData(datos);
+  formData.append('idPres',ip);
+  formData.append('tipo',tipo);
+  $.ajax({
+      data: formData,
+      url: action,
+      type: "post",
+      contentType: false,
+      processData: false,
+      success:function(e){
+          var obj = JSON.parse(e);
+          if(obj["error"]!=0){
+            if(obj["error"]==1){
+              ohSnap(obj["mensaje"],{color: 'red'});
+            }
+            check_todo_input_verificado();
+            validate_errores_peticion_ajax(obj);
+          }else if(obj["error"]==0){
+            cargar_cliente();
+            $('#modalAbono').modal("hide");
+            ohSnap('Se guardo correctamente',{color: 'green'});
+          }else{
+            ohSnap('Error desconocido.',{color: 'red'});
+          }
+      },
+      error:function(){
+          ohSnap('Error desconocido.',{color: 'red'});
+      }
+  });
+}

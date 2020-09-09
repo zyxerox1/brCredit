@@ -1,0 +1,31 @@
+.card-prestamo-usu{
+	width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    display: none;
+}
+
+#desplegue-cliente{
+	float: right; 
+	height: 14px;
+}
+
+.btn-depliegue{  
+	float: right;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+ }
+
+.img-cliente{
+ 	height: 300px;
+ }
+
+#datacliente>tbody>tr>td{
+    min-width: 85px;
+}
+
+@media screen and (max-width: 794px){
+    #datacliente>tbody>tr>td{
+        min-width: none;
+    }
+}
