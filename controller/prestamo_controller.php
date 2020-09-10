@@ -65,7 +65,7 @@ class prestamo_controller
             $interes=($_POST['inter']*$_POST['Valor'])/100;
             $valorInteres= $interes+$_POST['Valor'];
             $Valorc= $valorInteres/$_POST['ncoutas'];
-            $errores = $this->prestamo->crear_prestamo($_POST['FechaLimit'],1, $_POST['Valor'], $_POST['ncoutas'], $Valorc, $_POST['inter'], $_POST['id'],$valorInteres);
+            $errores = $this->prestamo->crear_prestamo($_POST['FechaLimit'],1, $_POST['Valor'], $_POST['ncoutas'], $Valorc, $_POST['inter'], $_POST['id'],$valorInteres,$_POST['latitud'],$_POST['longitud']);
         }
         echo json_encode($errores);  
     }

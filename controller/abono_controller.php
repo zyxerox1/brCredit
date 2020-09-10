@@ -22,6 +22,7 @@ class abono_controller
         require_once HTML_DIR . 'overall/header.php';
         require_once HTML_DIR . 'overall/topNav.php';
         require_once HTML_DIR . 'abono/modal_abono.php';
+        require_once HTML_DIR . 'abono/modal_confirmacion.php';
         require_once HTML_DIR . 'abono/abono.php';
         require_once HTML_DIR . 'overall/footer.php';
     }
@@ -47,9 +48,9 @@ class abono_controller
         $errores[] = array('error' => 1,"mensaje"=>"Error a completa el pago." );
       }
 
-      if($_POST['notaPago']==""){
+      /*if($_POST['notaPago']==""){
         $errores[] = array('error' => "El campo nota no puede estar vacio","control"=>"notaPago" );
-      }
+      }*/
 
       if(count($errores)==0){
         if($_POST['tipo']==1){
@@ -58,12 +59,11 @@ class abono_controller
           }else{
               $_POST['valorAbono'] = preg_replace('/[.,]/', '', $_POST['valorAbono']);
           }
-          $errores=$this->abono->abonar($_POST['tipo'],$_POST['idPres'],$_POST['notaPago'],$_POST['valorAbono']);
+          $errores=$this->abono->abonar($_POST['tipo'],$_POST['idPres'],$_POST['notaPago'],$_POST['valorAbono'],$_POST['latitud'],$_POST['longitud']);
         }else if($_POST['tipo']==0){
-          $errores=$this->abono->abonar($_POST['tipo'],$_POST['idPres'],$_POST['notaPago'],0);
+          $errores=$this->abono->abonar($_POST['tipo'],$_POST['idPres'],$_POST['notaPago'],0,$_POST['latitud'],$_POST['longitud']);
         }
       }
-      
       echo json_encode($errores);
     }
 }

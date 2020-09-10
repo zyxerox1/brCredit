@@ -66,7 +66,7 @@
               </div>
             </div>
           </div>
-
+          <div class="location"></div>
           <div class="row">
             <div class="col-md-12">
               <div class="form-group">
@@ -78,7 +78,7 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-success" id="guardarAbono">Guardar</button>
+        <button type="button" class="btn btn-success" id="guardarAbono" data-toggle="modal" data-target="#confirmAbonar">Guardar</button>
         <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
       </div>
     </div> 

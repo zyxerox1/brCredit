@@ -43,7 +43,11 @@ class cliente_modelo
             $img_name='usuario.jpg';
             $user["text_img_perfil_usu"]=1;
         }
-    	$query = "INSERT INTO tbl_cliente (id_clie, documento_clie, documento_ref_clie, primer_nombre_clie, segundo_nombre_clie, primer_apellido_clie, segundo_apellido_clie, telefono_1_clie, telefono_2_clie, direcion_clie, direcion_cobro_clie, sexo_clie, correo_clie, fecha_nacimineto_clie, foto_clie, estado_localidad_clie, ciudad_localidad_clie, id_usu,prestamo_minimo_client,prestamo_maximo_client) VALUES (NULL, $Documento, $ccr,'$primernombre', '$segundonombre', '$primerapellido', '$segundoapellido', $Telefono_1, $Telefono_2, '$Direcion', '$Direcionc','$Genero', '$Correo', '$Fecha','$img_name',$estados,$ciudades,".$_SESSION["id_usu_credit"].",".PRESTAMO_MINIMO.",".PRESTAMO_MAXIMO.");";
+
+        $query = "SELECT max(orden_ruta_clie) AS orden_ruta_clie FROM tbl_cliente";
+        $data=$this->DB_QUERY->query($query);
+        $data[0]["orden_ruta_clie"]+=1;
+    	$query = "INSERT INTO tbl_cliente (id_clie, documento_clie, documento_ref_clie, primer_nombre_clie, segundo_nombre_clie, primer_apellido_clie, segundo_apellido_clie, telefono_1_clie, telefono_2_clie, direcion_clie, direcion_cobro_clie, sexo_clie, correo_clie, fecha_nacimineto_clie, foto_clie, estado_localidad_clie, ciudad_localidad_clie, id_usu,prestamo_minimo_client,prestamo_maximo_client, orden_ruta_clie) VALUES (NULL, $Documento, $ccr,'$primernombre', '$segundonombre', '$primerapellido', '$segundoapellido', $Telefono_1, $Telefono_2, '$Direcion', '$Direcionc','$Genero', '$Correo', '$Fecha','$img_name',$estados,$ciudades,".$_SESSION["id_usu_credit"].",".PRESTAMO_MINIMO.",".PRESTAMO_MAXIMO.",".$data[0]["orden_ruta_clie"].");";
         $id=$this->DB_QUERY->save($query,'creacion de cliente.');
         $this->log_cliente(0,$id);
         return array('control' =>$user["text_img_perfil_usu"] ,'error' => 0,'resp'=>$id);
@@ -66,7 +70,7 @@ class cliente_modelo
                       clien.orden_ruta_clie as orden
                       FROM tbl_cliente as clien 
                       LEFT JOIN tbl_prestamo as pres on (pres.id_clie=clien.id_clie AND (pres.valor_pres>0)) 
-                      WHERE 1 ";
+                      WHERE clien.id_usu = ".$_SESSION["id_usu_credit"];
         if(isset($params['Nombre']) && $params['Nombre']!=0){
           $query.=" AND clien.id_clie = ".$params['Nombre'];
         }
@@ -74,7 +78,7 @@ class cliente_modelo
             $query.=" AND clien.documento_clie = ".$params['Cedula'];
         }
 
-        $query.="ORDER BY clien.orden_ruta_clie ASC";
+        $query.=" ORDER BY clien.orden_ruta_clie ASC";
 
         //$tablaSearch="AND int_documento_usu LIKE '%".$params['search']['value']."%'";
 
@@ -83,7 +87,7 @@ class cliente_modelo
     }
 
     public function obtener_filtro_cliente(){
-        $query="CALL obtenerCliente()";
+        $query="CALL obtenerCliente(".$_SESSION["id_usu_credit"].")";
         $data=$this->DB_QUERY->query($query);
         return $data;
     }

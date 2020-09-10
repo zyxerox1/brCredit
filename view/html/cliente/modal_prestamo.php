@@ -95,7 +95,7 @@
               </div>
             </div>
           </div>
-
+          <div class="location"></div>
           <div class="row">
             <div class="col-md-6 offset-md-3">
               <label for="Valorc" class="text-color">Valor de cada couta*</label>

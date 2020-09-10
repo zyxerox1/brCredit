@@ -28,7 +28,7 @@ class historial_controller
     public function ver()
     {
         $this->validacion->validarRol(2);
-        $data=$this->historial->ver($_POST);
+        $data=$this->historial->ver($_REQUEST);
         echo json_encode($data);
     }
 }

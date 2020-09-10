@@ -1,11 +1,15 @@
 var ip=0;
 var tipo=99;
+var latitud=0;
+var longitud=0;
+var ipRed=0;
 $(document).ready(function() {
   cargar_cliente();
   $('#buscar').on('click', function () {
     cargar_cliente();
   });
-
+  gelocalizacion();
+  
   $(".btn-depliegue").on('click', function () {
     if($('#desplegue-cliente').hasClass('fa-chevron-down')){
       $(".card-prestamo-usu").show("slow");
@@ -18,11 +22,31 @@ $(document).ready(function() {
     }
   });
 
-  $("#guardarAbono").on('click', function () {
+  $("#guardarAbonoConfirm").on('click', function () {
     registrar_abono($("#formulario-crear-abonar").attr('action'),$("#formulario-crear-abonar").serializeArray());
   });
-
 });
+
+function geo_success(position) {
+  latitud=position.coords.latitude;
+  longitud=position.coords.longitude;
+  $(".location").html('<input hidden value="'+latitud+'" name="latitud"><input hidden value="'+longitud+'" name="longitud">');
+}
+
+function geo_error() {
+  alert("Si no conocemos tu ubicacion puede generar errores a la hora de registrar el pago");
+}
+
+
+function gelocalizacion(){
+  var geo_options = {
+    enableHighAccuracy: true, 
+    maximumAge        : 30000, 
+    timeout           : 27000
+  };
+
+  var wpid = navigator.geolocation.getCurrentPosition(geo_success, geo_error, geo_options);
+}
 
 function cargar_cliente(){
   if ( $.fn.dataTable.isDataTable( '#datacliente' ) ) {
@@ -155,10 +179,13 @@ function registrar_abono(action,datos) {
     ohSnap('Error desconocido.',{color: 'red'});
     return false;
   }
+  gelocalizacion();
   var formData = new FormData();
   formData=crearObjetoFormData(datos);
   formData.append('idPres',ip);
   formData.append('tipo',tipo);
+  formData.append('latitud',latitud);
+  formData.append('longitud',longitud);
   $.ajax({
       data: formData,
       url: action,
@@ -176,6 +203,7 @@ function registrar_abono(action,datos) {
           }else if(obj["error"]==0){
             cargar_cliente();
             $('#modalAbono').modal("hide");
+            $('#confirmAbonar').modal("hide");
             ohSnap('Se guardo correctamente',{color: 'green'});
           }else{
             ohSnap('Error desconocido.',{color: 'red'});

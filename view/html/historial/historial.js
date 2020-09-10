@@ -5,51 +5,87 @@ $(document).ready(function() {
   });
 });
 
+
 function cargar_cliente(){
-  $.ajax({
-    data: {
-      'Nombre': $('#Nombre').val(),
-      'Cedula': $('#Cedula').val()
-    },
-    url: "index.php?c=historial&a=ver",
-    type: "post",
-    success:function(e){
-      var data = JSON.parse(e);
-      if(data["error"]==0){
-        var html="";
-        $.each(data["data"], function(i, item) {
-          
-            html+='<div class="row">';
-            html+=  '<div class="col-md-12">';
-            html+=    '<div class="container-data">';
-            html+=      '<div class="container-nombre">';
-            html+=        '<h6 class="nombreCliente">'+data["data"][0].nombre+'</h6>';
-            html+=      '</div>';
-            html+=      '<div class="container-counta">';
-            html+=        '<h6 class="counta">Cuota: $'+data["data"][0].couta+'- pago: $'+data["data"][0].pago+'</h6>';
-            html+=      '</div>';
-            html+=      '<div class="container-total-venta">';
-            html+=        '<h6 class="total-venta">Total de ventas: $'+data["data"][0].tVenta+'</h6>';
-            html+=      '</div>';
-            html+=      '<div class="container-valores">';
-            html+=        '<h6 class="total-pagado">Pagado: $'+data["data"][0].pagado+'-Debe: $'+data["data"][0].debe+'';
-            html+=      '</div>';          
-            html+=      '</div>';
-            html+=  '</div>';
-            html+='</div>';
-            html+='<hr>';
-          });
-
-          $(".container-cliente").html(html);
-      }
-    },
-    error:function(){
-        ohSnap('Error desconocido',{color: 'red'});
-    }
-  });
-}
-
-
+  if ( $.fn.dataTable.isDataTable( '#datahistoria' ) ) {
+   $("#datahistoria").dataTable().fnDestroy();
+  }
+    var MY_AJAX_ACTION_URL = "index.php?c=historial&a=ver";
+    table = $('#datahistoria').DataTable({
+        "autoWidth": true,
+        "ajax": {
+          "data": {
+            'Cedula':$('#Cedula').val(),
+            'Nombre':$('#Nombre').val()
+          },
+          "url": MY_AJAX_ACTION_URL
+        },
+        "type": "get",
+        "paging": true,
+        "searching": false,
+        "ordering": false,
+        "language": {
+          "zeroRecords": "Pagina no encontrada",
+          "processing": 'Cargando...'
+        },
+        //"stateSave": true,
+        "bLengthChange" : true,
+        "info": false,
+        "search": true,
+        "sort": true,
+        "stripeClasses": [ "odd nutzer_tr", "even nutzer_tr"],
+        "columns": [
+          { data: 'nombre' },
+          { data: 'couta'},
+          { data: 'tVenta' },
+          { data: 'diasV' },
+      ],
+      "columnDefs": [{
+          "targets": 0,
+          "data": "nombre",
+          "render": function ( data, type, row, meta ) {
+            if(row.cumplimiento==0){
+              return "<div class='nombreTableR'><h5>Nombre: "+data+"</h5><h5 class='valTable'>Sin validar</h5></div>";
+            }else{
+              return "<div class='nombreTableV'><h5>Nombre: "+data+"</h5><h5 class='valTable'>Validado</h5></div>";
+            }
+          }
+        },
+        {
+          "targets": 1,
+          "data": "couta",
+          "render": function ( data, type, row, meta ) {
+            var html="";
+            if(row.pago==null){
+              row.pago=0;
+            }
+            html="<div class='coutaTable'><h5>Couta: $R "+data+" - Pago: $R "+row.pago+"</h5></div>";
+            return html;
+          }
+        },{
+          "targets": 2,
+          "data": "tVenta",
+          "render": function ( data, type, row, meta ) {
+            var html="";
+            html="<div class='coutaTable'><h5>Total ventas: $R "+data+" - Debe: $R "+row.debe+"</h5></div>";
+            return html;
+          }
+        },{
+          "targets": 3,
+          "data": "tVenta",
+          "render": function ( data, type, row, meta ) {
+            var html="";
+            html="<div class='coutaTable'><h5>Dias vencido: "+data+"</h5></div>";
+            return html;
+          }
+        }],
+        "processing": true,
+        "serverSide": true,
+        "pageLength" : 10,
+        drawCallback: function () {
+        }
+    });
+  }
 
 function registrar_abono(action,datos) {
   if(ip==0){

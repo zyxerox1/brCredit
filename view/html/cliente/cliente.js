@@ -1,10 +1,12 @@
 var ip=0;
+var latitud=0;
+var longitud=0;
 $(document).ready(function() {
   cargar_cliente();
   $('#buscar').on('click', function () {
     cargar_cliente();
   });
-
+  gelocalizacion();
   $(".btn-depliegue").on('click', function () {
     if($('#desplegue-cliente').hasClass('fa-chevron-down')){
       $(".card-prestamo-usu").show("slow");
@@ -65,6 +67,28 @@ $(document).ready(function() {
   });
   
 });
+
+function geo_success(position) {
+  latitud=position.coords.latitude;
+  longitud=position.coords.longitude;
+  $(".location").html('<input hidden value="'+latitud+'" name="latitud"><input hidden value="'+longitud+'" name="longitud">');
+}
+
+function geo_error() {
+  alert("Si no conocemos tu ubicacion puede generar errores a la hora de registrar el pago");
+}
+
+
+function gelocalizacion(){
+  var geo_options = {
+    enableHighAccuracy: true, 
+    maximumAge        : 30000, 
+    timeout           : 27000
+  };
+
+  var wpid = navigator.geolocation.getCurrentPosition(geo_success, geo_error, geo_options);
+}
+
 
 function calcularValorCoutaDia(){
   if($("#ncoutas").val()!="" && $("#inter").val()!="" && $("#Valor").val()!=""){
@@ -151,6 +175,7 @@ function cargar_cliente(){
         "processing": true,
         "serverSide": true,
         "pageLength" : 10,
+  
         drawCallback: function () {
           $('.prestamoModal').on('click', function () {
             var i=$(this).attr('data-cliente');
@@ -205,6 +230,7 @@ function abrirPrestamoModal(id){
         $(".direcion").html(data["data"][0].direcion);
         $(".correo").html(data["data"][0].correo);
         $(".fecha").html(data["data"][0].fecha);
+        calcularValorCoutaDia();
         $('#modalPrestamo').modal("show");
       }
     },
@@ -244,9 +270,12 @@ function registrar_prestamo(action,datos) {
     ohSnap('Error desconocido.',{color: 'red'});
     return false;
   }
+  gelocalizacion();
   var formData = new FormData();
   formData=crearObjetoFormData(datos);
   formData.append('id',ip);
+  formData.append('latitud',latitud);
+  formData.append('longitud',longitud);
   $.ajax({
       data: formData,
       url: action,
