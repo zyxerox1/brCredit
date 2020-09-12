@@ -38,18 +38,11 @@
       </li>
       <?php } ?> 
       <?php if($_SESSION["rol"]==1){?>
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Reasignar ruta <span class="sr-only">(current)</span></a>
-      </li>
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Autorizar aumento de saldo <span class="sr-only">(current)</span></a>
-      </li>
+     
       <li class="nav-item active">
         <a class="nav-link" href="index.php?c=gasto">Autorizar pago de gasto <span class="sr-only">(current)</span></a>
       </li>
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Autorizar cliente a ruta <span class="sr-only">(current)</span></a>
-      </li>
+     
       <?php } ?>
 
       <?php if($_SESSION["rol"]==2){ ?>

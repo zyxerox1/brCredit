@@ -1,3 +1,7 @@
+var ip=0;
+var latitud=0;
+var longitud=0;
+
 $(document).ready(function() {
   $('.cambiar-vista-list').on('click', function () {cambiar_vista_tabla(1,"dataGasto")});
   $('.cambiar-vista-cuad').on('click', function () {cambiar_vista_tabla(2,"dataGasto")}); 
@@ -18,8 +22,35 @@ $(document).ready(function() {
   $('#buscar').on('click', function () {
     cargar_gasto();
   });
+
+  $("#guardarAbono").on('click', function () {
+    registrar_abono($("#formulario-crear-abonar").attr('action'),$("#formulario-crear-abonar").serializeArray());
+  });
+
+  gelocalizacion();
   cargar_gasto();
 });
+
+function geo_success(position) {
+  latitud=position.coords.latitude;
+  longitud=position.coords.longitude;
+  $(".location").html('<input hidden value="'+latitud+'" name="latitud"><input hidden value="'+longitud+'" name="longitud">');
+}
+
+function geo_error() {
+  alert("Si no conocemos tu ubicacion puede generar errores a la hora de registrar el pago");
+}
+
+
+function gelocalizacion(){
+  var geo_options = {
+    enableHighAccuracy: true, 
+    maximumAge        : 30000, 
+    timeout           : 27000
+  };
+
+  var wpid = navigator.geolocation.getCurrentPosition(geo_success, geo_error, geo_options);
+}
 
 function cargar_gasto(){
   if ( $.fn.dataTable.isDataTable( '#dataGasto' ) ) {
@@ -83,9 +114,13 @@ function cargar_gasto(){
            "render": function ( data, type, row, meta ) {
            		if(row.estado==0){
            			var html='<a class="btn btn-warning cambiar" data-i='+data+'><i class="fas fa-exclamation"></i> Pendiente</a>';
-           		}else{
-           			var html='<a class="btn btn-success cambiar" style="color: white" data-i='+data+'><i class="fas fa-thumbs-up"></i></i></a>';
-           		}
+           		}else if(row.estado==2){
+           			var html='<a class="btn btn-primary cambiar" style="color: white" data-i='+data+'>Abono</a>';
+           		}else if(row.estado==1){
+                var html='<a class="btn btn-success cambiar" style="color: white" data-i='+data+'><i class="fas fa-thumbs-up"></i></a>';
+              }else if(row.estado==3){
+                var html='<a class="btn btn-danger cambiar" style="color: white" data-i='+data+'>Anulado</a>';
+              }
            		
               return html;
            }
@@ -114,6 +149,7 @@ function cargar_gasto(){
   }
 
 function modalCambiar(i){
+  ip=i;
 	$.ajax({
 	  data: {"id":i},
 	  url: "index.php?c=gasto&a=obtenerGasto",
@@ -124,14 +160,15 @@ function modalCambiar(i){
 		    $("#titleGasto").html("gasto de "+obj["data"][0].nombre_tipog);
 		 	$(".detalle").html(obj["data"][0].nota_gas);
 		 	$('.fecha_d').html(obj["data"][0].fecha_logg);
+      
 		 	if(obj["data"][0].estado_gas==0){
 		 		$('.estado').html("Pendiente");
 		 	}else if(obj["data"][0].estado_gas==1){
-		 		$('.estado').html("Anulado");
-		 	}else if(obj["data"][0].estado_gas==2){
 		 		$('.estado').html("Cancelado");
-		 	}else if(obj["data"][0].estado_gas==3){
+		 	}else if(obj["data"][0].estado_gas==2){
 		 		$('.estado').html("Abono");
+		 	}else if(obj["data"][0].estado_gas==3){
+		 		$('.estado').html("Anulado");
 		 	}
 
 			$('.valor').html('$'+formatValor(obj["data"][0].valor_gas)+".00");
@@ -146,13 +183,13 @@ function modalCambiar(i){
 
 			for (var i = 0; i < obj["suma"].length; i++) {
 				if(obj["suma"][i].estado==0){
-					$('.pendientes').html('$'+formatValor(obj["suma"][i].total)+".00");
+					$('#Vpendientes').html('$'+formatValor(obj["suma"][i].total)+".00");
 				}if(obj["suma"][i].estado==1){
-					$('.cancelador').html('$'+formatValor(obj["suma"][i].total)+".00");
+					$('#Vcancelador').html('$'+formatValor(obj["suma"][i].total)+".00");
 				}if(obj["suma"][i].estado==2){
-					$('.anulado').html('$'+formatValor(obj["suma"][i].total)+".00");
+					$('#Vabonos').html('$'+formatValor(obj["suma"][i].total)+".00");
 				}if(obj["suma"][i].estado==3){
-					$('.abonos').html('$'+formatValor(obj["suma"][i].total)+".00");
+					$('#Vanulado').html('$'+formatValor(obj["suma"][i].total)+".00");
 				}
 			}
 			$('.cancelar').attr('href','index.php?c=gasto&a=cambiarEstado&id='+obj["data"][0].id_gas);
@@ -165,4 +202,45 @@ function modalCambiar(i){
 	      ohSnap('Error ha iniciar session',{color: 'red'});
 	  }
 	});
+}
+
+function registrar_abono(action,datos) {
+  if(ip==0){
+    ohSnap('Error desconocido.',{color: 'red'});
+    return false;
+  }
+  gelocalizacion();
+  var formData = new FormData();
+  formData=crearObjetoFormData(datos);
+  formData.append('idGasto',ip);
+  formData.append('latitud',latitud);
+  formData.append('longitud',longitud);
+  $.ajax({
+      data: formData,
+      url: action,
+      type: "post",
+      contentType: false,
+      processData: false,
+      success:function(e){
+          var obj = JSON.parse(e);
+          if(obj["error"]!=0){
+            if(obj["error"]==1){
+              ohSnap(obj["mensaje"],{color: 'red'});
+            }
+            check_todo_input_verificado();
+            validate_errores_peticion_ajax(obj);
+          }else if(obj["error"]==0){
+            cargar_gasto();
+            $('#modalAbono').modal("hide");
+            $('#confirmAbonar').modal("hide");
+            $('#gastoModal').modal("hide");
+            ohSnap('Se guardo correctamente',{color: 'green'});
+          }else{
+            ohSnap('Error desconocido.',{color: 'red'});
+          }
+      },
+      error:function(){
+          ohSnap('Error desconocido.',{color: 'red'});
+      }
+  });
 }

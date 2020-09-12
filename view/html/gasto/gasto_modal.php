@@ -88,7 +88,7 @@
         </div>
         <div class="row">
           <div class="col-md-12">
-            <table class="table table-total">
+            <table class="table table-totales">
               <thead class="thead-dark">
                 <tr>
                   <th scope="col">Pendientes</th>
@@ -98,6 +98,12 @@
                 </tr>
               </thead>
               <tbody>
+                <tr>
+                  <td ><h6 id="Vpendientes"></h6></td>
+                  <td ><h6 id="Vcancelador"></h6></td>
+                  <td ><h6 id="Vabonos"></h6></td>
+                  <td ><h6 id="Vanulado"></h6></td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -105,7 +111,7 @@
       </div>
       <div class="modal-footer">
         <?php if($_SESSION["rol"]==1){ ?>
-          <a type="button" class="btn btn-primary">Abonar</a>
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalAbono" >Abonar</button>
           <a type="button" href="" class="btn btn-success cancelar">Cancelar</a>
           <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
         <?php } ?>

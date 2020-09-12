@@ -35,6 +35,7 @@ class gasto_controller
         require_once HTML_DIR . 'gasto/gasto.php';
         require_once HTML_DIR . 'gasto/gasto_modal.php';
         require_once HTML_DIR . 'gasto/modal_confirmacion.php';
+        require_once HTML_DIR . 'gasto/modalAbono.php';
         require_once HTML_DIR . 'overall/footer.php';
       
     }
@@ -95,7 +96,8 @@ class gasto_controller
     public function cambiarEstado(){
         $this->validacion->validarRol([2,1]);
         if($_SESSION["rol"]==1){
-            $data=$this->gasto->cambiarEstado($_POST,1);
+            $data=$this->gasto->cambiarEstado($_GET,1);
+            $this->index();
         }
          if($_SESSION["rol"]==2){
             $data=$this->gasto->cambiarEstado($_POST,3);
@@ -121,5 +123,25 @@ class gasto_controller
         $this->validacion->validarRol([2,1]);
         $data=$this->gasto->obtenerGasto($_REQUEST);
         echo json_encode($data);
+    }
+
+    public function abonarGasto(){
+        $this->validacion->validarRol(1);
+
+        $errores=array();
+        if($_POST['idGasto']==""){
+            $errores[] = array('error' => 1,"mensaje"=>"Error a completa el abono." );
+        }
+
+        if ($_POST['valorAbono']=="") {
+          return array('control' =>"valorAbono" ,'error' => "Tiene que ingresar un valor"  );
+        }else{
+          $_POST['valorAbono'] = preg_replace('/[.,]/', '', $_POST['valorAbono']);
+       }
+
+      if(count($errores)==0){
+        $errores=$this->gasto->abonar($_POST['idGasto'],$_POST['notaGasto'],$_POST['valorAbono'],$_POST['latitud'],$_POST['longitud']);
+      }
+      echo json_encode($errores);
     }
 }

@@ -15,7 +15,7 @@ class gasto_modelo
 
     /*/////////////////////////////////////////////guardar///////////////////////////////////*/
 
-      public function log_gasto($movimiento="",$id="",$nota=""){
+      public function log_gasto($movimiento="",$id="",$nota="",$valor="",$latitud=0, $longitud=0){
         /*parametro de errores{*/
         $controller="";
         $accion_func="";
@@ -26,7 +26,7 @@ class gasto_modelo
             $accion_func=$_REQUEST['a'];
         }
 
-        $query = "CALL logGasto('$movimiento','$id','$controller',".$_SESSION["id_usu_credit"].",'$accion_func')";
+        $query = "CALL logGasto('$movimiento','$id','$controller',".$_SESSION["id_usu_credit"].",'$accion_func','$valor','$nota',$latitud, $longitud)";
         $this->DB_QUERY->save($query);
     }
 
@@ -43,10 +43,10 @@ class gasto_modelo
             $data["img"]=1;
         }
        
-        $query = "INSERT INTO `tbl_gasto` (`id_gas`, `valor_gas`, `fecha_gas`, `evidencia_gas`, `nota_gas`, `id_usu`,id_tipo_tipog) VALUES (NULL, '$valor', now(), '$img', '$nota', '".$_SESSION["id_usu_credit"]."','$Tipo')";
+        $query = "INSERT INTO `tbl_gasto` (`id_gas`, `valor_gas`, `fecha_gas`, `evidencia_gas`, `nota_gas`, `id_usu`,id_tipo_tipog,valor_total_gas) VALUES (NULL, '$valor', now(), '$img', '$nota', '".$_SESSION["id_usu_credit"]."','$Tipo','$valor')";
 
         $id=$this->DB_QUERY->save($query,'Creaciòn de gasto propio del vendedor.');
-        $this->log_gasto(0,$id);
+        $this->log_gasto(0,$id,'Creacion de gatos',$valor);
         return array('control' =>$data["img"] ,'error' => 0);
     }
 
@@ -109,6 +109,8 @@ class gasto_modelo
             $query.=" AND gasto.valor_gas >= '".$params['Fecha_ini']."'";
         }
 
+        $query.=" GROUP BY gasto.id_gas";
+
 
         //$tablaSearch="AND int_documento_usu LIKE '%".$params['search']['value']."%'";
 
@@ -152,20 +154,52 @@ class gasto_modelo
         return $data;
     }
 
-    
+    public function abonar($idGasto, $notaGasto, $valorAbono, $latitud, $longitud){ 
+        $valor=0;
+        $estado='';
+        $query="SELECT estado_gas,valor_gas FROM `tbl_gasto` WHERE id_gas=".$idGasto;
+        $data=$this->DB_QUERY1->query($query);
+ 
+        if($data[0]['estado_gas']==1 || $data[0]['estado_gas']==4){
+            return array('mensaje' =>'Este gasto no se puede anular.' ,'error' =>1 );
+        }
+        $valor=$data[0]['valor_gas']-$valorAbono;
+        if($valor<0){
+            return array('control' =>'valorAbono' ,'error' =>1, 'mensaje'=>"El valor sobrepasa la dueda" );
+        }
+
+        if($valor==0){
+           $estado= ", estado_gas = 1 ";
+        }else{
+            $estado= ", estado_gas = 2 ";
+        }
+
+         $query = "UPDATE `tbl_gasto` SET valor_gas = $valor $estado WHERE `tbl_gasto`.`id_gas` = ".$idGasto;
+        
+        $id=$this->DB_QUERY->save($query,'Abono.');
+        $this->log_gasto(2,$idGasto,$notaGasto,$valorAbono,$latitud,$longitud);
+        return array('control' =>0 ,'error' => 0);
+
+    }
 
     public function cambiarEstado($params,$tipo){
+        $valor='';
+        $query="SELECT estado_gas,valor_gas FROM `tbl_gasto` WHERE id_gas=".$params['id'];
+        $data=$this->DB_QUERY1->query($query);
         if($tipo==3){
-            $query="SELECT estado_gas FROM `tbl_gasto` WHERE id_gas=".$params['id'];
-            $data=$this->DB_QUERY1->query($query);
             if($data[0]['estado_gas']!=0){
                 return array('control' =>'Este gasto no se puede anular.' ,'error' =>1 );
             }
+        }else{
+            $valor=", valor_gas = 0 , pagado_gasto_gas = '".$data[0]['valor_gas']."'";
         }
-        $query = "UPDATE `tbl_gasto` SET `estado_gas` = '$tipo' WHERE `tbl_gasto`.`id_gas` = ".$params['id'];
+        $query = "UPDATE `tbl_gasto` SET `estado_gas` = '$tipo' $valor WHERE `tbl_gasto`.`id_gas` = ".$params['id'];
         $id=$this->DB_QUERY->save($query,'Cambio de estado a '.$tipo.".");
-        $this->log_gasto($tipo,$params['id']);
-        return array('control' =>0 ,'error' => 0);
+        $this->log_gasto($tipo,$params['id'],'Cancelar gatos',$data[0]['valor_gas']);
+        if($tipo==3){
+            return array('control' =>0 ,'error' => 0);
+        }
+        return "";
     }
     
     

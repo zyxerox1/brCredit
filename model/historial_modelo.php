@@ -14,12 +14,46 @@ class historial_modelo
         $this->hitorial = array();
     }
 
+    /*/////////////////////////////////////////////guardar///////////////////////////////////*/
+    public function log_abono($movimiento="",$id="",$id_clie,$nota="",$valor,$tipo,$latitud,$longitud){
+
+        /*movimineto 0-crear,1-editar,3-cambiar estado,2-orden*/
+        /*parametro de errores{*/
+        $controller="";
+        $accion_func="";
+        if(isset($_REQUEST['c'])){
+            $controller=$_REQUEST['c'];
+        }
+        if(isset($_REQUEST['a'])){
+            $accion_func=$_REQUEST['a'];
+        }
+        $ip=$this->getRealIP();
+
+        //$query = "CALL logPrestamo('$movimiento','$id','$controller',".$_SESSION["id_usu_credit"].",'$accion_func','$id_clie','$nota','$valor','$tipo','$latitud','$longitud','$ip')";
+
+        $query="INSERT INTO `tbl_log_prestamo` (`id_logp`, `movimiento_logp`, `fecha_logp`, `id_pres`, `controller_logp`, `id_autor_usu`, `accion_func_logp`,id_clie,nota_logp,valor_pres_logp,forma_pago_logp,latitud_logp,longitud_logp,ip_logp) VALUES (NULL, '$movimiento', now(), '$id', '$controller', ".$_SESSION["id_usu_credit"].",'$accion_func','$id_clie','$nota','$valor','$tipo','$latitud','$longitud','$ip');";
+
+        $id=$this->DB_QUERY->save($query);
+        return $id;
+    }
+
+
     /*////////////////////////////////consulta//////////////////////////////////////////////////*/
 
     public function obtener_filtro_cliente(){
         $query="CALL obtenerCliente(".$_SESSION["id_usu_credit"].")";
         $data=$this->DB_QUERY->query($query);
         return $data;
+    }
+
+    function getRealIP() {
+        if (!empty($_SERVER['HTTP_CLIENT_IP']))
+            return $_SERVER['HTTP_CLIENT_IP'];
+           
+        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR']))
+            return $_SERVER['HTTP_X_FORWARDED_FOR'];
+       
+        return $_SERVER['REMOTE_ADDR'];
     }
 
     public function ver($params){
@@ -31,9 +65,11 @@ class historial_modelo
                 (SELECT SUM(tbl_prestamo.valor_pres) FROM tbl_prestamo WHERE tbl_prestamo.id_clie=clien.id_clie) as tVenta,
                 press.valor_pres as debe,
                 logPrestamo.id_logp as idPres,
+                press.id_pres as idPrestamos,
                 rh.cumplimineto_rutaH as cumplimiento,
-                diasvTable.diasV,
-                clien.id_clie as idClie
+                if(diasvTable.diasV IS null,0,diasvTable.diasV) AS diasV,
+                clien.id_clie as idClie,
+                rh.id_rutaH AS idRuta
                 FROM tbl_ruta_historial as rh
                 INNER JOIN tbl_cliente AS clien ON (clien.id_clie=rh.id_clien)
                 INNER JOIN tbl_prestamo AS press ON (rh.id_pres=press.id_pres)
@@ -79,52 +115,77 @@ class historial_modelo
         return array('error' => 0,'data'=>$data);
     }
 
-    public function abonar ($idPres,$nota,$valor,$latitud,$longitud){
+    public function abonarRegistrar($idPres,$nota,$valor,$latitud,$longitud,$his){
 
         $data = array();
         $valorAtualizar="";
         $query="";
         $query1="";
 
-        $query="SELECT pres.valor_pres,pres.valor_cuotas_pres,pres.id_clie
+        $query="SELECT pres.valor_pres,pres.valor_cuotas_pres,pres.id_clie,client.cumplimineto_client
+                      FROM tbl_prestamo as pres
+                      INNER JOIN tbl_cliente as client ON (client.id_clie=pres.id_clie) 
+                      WHERE pres.id_pres=".$idPres;
+        $data=$this->DB_QUERY->query($query);
+
+        if(count($data)>0){
+            if($data[0]['valor_pres']<=0){
+                return array('error' => 1,"mensaje"=>"Este prestamo ya no esta vigente." ); 
+            }
+            $valorAtualizar=$data[0]['valor_pres']-$valor;
+            if($valorAtualizar<0){
+                return array('error' => 1,"mensaje"=>"El valor sobrepasa la deuda" );
+            }
+            $query = "UPDATE tbl_prestamo SET valor_pres='$valorAtualizar' WHERE id_pres =".$idPres;
+        }
+
+        $id=$this->log_abono(1,$idPres,$data[0]['id_clie'],$nota,$valor,3,$latitud,$longitud);
+
+        $query2 = "UPDATE tbl_log_prestamo SET apuntadaor_prestamo_logp = '$id',movimiento_logp=3 WHERE id_logp =".$idPres;
+        $query3 = "UPDATE tbl_ruta_historial SET cumplimineto_rutaH = '$id', id_log_pres_rutaH='$id'  WHERE id_rutaH =".$his;
+
+        $this->DB_QUERY2->save($query2,'Editar abono.');
+        $this->DB_QUERY->save($query,'Abonar.');
+        $this->DB_QUERY1->save($query3,'editar historial.');
+        return array('error' => 0); 
+    }
+
+    public function abonar ($idPres,$nota,$valor,$latitud,$longitud,$his){
+
+        $data = array();
+        $valorAtualizar="";
+        $query="";
+        $query1="";
+        $total="";
+
+        $query="SELECT pres.valor_pres,pres.valor_cuotas_pres,pres.id_clie,presLog.valor_pres_logp,pres.id_pres
                       FROM tbl_prestamo as pres
                       INNER JOIN tbl_log_prestamo as presLog ON (presLog.id_pres=pres.id_pres) 
                       WHERE presLog.id_logp=".$idPres;
         $data=$this->DB_QUERY->query($query);
 
-        print_r($data);
-        exit();
-        if($data[0]['cumplimineto_client']!=0){
-            return array('error' => 1,"mensaje"=>"Ya hizo el abono de este vendedor hoy, puede editarlo en le historial" ); 
-        }
-
         if(count($data)>0){
-            if(isset($data[0]['valor_pres']) && $data[0]['valor_pres']!=0){
-                //validacion de tipo
-                if($tipo==0){
-                    $valorAtualizar=$data[0]['valor_pres']-$data[0]['valor_cuotas_pres'];
-                    $valor=$data[0]['valor_cuotas_pres'];
-                }else if($tipo==1){
-                    $valorAtualizar=$data[0]['valor_pres']-$valor;
-                }
-                if($valorAtualizar<0){
-                    return array('error' => 1,"mensaje"=>"El valor sobrepasa la deuda" );
-                }
-                //fin validacion de tipo
-                $query = "UPDATE tbl_prestamo SET valor_pres='$valorAtualizar' WHERE id_pres =".$idPres;
-                
-            }else{
-                return array('error' => 1,"mensaje"=>"Error a tratar abonar al cliente" ); 
+            if($data[0]['valor_pres']<=0){
+                return array('error' => 1,"mensaje"=>"Este prestamo ya no esta vigente." ); 
             }
+            $total=$data[0]['valor_pres']+$data[0]['valor_pres_logp'];
+            $valorAtualizar=$total-$valor;
+            if($valorAtualizar<0){
+                return array('error' => 1,"mensaje"=>"El valor sobrepasa la deuda" );
+            }
+            $query = "UPDATE tbl_prestamo SET valor_pres='$valorAtualizar' WHERE id_pres =".$data[0]['id_pres'];
+           
         }else{
-           return array('error' => 1,"mensaje"=>"Error a tratar abonar al cliente" ); 
+           return array('error' => 1,"mensaje"=>"Error a tratar abonar al cliente." ); 
         }
+        
+        $id=$this->log_abono(1,$data[0]['id_pres'],$data[0]['id_clie'],$nota,$valor,3,$latitud,$longitud);
 
-        $id=$this->log_abono(1,$idPres,$data[0]['id_clie'],$nota,$valor,$tipo,$latitud,$longitud);
-        $query1 = "UPDATE tbl_cliente SET cumplimineto_client = '$id' WHERE id_clie =".$data[0]['id_clie'];
-        $this->cliente->log_cliente(4,$data[0]['id_clie']);
+        $query2 = "UPDATE tbl_log_prestamo SET apuntadaor_prestamo_logp = '$id',movimiento_logp=3 WHERE id_logp =".$idPres;
+        $query3 = "UPDATE tbl_ruta_historial SET cumplimineto_rutaH = '$id', id_log_pres_rutaH='$id' WHERE id_rutaH =".$his;
+        $this->DB_QUERY2->save($query2,'Editar abono.');
         $this->DB_QUERY->save($query,'Abonar.');
-        $this->DB_QUERY1->save($query1,'Abonar cliente.');
+        $this->DB_QUERY1->save($query3,'editar historial.');
         return array('error' => 0); 
         
     }

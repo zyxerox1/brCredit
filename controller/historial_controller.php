@@ -53,7 +53,12 @@ class historial_controller
               $_POST['valorAbono'] = preg_replace('/[.,]/', '', $_POST['valorAbono']);
           }
 
-          $errores=$this->historial->abonar($_POST['idPres'],$_POST['notaPago'],$_POST['valorAbono'],$_POST['latitud'],$_POST['longitud']);
+          if($_POST['tipo']==2){
+            $errores=$this->historial->abonarRegistrar($_POST['idPres'],$_POST['notaPago'],$_POST['valorAbono'],$_POST['latitud'],$_POST['longitud'],$_POST['his']);
+          }else if($_POST['tipo']==1){
+            $errores=$this->historial->abonar($_POST['idPres'],$_POST['notaPago'],$_POST['valorAbono'],$_POST['latitud'],$_POST['longitud'],$_POST['his']);
+          }
+          
       }
       echo json_encode($errores);
     }
