@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 09-09-2020 a las 06:19:55
+-- Tiempo de generación: 12-09-2020 a las 19:26:05
 -- Versión del servidor: 10.4.11-MariaDB
 -- Versión de PHP: 7.4.4
 
@@ -65,9 +65,9 @@ BEGIN
 	SELECT * FROM tbl_usuarios WHERE documento_usu = dataUsuario and estado_usu=1;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `logPrestamo` (IN `movimiento` TEXT, IN `id_pres` BIGINT, IN `controller` TEXT, IN `autor` BIGINT, IN `accion` TEXT, IN `id_clie` BIGINT, IN `nota` TEXT, IN `valor` DOUBLE, IN `tipo` INT)  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `logPrestamo` (IN `movimiento` TEXT, IN `id_pres` BIGINT, IN `controller` TEXT, IN `autor` BIGINT, IN `accion` TEXT, IN `id_clie` BIGINT, IN `nota` TEXT, IN `valor` DOUBLE, IN `tipo` INT, IN `latitud` TEXT, IN `longitud` TEXT, IN `ip_logp` TEXT)  NO SQL
 BEGIN
-	INSERT INTO `tbl_log_prestamo` (`id_logp`, `movimiento_logp`, `fecha_logp`, `id_pres`, `controller_logp`, `id_autor_usu`, `accion_func_logp`,id_clie,nota_logp,valor_pres_logp,forma_pago_logp) VALUES (NULL, movimiento, now(), id_pres, controller, autor, accion,id_clie,nota,valor,tipo);
+	INSERT INTO `tbl_log_prestamo` (`id_logp`, `movimiento_logp`, `fecha_logp`, `id_pres`, `controller_logp`, `id_autor_usu`, `accion_func_logp`,id_clie,nota_logp,valor_pres_logp,forma_pago_logp,latitud_logp,longitud_logp,ip_logp) VALUES (NULL, movimiento, now(), id_pres, controller, autor, accion,id_clie,nota,valor,tipo,latitud,longitud,ip_logp);
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `logTipoGasto` (IN `movimiento` TEXT, IN `id_gasto` BIGINT, IN `controller` TEXT, IN `autor` BIGINT, IN `accion` INT)  NO SQL
@@ -85,9 +85,9 @@ BEGIN
 	SELECT id_usu,primer_nombre_usu,segundo_nombre_usu,primer_apellido_usu,segundo_apellido_usu, documento_usu FROM tbl_usuarios WHERE rol_usu = 0;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `obtenerCliente` ()  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `obtenerCliente` (IN `id` BIGINT)  NO SQL
 BEGIN
-	SELECT id_clie,primer_nombre_clie,segundo_nombre_clie,primer_apellido_clie,segundo_apellido_clie, documento_clie FROM tbl_cliente;
+	SELECT id_clie,primer_nombre_clie,segundo_nombre_clie,primer_apellido_clie,segundo_apellido_clie, documento_clie FROM tbl_cliente WHERE id_usu=id;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `obtenerCoordinadores` ()  NO SQL
@@ -157,17 +157,21 @@ CREATE TABLE `tbl_cliente` (
   `id_usu` bigint(20) NOT NULL DEFAULT 0,
   `prestamo_minimo_client` int(11) NOT NULL,
   `prestamo_maximo_client` int(11) NOT NULL,
-  `orden_ruta_clie` int(11) NOT NULL
+  `orden_ruta_clie` int(11) NOT NULL,
+  `cumplimineto_client` int(11) NOT NULL DEFAULT 0 COMMENT '0-no pago,1-pago'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_swedish_ci;
 
 --
 -- Volcado de datos para la tabla `tbl_cliente`
 --
 
-INSERT INTO `tbl_cliente` (`id_clie`, `documento_clie`, `documento_ref_clie`, `primer_nombre_clie`, `segundo_nombre_clie`, `primer_apellido_clie`, `segundo_apellido_clie`, `telefono_1_clie`, `telefono_2_clie`, `direcion_clie`, `direcion_cobro_clie`, `sexo_clie`, `correo_clie`, `fecha_nacimineto_clie`, `foto_clie`, `estado_clie`, `estado_localidad_clie`, `ciudad_localidad_clie`, `id_usu`, `prestamo_minimo_client`, `prestamo_maximo_client`, `orden_ruta_clie`) VALUES
-(2, 12312333344, 423432423324, 'pruebacliente', 'pruebacliente', 'pruebacliente', '', 3423423444, 4324234444, 'fsdfds', 'fdsfsddddddd', 'Mujer', 'j.a@dfsd.com', '2002-01-07 00:00:00', '20200906035141_13.png', 1, '3', '222', 3, 200, 300, 1),
-(3, 1111111111, 423432423324, 'yeison', 'sanchez', 'arley', '', 3423423444, 4324234444, 'fsdfds', 'fdsfsddddddd', 'Mujer', 'dj.a@dfsd.com', '2002-01-07 00:00:00', '20200906035514_43.png', 1, '3', '222', 3, 200, 300, 2),
-(4, 22222222222, 423432423324, 'yeison', 'sanchez', 'arley', '', 3423423444, 4324234444, 'fsdfds', 'fdsfsddddddd', 'Mujer', 'dej.a@dfsd.com', '2002-01-07 00:00:00', '20200906040010_73.png', 1, '3', '223', 3, 200, 300, 3);
+INSERT INTO `tbl_cliente` (`id_clie`, `documento_clie`, `documento_ref_clie`, `primer_nombre_clie`, `segundo_nombre_clie`, `primer_apellido_clie`, `segundo_apellido_clie`, `telefono_1_clie`, `telefono_2_clie`, `direcion_clie`, `direcion_cobro_clie`, `sexo_clie`, `correo_clie`, `fecha_nacimineto_clie`, `foto_clie`, `estado_clie`, `estado_localidad_clie`, `ciudad_localidad_clie`, `id_usu`, `prestamo_minimo_client`, `prestamo_maximo_client`, `orden_ruta_clie`, `cumplimineto_client`) VALUES
+(11, 123456789, 123456789, 'primer', '', 'cliente', '', 1234567890, 1234567890, '123456789', '123456789', 'Hombre', '1@gmail.com', '2007-08-31 00:00:00', 'usuario.jpg', 1, '4', '206', 4, 200, 300, 3, 0),
+(12, 123456789, 123456789, 'segundo', '', 'cliente', '', 1234567890, 1234567890, '123456789', '123456789', 'Hombre', '2@GMAIL.COM', '2007-08-31 00:00:00', 'usuario.jpg', 1, '4', '207', 4, 200, 300, 1, 0),
+(13, 1234567890, 1234567890, 'tercer', '', 'cliente', '', 1234567890, 1234567890, '1234567890', '1234567890', 'Hombre', '3@GMAIL.COM', '2007-08-31 00:00:00', 'usuario.jpg', 1, '4', '205', 4, 200, 300, 2, 0),
+(14, 1234567890, 1234567890, 'cuarto', '', 'cliente', '', 1234567890, 1234567890, '1234567890', '1234567890', 'Hombre', '4@GMAIL.COM', '2007-08-31 00:00:00', 'usuario.jpg', 1, '6', '702', 4, 200, 300, 4, 0),
+(15, 1234567890, 1234567890, 'quinto', '', 'cliente', '', 1234567890, 1234567890, '1234567890', '1234567890', 'Hombre', '5@GMAIL.COM', '2007-08-31 00:00:00', 'usuario.jpg', 1, '2', '104', 3, 200, 300, 5, 0),
+(16, 1234567890, 1234567890, 'sexto', '', 'cliente', '', 1234567890, 1234567890, '1234567890', '1234567890', 'Hombre', '6@GMAIL.COM', '2007-08-31 00:00:00', 'usuario.jpg', 1, '2', '101', 3, 200, 300, 6, 0);
 
 -- --------------------------------------------------------
 
@@ -185,20 +189,6 @@ CREATE TABLE `tbl_gasto` (
   `id_tipo_tipog` bigint(20) NOT NULL,
   `estado_gas` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
-
---
--- Volcado de datos para la tabla `tbl_gasto`
---
-
-INSERT INTO `tbl_gasto` (`id_gas`, `valor_gas`, `fecha_gas`, `evidencia_gas`, `nota_gas`, `id_usu`, `id_tipo_tipog`, `estado_gas`) VALUES
-(1, 1, '2020-08-28 01:26:19', '20200828082619_3.png', 'no', 3, 1, 3),
-(2, 2344, '2020-08-28 01:43:29', '20200828084329_3.png', 'no', 3, 2, 1),
-(3, 1333, '2020-08-28 01:47:37', '20200828084737_3.png', 'hola', 3, 3, 3),
-(4, 133, '2020-08-28 01:48:31', '20200828084831_3.png', '223', 3, 4, 0),
-(5, 4234, '2020-08-28 01:49:12', '20200828084912_3.png', '312321', 3, 3, 3),
-(24, 332, '2020-08-28 07:44:38', '20200828144438_4.pdf', 'prueba', 4, 5, 0),
-(25, 13, '2020-08-28 07:45:16', '20200828144516_4.pdf', 'fdsf', 4, 5, 0),
-(26, 1111111, '2020-08-28 12:26:18', '20200828192618_3.jpg', 'No hay', 3, 6, 3);
 
 -- --------------------------------------------------------
 
@@ -278,7 +268,32 @@ INSERT INTO `tbl_log_cliente` (`id_logc`, `movimiento_logc`, `fecha_logc`, `id_u
 (55, 2, '2020-09-07 12:43:14', 2, 'cliente', 3, 'orden'),
 (56, 2, '2020-09-07 12:43:14', 3, 'cliente', 3, 'orden'),
 (57, 2, '2020-09-08 23:17:56', 2, 'cliente', 3, 'orden'),
-(58, 2, '2020-09-08 23:17:56', 3, 'cliente', 3, 'orden');
+(58, 2, '2020-09-08 23:17:56', 3, 'cliente', 3, 'orden'),
+(59, 2, '2020-09-09 16:08:27', 3, 'cliente', 3, 'orden'),
+(60, 2, '2020-09-09 16:08:27', 2, 'cliente', 3, 'orden'),
+(61, 2, '2020-09-09 16:08:33', 4, 'cliente', 3, 'orden'),
+(62, 2, '2020-09-09 16:08:33', 2, 'cliente', 3, 'orden'),
+(63, 0, '2020-09-09 17:46:16', 5, 'cliente', 4, 'save'),
+(64, 0, '2020-09-09 17:47:13', 6, 'cliente', 4, 'save'),
+(65, 0, '2020-09-09 17:48:05', 7, 'cliente', 4, 'save'),
+(66, 0, '2020-09-09 17:49:35', 8, 'cliente', 4, 'save'),
+(67, 0, '2020-09-09 18:33:36', 9, 'cliente', 4, 'save'),
+(68, 0, '2020-09-09 18:35:11', 10, 'cliente', 4, 'save'),
+(69, 0, '2020-09-09 18:36:56', 11, 'cliente', 4, 'save'),
+(70, 0, '2020-09-09 18:37:55', 12, 'cliente', 4, 'save'),
+(71, 0, '2020-09-09 18:38:40', 13, 'cliente', 4, 'save'),
+(72, 0, '2020-09-09 18:39:23', 14, 'cliente', 4, 'save'),
+(73, 2, '2020-09-09 18:40:06', 12, 'cliente', 4, 'orden'),
+(74, 2, '2020-09-09 18:40:06', 11, 'cliente', 4, 'orden'),
+(75, 2, '2020-09-09 18:40:11', 11, 'cliente', 4, 'orden'),
+(76, 2, '2020-09-09 18:40:11', 13, 'cliente', 4, 'orden'),
+(77, 0, '2020-09-09 18:53:04', 15, 'cliente', 3, 'save'),
+(78, 0, '2020-09-09 18:53:59', 16, 'cliente', 3, 'save'),
+(79, 4, '2020-09-09 21:13:06', 13, 'abono', 4, 'abonarPago'),
+(80, 4, '2020-09-10 00:43:20', 13, 'abono', 4, 'abonarPago'),
+(81, 4, '2020-09-10 02:30:18', 13, 'abono', 4, 'abonarPago'),
+(82, 4, '2020-09-10 02:31:23', 11, 'abono', 4, 'abonarPago'),
+(83, 4, '2020-09-10 02:37:18', 12, 'abono', 4, 'abonarPago');
 
 -- --------------------------------------------------------
 
@@ -359,7 +374,33 @@ INSERT INTO `tbl_log_errores` (`int_id_loge`, `text_accion_loge`, `text_descripc
 (64, 'Consulta de dataTable => SELECT clien.id_clie as id, \r\n                       clien.documento_clie as CC, \r\n                      CONCAT_WS (\' \',clien.primer_nombre_clie,clien.segundo_nombre_clie,clien.primer_apellido_clie,clien.segundo_apellido_clie) as nombre,\r\n                      clien.telefono_1_clie as t1, \r\n                      clien.telefono_2_clie as t2,\r\n                      clien.correo_clie as Correo,\r\n                      clien.documento_clie as Direcionr,\r\n                      clien.documento_ref_clie as Direcionc, \r\n                      if(pres.valor_pres IS NOT NULL,pres.valor_pres,0) as valorDeuda,\r\n                      if(pres.id_pres IS NOT NULL,pres.id_pres,0) as id_cobro\r\n                      FROM tbl_cliente as clien \r\n                      LEFT JOIN tbl_prestamo as pres on (pres.id_clie=clien.id_clie AND (pres.valor_pres>0)) \r\n                      WHERE pres.valor_pres>0ORDER BY clien.orden_ruta_clie ASC', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'BY clien.orden_ruta_clie ASC\' at line 13', '2020-09-08 22:13:50', 3, 'abono', 'cargar'),
 (65, ' => CALL logPrestamo(\'1\',\'\',3,\'abonarPago\',\'abono\',\'3\',\'prueba\',\'18\')', 'Column count doesn\'t match value count at row 1', '2020-09-08 22:29:15', 3, 'abono', 'abonarPago'),
 (66, ' => CALL logPrestamo(\'1\',\'9\',3,\'abonarPago\',\'abono\',\'3\',\'prueba\',\'18\')', 'Column count doesn\'t match value count at row 1', '2020-09-08 22:30:14', 3, 'abono', 'abonarPago'),
-(67, ' => CALL logPrestamo(\'0\',\'10\',\'prestamo\',3,\'save\')', 'Incorrect number of arguments for PROCEDURE bd_sistema_ruta.logPrestamo; expected 9, got 5', '2020-09-08 23:08:16', 3, 'prestamo', 'save');
+(67, ' => CALL logPrestamo(\'0\',\'10\',\'prestamo\',3,\'save\')', 'Incorrect number of arguments for PROCEDURE bd_sistema_ruta.logPrestamo; expected 9, got 5', '2020-09-08 23:08:16', 3, 'prestamo', 'save'),
+(68, 'Consulta de dataTable => SELECT clien.id_clie as id, \r\n                       clien.documento_clie as CC, \r\n                      CONCAT_WS (\' \',clien.primer_nombre_clie,clien.segundo_nombre_clie,clien.primer_apellido_clie,clien.segundo_apellido_clie) as nombre,\r\n                      clien.telefono_1_clie as t1, \r\n                      clien.telefono_2_clie as t2,\r\n                      clien.correo_clie as Correo,\r\n                      clien.documento_clie as Direcionr,\r\n                      clien.documento_ref_clie as Direcionc, \r\n                      clien.fecha_nacimineto_clie as fecha_cobro,\r\n                      if(pres.valor_pres IS NOT NULL,pres.valor_pres,0) as valorDeuda,\r\n                      if(pres.id_pres IS NOT NULL,pres.id_pres,0) as id_cobro,\r\n                      clien.orden_ruta_clie as orden\r\n                      FROM tbl_cliente as clien \r\n                      LEFT JOIN tbl_prestamo as pres on (pres.id_clie=clien.id_clie AND (pres.valor_pres>0)) \r\n                      WHERE id_usu = 4ORDER BY clien.orden_ruta_clie ASC', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'BY clien.orden_ruta_clie ASC\' at line 15', '2020-09-09 17:42:17', 4, 'cliente', 'cargar'),
+(69, 'Consulta de dataTable => SELECT clien.id_clie as id, \r\n                       clien.documento_clie as CC, \r\n                      CONCAT_WS (\' \',clien.primer_nombre_clie,clien.segundo_nombre_clie,clien.primer_apellido_clie,clien.segundo_apellido_clie) as nombre,\r\n                      clien.telefono_1_clie as t1, \r\n                      clien.telefono_2_clie as t2,\r\n                      clien.correo_clie as Correo,\r\n                      clien.documento_clie as Direcionr,\r\n                      clien.documento_ref_clie as Direcionc, \r\n                      clien.fecha_nacimineto_clie as fecha_cobro,\r\n                      if(pres.valor_pres IS NOT NULL,pres.valor_pres,0) as valorDeuda,\r\n                      if(pres.id_pres IS NOT NULL,pres.id_pres,0) as id_cobro,\r\n                      clien.orden_ruta_clie as orden\r\n                      FROM tbl_cliente as clien \r\n                      LEFT JOIN tbl_prestamo as pres on (pres.id_clie=clien.id_clie AND (pres.valor_pres>0)) \r\n                      WHERE clien.id_usu = 4ORDER BY clien.orden_ruta_clie ASC', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'BY clien.orden_ruta_clie ASC\' at line 15', '2020-09-09 17:42:44', 4, 'cliente', 'cargar'),
+(70, 'c= a= /-/ consulta=CALL obtenerCliente()', 'Incorrect number of arguments for PROCEDURE bd_sistema_ruta.obtenerCliente; expected 1, got 0', '2020-09-09 17:50:10', 4, 'historial', ''),
+(71, 'c= a= /-/ consulta=CALL obtenerCliente()', 'Incorrect number of arguments for PROCEDURE bd_sistema_ruta.obtenerCliente; expected 1, got 0', '2020-09-09 18:42:11', 4, 'historial', ''),
+(72, 'Consulta de dataTable => SELECT clien.id_clie as id, \r\n                       clien.documento_clie as CC, \r\n                      CONCAT_WS (\' \',clien.primer_nombre_clie,clien.segundo_nombre_clie,clien.primer_apellido_clie,clien.segundo_apellido_clie) as nombre,\r\n                      clien.telefono_1_clie as t1, \r\n                      clien.telefono_2_clie as t2,\r\n                      clien.correo_clie as Correo,\r\n                      clien.documento_clie as Direcionr,\r\n                      clien.documento_ref_clie as Direcionc, \r\n                      if(pres.valor_pres IS NOT NULL,pres.valor_pres,0) as valorDeuda,\r\n                      if(pres.id_pres IS NOT NULL,pres.id_pres,0) as id_cobro,\r\n                      pres.id_pres idPres\r\n                      FROM tbl_cliente as clien \r\n                      LEFT JOIN tbl_prestamo as pres on (pres.id_clie=clien.id_clie AND (pres.valor_pres>0)) \r\n                      WHERE pres.valor_pres>0 AND clien.id_usu = 3ORDER BY clien.orden_ruta_clie ASC', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'BY clien.orden_ruta_clie ASC\' at line 14', '2020-09-09 18:56:09', 3, 'abono', 'cargar'),
+(73, 'c= a= /-/ consulta=SELECT\r\n                     CONCAT_WS (\' \',clien.primer_nombre_clie,clien.segundo_nombre_clie,clien.primer_apellido_clie,clien.segundo_apellido_clie) as nombre,\r\n                     press.valor_cuotas_pres as couta,\r\n                    logPrestamo.valor_pres_logp as pago,\r\n                    (SELECT SUM(tbl_prestamo.valor_pres) FROM tbl_prestamo WHERE tbl_prestamo.id_clie=clien.id_clie) as tVenta,\r\n                    pressValor.pagado,\r\n                    press.valor_pres as debe\r\n                    FROM tbl_log_prestamo as logPrestamo \r\n                    INNER JOIN tbl_cliente AS clien ON (clien.id_clie=logPrestamo.id_clie)\r\n                    INNER JOIN tbl_prestamo AS press ON (press.id_pres=logPrestamo.id_pres)\r\n                    LEFT JOIN (SELECT SUM(tbl_log_prestamo.valor_pres_logp) AS pagado, tbl_log_prestamo.id_clie,tbl_log_prestamo.id_pres FROM tbl_log_prestamo GROUP BY tbl_log_prestamo.id_clie,tbl_log_prestamo.id_pres ) AS pressValor ON (pressValor.id_pres=logPrestamo.id_pres AND pressValor.id_clie=logPrestamo.id_clie) \r\n                    WHERE logPrestamo.valor_pres>0 AND logPrestamo.id_autor_usu=ORDER BY clien.orden_ruta_clie ASC', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'ORDER BY clien.orden_ruta_clie ASC\' at line 12', '2020-09-09 19:18:06', 4, 'historial', 'ver'),
+(74, 'c= a= /-/ consulta=SELECT\r\n                     CONCAT_WS (\' \',clien.primer_nombre_clie,clien.segundo_nombre_clie,clien.primer_apellido_clie,clien.segundo_apellido_clie) as nombre,\r\n                     press.valor_cuotas_pres as couta,\r\n                    logPrestamo.valor_pres_logp as pago,\r\n                    (SELECT SUM(tbl_prestamo.valor_pres) FROM tbl_prestamo WHERE tbl_prestamo.id_clie=clien.id_clie) as tVenta,\r\n                    pressValor.pagado,\r\n                    press.valor_pres as debe\r\n                    FROM tbl_log_prestamo as logPrestamo \r\n                    INNER JOIN tbl_cliente AS clien ON (clien.id_clie=logPrestamo.id_clie)\r\n                    INNER JOIN tbl_prestamo AS press ON (press.id_pres=logPrestamo.id_pres)\r\n                    LEFT JOIN (SELECT SUM(tbl_log_prestamo.valor_pres_logp) AS pagado, tbl_log_prestamo.id_clie,tbl_log_prestamo.id_pres FROM tbl_log_prestamo GROUP BY tbl_log_prestamo.id_clie,tbl_log_prestamo.id_pres ) AS pressValor ON (pressValor.id_pres=logPrestamo.id_pres AND pressValor.id_clie=logPrestamo.id_clie) \r\n                    WHERE logPrestamo.valor_pres>0 AND logPrestamo.id_autor_usu= ORDER BY clien.orden_ruta_clie ASC', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'ORDER BY clien.orden_ruta_clie ASC\' at line 12', '2020-09-09 19:18:22', 4, 'historial', 'ver'),
+(75, 'c= a= /-/ consulta=SELECT\r\n                     CONCAT_WS (\' \',clien.primer_nombre_clie,clien.segundo_nombre_clie,clien.primer_apellido_clie,clien.segundo_apellido_clie) as nombre,\r\n                     press.valor_cuotas_pres as couta,\r\n                    logPrestamo.valor_pres_logp as pago,\r\n                    (SELECT SUM(tbl_prestamo.valor_pres) FROM tbl_prestamo WHERE tbl_prestamo.id_clie=clien.id_clie) as tVenta,\r\n                    pressValor.pagado,\r\n                    press.valor_pres as debe\r\n                    FROM tbl_log_prestamo as logPrestamo \r\n                    INNER JOIN tbl_cliente AS clien ON (clien.id_clie=logPrestamo.id_clie)\r\n                    INNER JOIN tbl_prestamo AS press ON (press.id_pres=logPrestamo.id_pres)\r\n                    LEFT JOIN (SELECT SUM(tbl_log_prestamo.valor_pres_logp) AS pagado, tbl_log_prestamo.id_clie,tbl_log_prestamo.id_pres FROM tbl_log_prestamo GROUP BY tbl_log_prestamo.id_clie,tbl_log_prestamo.id_pres ) AS pressValor ON (pressValor.id_pres=logPrestamo.id_pres AND pressValor.id_clie=logPrestamo.id_clie) \r\n                    WHERE logPrestamo.movimiento_logp=1 AND logPrestamo.id_autor_usu= ORDER BY clien.orden_ruta_clie ASC', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'ORDER BY clien.orden_ruta_clie ASC\' at line 12', '2020-09-09 19:19:01', 4, 'historial', 'ver'),
+(76, 'Abonar. => UPDATE tbl_prestamo SET valor_pres=\'130\' WHERE id_pres =15; UPDATE tbl_cliente SET cumplimineto_client = 1 WHERE id_clie =13', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'UPDATE tbl_cliente SET cumplimineto_client = 1 WHERE id_clie =13\' at line 1', '2020-09-09 20:51:34', 4, 'abono', 'abonarPago'),
+(77, ' => CALL logPrestamo(\'0\',\'17\',\'prestamo\',4,\'save\',\'12\',\'Creao prestamo\',\'202\',\'99\')', 'Incorrect number of arguments for PROCEDURE bd_sistema_ruta.logPrestamo; expected 12, got 9', '2020-09-10 02:15:12', 4, 'prestamo', 'save'),
+(78, ' => CALL logPrestamo(\'0\',\'18\',\'prestamo\',4,\'save\',\'12\',\'Creao prestamo\',\'202\',\'99\',::1)', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'::1)\' at line 1', '2020-09-10 02:24:38', 4, 'prestamo', 'save'),
+(79, ' => CALL logPrestamo(\'0\',\'19\',\'prestamo\',4,\'save\',\'12\',\'Creao prestamo\',\'202\',\'99\',6.2867621,-75.5906337,::1)', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'::1)\' at line 1', '2020-09-10 02:27:17', 4, 'prestamo', 'save'),
+(80, 'Consulta de dataTable => SELECT \r\n                CONCAT_WS (\' \',clien.primer_nombre_clie,clien.segundo_nombre_clie,clien.primer_apellido_clie,clien.segundo_apellido_clie) as nombre,\r\n                press.valor_cuotas_pres as couta,\r\n                logPrestamo.valor_pres_logp as pago,\r\n                (SELECT SUM(tbl_prestamo.valor_pres) FROM tbl_prestamo WHERE tbl_prestamo.id_clie=clien.id_clie) as tVenta,\r\n                press.valor_pres as debe,\r\n                logPrestamo.id_logp as idPres\r\n                FROM tbl_ruta_historial as rh\r\n                INNER JOIN tbl_cliente AS clien ON (clien.id_clie=rh.id_clien)\r\n                INNER JOIN tbl_prestamo AS press ON (rh.id_pres=press.id_pres)\r\n                LEFT JOIN tbl_log_prestamo as logPrestamo  ON (logPrestamo.id_logp=rh.id_log_pres_rutaH)\r\n                WHERE clien.id_usu=4 ORDER BY clien.orden_ruta_clie ASC', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'\' at line 12', '2020-09-10 04:41:06', 4, 'historial', 'ver'),
+(81, 'Consulta de dataTable => SELECT \r\n                CONCAT_WS (\' \',clien.primer_nombre_clie,clien.segundo_nombre_clie,clien.primer_apellido_clie,clien.segundo_apellido_clie) as nombre,\r\n                press.valor_cuotas_pres as couta,\r\n                logPrestamo.valor_pres_logp as pago,\r\n                (SELECT SUM(tbl_prestamo.valor_pres) FROM tbl_prestamo WHERE tbl_prestamo.id_clie=clien.id_clie) as tVenta,\r\n                press.valor_pres as debe,\r\n                logPrestamo.id_logp as idPres\r\n                FROM tbl_ruta_historial as rh\r\n                INNER JOIN tbl_cliente AS clien ON (clien.id_clie=rh.id_clien)\r\n                INNER JOIN tbl_prestamo AS press ON (rh.id_pres=press.id_pres)\r\n                LEFT JOIN tbl_log_prestamo as logPrestamo  ON (logPrestamo.id_logp=rh.id_log_pres_rutaH)\r\n                WHERE clien.id_usu=4 ORDER BY clien.orden_ruta_clie ASC', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'\' at line 12', '2020-09-10 04:44:17', 4, 'historial', 'ver'),
+(82, 'Consulta de dataTable => SELECT \r\n                CONCAT_WS (\' \',clien.primer_nombre_clie,clien.segundo_nombre_clie,clien.primer_apellido_clie,clien.segundo_apellido_clie) as nombre,\r\n                press.valor_cuotas_pres as couta,\r\n                logPrestamo.valor_pres_logp as pago,\r\n                (SELECT SUM(tbl_prestamo.valor_pres) FROM tbl_prestamo WHERE tbl_prestamo.id_clie=clien.id_clie) as tVenta,\r\n                press.valor_pres as debe,\r\n                logPrestamo.id_logp as idPres\r\n                FROM tbl_ruta_historial as rh\r\n                INNER JOIN tbl_cliente AS clien ON (clien.id_clie=rh.id_clien)\r\n                INNER JOIN tbl_prestamo AS press ON (rh.id_pres=press.id_pres)\r\n                LEFT JOIN tbl_log_prestamo as logPrestamo  ON (logPrestamo.id_logp=rh.id_log_pres_rutaH)\r\n                WHERE clien.id_usu=4 ORDER BY clien.orden_ruta_clie ASC', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'\' at line 12', '2020-09-10 04:47:20', 4, 'historial', 'ver'),
+(83, 'Consulta de dataTable => SELECT \r\n                CONCAT_WS (\' \',clien.primer_nombre_clie,clien.segundo_nombre_clie,clien.primer_apellido_clie,clien.segundo_apellido_clie) as nombre,\r\n                press.valor_cuotas_pres as couta,\r\n                logPrestamo.valor_pres_logp as pago,\r\n                (SELECT SUM(tbl_prestamo.valor_pres) FROM tbl_prestamo WHERE tbl_prestamo.id_clie=clien.id_clie) as tVenta,\r\n                press.valor_pres as debe,\r\n                logPrestamo.id_logp as idPres\r\n                FROM tbl_ruta_historial as rh\r\n                INNER JOIN tbl_cliente AS clien ON (clien.id_clie=rh.id_clien)\r\n                INNER JOIN tbl_prestamo AS press ON (rh.id_pres=press.id_pres)\r\n                LEFT JOIN tbl_log_prestamo as logPrestamo  ON (logPrestamo.id_logp=rh.id_log_pres_rutaH)\r\n                WHERE clien.id_usu=4 ORDER BY clien.orden_ruta_clie ASC', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'\' at line 12', '2020-09-10 04:50:19', 4, 'historial', 'ver'),
+(84, 'Consulta de dataTable => SELECT \r\n                CONCAT_WS (\' \',clien.primer_nombre_clie,clien.segundo_nombre_clie,clien.primer_apellido_clie,clien.segundo_apellido_clie) as nombre,\r\n                press.valor_cuotas_pres as couta,\r\n                logPrestamo.valor_pres_logp as pago,\r\n                (SELECT SUM(tbl_prestamo.valor_pres) FROM tbl_prestamo WHERE tbl_prestamo.id_clie=clien.id_clie) as tVenta,\r\n                press.valor_pres as debe,\r\n                logPrestamo.id_logp as idPres\r\n                FROM tbl_ruta_historial as rh\r\n                INNER JOIN tbl_cliente AS clien ON (clien.id_clie=rh.id_clien)\r\n                INNER JOIN tbl_prestamo AS press ON (rh.id_pres=press.id_pres)\r\n                LEFT JOIN tbl_log_prestamo as logPrestamo  ON (logPrestamo.id_logp=rh.id_log_pres_rutaH)\r\n                WHERE clien.id_usu=4 ORDER BY clien.orden_ruta_clie ASC', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'\' at line 12', '2020-09-10 04:51:30', 4, 'historial', 'ver'),
+(85, 'Consulta de dataTable => SELECT \r\n                CONCAT_WS (\' \',clien.primer_nombre_clie,clien.segundo_nombre_clie,clien.primer_apellido_clie,clien.segundo_apellido_clie) as nombre,\r\n                press.valor_cuotas_pres as couta,\r\n                logPrestamo.valor_pres_logp as pago,\r\n                (SELECT SUM(tbl_prestamo.valor_pres) FROM tbl_prestamo WHERE tbl_prestamo.id_clie=clien.id_clie) as tVenta,\r\n                press.valor_pres as debe,\r\n                logPrestamo.id_logp as idPres\r\n                FROM tbl_ruta_historial as rh\r\n                INNER JOIN tbl_cliente AS clien ON (clien.id_clie=rh.id_clien)\r\n                INNER JOIN tbl_prestamo AS press ON (rh.id_pres=press.id_pres)\r\n                LEFT JOIN tbl_log_prestamo as logPrestamo  ON (logPrestamo.id_logp=rh.id_log_pres_rutaH)\r\n                WHERE clien.id_usu=4 ORDER BY clien.orden_ruta_clie ASC', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'\' at line 12', '2020-09-10 04:51:37', 4, 'historial', 'ver'),
+(86, 'Consulta de dataTable => SELECT \r\n                CONCAT_WS (\' \',clien.primer_nombre_clie,clien.segundo_nombre_clie,clien.primer_apellido_clie,clien.segundo_apellido_clie) as nombre,\r\n                press.valor_cuotas_pres as couta,\r\n                logPrestamo.valor_pres_logp as pago,\r\n                (SELECT SUM(tbl_prestamo.valor_pres) FROM tbl_prestamo WHERE tbl_prestamo.id_clie=clien.id_clie) as tVenta,\r\n                press.valor_pres as debe,\r\n                logPrestamo.id_logp as idPres\r\n                FROM tbl_ruta_historial as rh\r\n                INNER JOIN tbl_cliente AS clien ON (clien.id_clie=rh.id_clien)\r\n                INNER JOIN tbl_prestamo AS press ON (rh.id_pres=press.id_pres)\r\n                LEFT JOIN tbl_log_prestamo as logPrestamo  ON (logPrestamo.id_logp=rh.id_log_pres_rutaH)\r\n                WHERE clien.id_usu=4 ORDER BY clien.orden_ruta_clie ASC', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'\' at line 12', '2020-09-10 04:55:44', 4, 'historial', 'ver'),
+(87, 'Consulta de dataTable => SELECT \r\n                CONCAT_WS (\' \',clien.primer_nombre_clie,clien.segundo_nombre_clie,clien.primer_apellido_clie,clien.segundo_apellido_clie) as nombre,\r\n                press.valor_cuotas_pres as couta,\r\n                logPrestamo.valor_pres_logp as pago,\r\n                (SELECT SUM(tbl_prestamo.valor_pres) FROM tbl_prestamo WHERE tbl_prestamo.id_clie=clien.id_clie) as tVenta,\r\n                press.valor_pres as debe,\r\n                logPrestamo.id_logp as idPres\r\n                FROM tbl_ruta_historial as rh\r\n                INNER JOIN tbl_cliente AS clien ON (clien.id_clie=rh.id_clien)\r\n                INNER JOIN tbl_prestamo AS press ON (rh.id_pres=press.id_pres)\r\n                LEFT JOIN tbl_log_prestamo as logPrestamo  ON (logPrestamo.id_logp=rh.id_log_pres_rutaH)\r\n                WHERE clien.id_usu=4 ORDER BY clien.orden_ruta_clie ASC', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'\' at line 12', '2020-09-10 05:01:25', 4, 'historial', 'ver'),
+(88, 'Consulta de dataTable => SELECT \r\n                CONCAT_WS (\' \',clien.primer_nombre_clie,clien.segundo_nombre_clie,clien.primer_apellido_clie,clien.segundo_apellido_clie) as nombre,\r\n                press.valor_cuotas_pres as couta,\r\n                logPrestamo.valor_pres_logp as pago,\r\n                (SELECT SUM(tbl_prestamo.valor_pres) FROM tbl_prestamo WHERE tbl_prestamo.id_clie=clien.id_clie) as tVenta,\r\n                press.valor_pres as debe,\r\n                logPrestamo.id_logp as idPres\r\n                FROM tbl_ruta_historial as rh\r\n                INNER JOIN tbl_cliente AS clien ON (clien.id_clie=rh.id_clien)\r\n                INNER JOIN tbl_prestamo AS press ON (rh.id_pres=press.id_pres)\r\n                LEFT JOIN tbl_log_prestamo as logPrestamo  ON (logPrestamo.id_logp=rh.id_log_pres_rutaH)\r\n                WHERE clien.id_usu=4 ORDER BY clien.orden_ruta_clie ASC', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'\' at line 12', '2020-09-10 05:02:00', 4, 'historial', 'ver');
+INSERT INTO `tbl_log_errores` (`int_id_loge`, `text_accion_loge`, `text_descripcion_loge`, `date_fecha_loge`, `int_id_usu`, `text_controller_loge`, `text_func_accion_loge`) VALUES
+(89, 'Consulta de dataTable => SELECT \r\n                CONCAT_WS (\' \',clien.primer_nombre_clie,clien.segundo_nombre_clie,clien.primer_apellido_clie,clien.segundo_apellido_clie) as nombre,\r\n                press.valor_cuotas_pres as couta,\r\n                logPrestamo.valor_pres_logp as pago,\r\n                (SELECT SUM(tbl_prestamo.valor_pres) FROM tbl_prestamo WHERE tbl_prestamo.id_clie=clien.id_clie) as tVenta,\r\n                press.valor_pres as debe,\r\n                logPrestamo.id_logp as idPres\r\n                FROM tbl_ruta_historial as rh\r\n                INNER JOIN tbl_cliente AS clien ON (clien.id_clie=rh.id_clien)\r\n                INNER JOIN tbl_prestamo AS press ON (rh.id_pres=press.id_pres)\r\n                LEFT JOIN tbl_log_prestamo as logPrestamo  ON (logPrestamo.id_logp=rh.id_log_pres_rutaH)\r\n                WHERE clien.id_usu=4 ORDER BY clien.orden_ruta_clie ASC', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'\' at line 12', '2020-09-10 05:02:19', 4, 'historial', 'ver'),
+(90, 'Consulta de dataTable => SELECT \r\n                CONCAT_WS (\' \',clien.primer_nombre_clie,clien.segundo_nombre_clie,clien.primer_apellido_clie,clien.segundo_apellido_clie) as nombre,\r\n                press.valor_cuotas_pres as couta,\r\n                logPrestamo.valor_pres_logp as pago,\r\n                (SELECT SUM(tbl_prestamo.valor_pres) FROM tbl_prestamo WHERE tbl_prestamo.id_clie=clien.id_clie) as tVenta,\r\n                press.valor_pres as debe,\r\n                logPrestamo.id_logp as idPres\r\n                FROM tbl_ruta_historial as rh\r\n                INNER JOIN tbl_cliente AS clien ON (clien.id_clie=rh.id_clien)\r\n                INNER JOIN tbl_prestamo AS press ON (rh.id_pres=press.id_pres)\r\n                LEFT JOIN tbl_log_prestamo as logPrestamo  ON (logPrestamo.id_logp=rh.id_log_pres_rutaH)\r\n                WHERE clien.id_usu=4 ORDER BY clien.orden_ruta_clie ASC', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'\' at line 12', '2020-09-10 05:09:36', 4, 'historial', 'ver'),
+(91, 'Consulta de dataTable => SELECT \r\n                CONCAT_WS (\' \',clien.primer_nombre_clie,clien.segundo_nombre_clie,clien.primer_apellido_clie,clien.segundo_apellido_clie) as nombre,\r\n                press.valor_cuotas_pres as couta,\r\n                logPrestamo.valor_pres_logp as pago,\r\n                (SELECT SUM(tbl_prestamo.valor_pres) FROM tbl_prestamo WHERE tbl_prestamo.id_clie=clien.id_clie) as tVenta,\r\n                press.valor_pres as debe,\r\n                logPrestamo.id_logp as idPres,\r\n                rh.cumplimineto_rutaH as cumplimiento,\r\n                diasvTable.diasV\r\n                FROM tbl_ruta_historial as rh\r\n                INNER JOIN tbl_cliente AS clien ON (clien.id_clie=rh.id_clien)\r\n                INNER JOIN tbl_prestamo AS press ON (rh.id_pres=press.id_pres)\r\n                LEFT JOIN tbl_log_prestamo as logPrestamo  ON (logPrestamo.id_logp=rh.id_log_pres_rutaH)\r\n                LEFT JOIN (\r\n                    SELECT count(tbl_ruta_historial.id_rutaH) AS diasV,tbl_ruta_historial.id_clien,tbl_ruta_historial.cumplimineto_rutaH \r\n                    FROM tbl_ruta_historial\r\n                    WHERE diasvTable.cumplimineto_rutaH=0 \r\n                    GROUP BY tbl_ruta_historial.id_clien) as diasvTable ON (diasvTable.id_clien=clien.id_clie)\r\n                WHERE clien.id_usu=4 ORDER BY clien.orden_ruta_clie ASC', 'Unknown column \'diasvTable.cumplimineto_rutaH\' in \'where clause\'', '2020-09-10 06:27:02', 4, 'historial', 'ver'),
+(92, 'c= a= /-/ consulta=SELECT pres.valor_pres,pres.valor_cuotas_pres,pres.id_clie,client.cumplimineto_client\r\n                      FROM tbl_prestamo as pres\r\n                      INNER JOIN tbl_log_prestamo as presLog ON (presLog.id_pres=pres.id_pres) \r\n                      WHERE presLog.id_logp=48', 'Unknown column \'client.cumplimineto_client\' in \'field list\'', '2020-09-11 16:08:34', 4, 'historial', 'abonarPago');
 
 -- --------------------------------------------------------
 
@@ -376,42 +417,6 @@ CREATE TABLE `tbl_log_gasto` (
   `id_autor_gas` bigint(20) NOT NULL,
   `accion_func_logu` text COLLATE utf8_swedish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
-
---
--- Volcado de datos para la tabla `tbl_log_gasto`
---
-
-INSERT INTO `tbl_log_gasto` (`id_logg`, `movimiento_logg`, `fecha_logg`, `id_gas`, `controller_logg`, `id_autor_gas`, `accion_func_logu`) VALUES
-(2, 0, '2020-08-28 01:26:19', 1, 'gasto', 3, '0'),
-(3, 0, '2020-08-28 01:43:29', 2, 'gasto', 3, 'save'),
-(4, 0, '2020-08-28 01:47:37', 3, 'gasto', 3, 'save'),
-(5, 0, '2020-08-28 01:48:31', 4, 'gasto', 3, 'save'),
-(6, 0, '2020-08-28 01:49:12', 5, 'gasto', 3, 'save'),
-(7, 0, '2020-08-28 05:30:44', 6, 'gasto', 4, 'save'),
-(8, 0, '2020-08-28 05:46:24', 7, 'gasto', 3, 'save'),
-(9, 0, '2020-08-28 05:46:57', 8, 'gasto', 3, 'save'),
-(10, 0, '2020-08-28 05:47:17', 9, 'gasto', 3, 'save'),
-(11, 0, '2020-08-28 05:47:55', 10, 'gasto', 3, 'save'),
-(12, 0, '2020-08-28 05:48:22', 11, 'gasto', 3, 'save'),
-(13, 0, '2020-08-28 05:49:24', 12, 'gasto', 3, 'save'),
-(14, 0, '2020-08-28 05:51:04', 13, 'gasto', 3, 'save'),
-(15, 0, '2020-08-28 05:51:46', 14, 'gasto', 3, 'save'),
-(16, 0, '2020-08-28 05:51:57', 15, 'gasto', 3, 'save'),
-(17, 0, '2020-08-28 05:52:16', 16, 'gasto', 3, 'save'),
-(18, 0, '2020-08-28 05:53:23', 17, 'gasto', 3, 'save'),
-(19, 0, '2020-08-28 05:55:36', 18, 'gasto', 3, 'save'),
-(20, 0, '2020-08-28 05:57:19', 19, 'gasto', 3, 'save'),
-(21, 0, '2020-08-28 05:59:11', 20, 'gasto', 3, 'save'),
-(22, 0, '2020-08-28 07:11:55', 21, 'gasto', 4, 'save'),
-(23, 0, '2020-08-28 07:14:37', 22, 'gasto', 4, 'save'),
-(24, 0, '2020-08-28 07:39:14', 23, 'gasto', 4, 'save'),
-(25, 0, '2020-08-28 07:44:38', 24, 'gasto', 4, 'save'),
-(26, 0, '2020-08-28 07:45:16', 25, 'gasto', 4, 'save'),
-(27, 0, '2020-08-28 12:26:18', 26, 'gasto', 3, 'save'),
-(28, 3, '2020-09-03 19:18:38', 3, 'gasto', 3, 'cambiarEstado'),
-(29, 3, '2020-09-03 19:27:18', 5, 'gasto', 3, 'cambiarEstado'),
-(30, 3, '2020-09-03 20:05:12', 26, 'gasto', 3, 'cambiarEstado'),
-(31, 3, '2020-09-03 20:05:58', 1, 'gasto', 3, 'cambiarEstado');
 
 -- --------------------------------------------------------
 
@@ -430,43 +435,23 @@ CREATE TABLE `tbl_log_prestamo` (
   `id_clie` bigint(20) NOT NULL,
   `valor_pres_logp` double NOT NULL,
   `nota_logp` text COLLATE utf8_swedish_ci NOT NULL,
-  `forma_pago_logp` int(11) NOT NULL
+  `forma_pago_logp` int(11) NOT NULL,
+  `latitud_logp` text COLLATE utf8_swedish_ci DEFAULT '0',
+  `longitud_logp` text COLLATE utf8_swedish_ci DEFAULT '0',
+  `ip_logp` text COLLATE utf8_swedish_ci DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
 
 --
 -- Volcado de datos para la tabla `tbl_log_prestamo`
 --
 
-INSERT INTO `tbl_log_prestamo` (`id_logp`, `movimiento_logp`, `fecha_logp`, `id_pres`, `controller_logp`, `id_autor_usu`, `accion_func_logp`, `id_clie`, `valor_pres_logp`, `nota_logp`, `forma_pago_logp`) VALUES
-(1, 0, '2020-09-07 01:38:52', 6, 'prestamo', 3, 'save', 0, 0, '0', 0),
-(2, 0, '2020-09-07 01:40:30', 7, 'prestamo', 3, 'save', 0, 0, '0', 0),
-(3, 0, '2020-09-07 01:56:33', 8, 'prestamo', 3, 'save', 0, 0, '0', 0),
-(4, 0, '2020-09-07 01:57:41', 9, 'prestamo', 3, 'save', 0, 0, '0', 0),
-(5, 1, '2020-09-08 22:32:26', 9, '3', 0, 'abono', 3, 18, '0', 0),
-(6, 1, '2020-09-08 22:35:38', 9, 'abono', 3, 'abonarPago', 3, 18, '0', 0),
-(7, 1, '2020-09-08 22:36:32', 9, 'abono', 3, 'abonarPago', 3, 18, 'prueba', 0),
-(8, 1, '2020-09-08 22:38:39', 9, 'abono', 3, 'abonarPago', 3, 18, 'prueba', 0),
-(9, 1, '2020-09-08 22:39:07', 9, 'abono', 3, 'abonarPago', 3, 18, 'prueba', 0),
-(10, 1, '2020-09-08 22:40:02', 9, 'abono', 3, 'abonarPago', 3, 18, 'error', 0),
-(11, 1, '2020-09-08 22:40:54', 9, 'abono', 3, 'abonarPago', 3, 18, 'valor', 0),
-(12, 1, '2020-09-08 22:41:01', 9, 'abono', 3, 'abonarPago', 3, 18, 'valor', 0),
-(13, 1, '2020-09-08 22:41:07', 9, 'abono', 3, 'abonarPago', 3, 18, 'valor', 0),
-(14, 1, '2020-09-08 22:41:44', 9, 'abono', 3, 'abonarPago', 3, 0, 'valor', 0),
-(15, 1, '2020-09-08 22:45:38', 9, 'abono', 3, 'abonarPago', 3, 18, 'tipo', 0),
-(16, 1, '2020-09-08 22:46:50', 9, 'abono', 3, 'abonarPago', 3, 18, 'tipo', 0),
-(17, 1, '2020-09-08 22:49:47', 9, 'abono', 3, 'abonarPago', 3, 18, '', 0),
-(18, 1, '2020-09-08 22:50:21', 9, 'abono', 3, 'abonarPago', 3, 18, '33', 0),
-(19, 1, '2020-09-08 22:50:28', 9, 'abono', 3, 'abonarPago', 3, 18, '', 0),
-(20, 1, '2020-09-08 22:53:07', 9, 'abono', 3, 'abonarPago', 3, 18, 'nota', 0),
-(21, 1, '2020-09-08 22:54:05', 9, 'abono', 3, 'abonarPago', 3, 0, 'nota', 1),
-(22, 1, '2020-09-08 22:54:45', 9, 'abono', 3, 'abonarPago', 3, 0, 'n', 1),
-(23, 1, '2020-09-08 22:58:01', 9, 'abono', 3, 'abonarPago', 3, 22, 'n', 1),
-(24, 1, '2020-09-08 22:58:17', 9, 'abono', 3, 'abonarPago', 3, 8, 'n', 1),
-(25, 1, '2020-09-08 22:59:21', 9, 'abono', 3, 'abonarPago', 3, 9, 'n', 1),
-(26, 1, '2020-09-08 23:07:07', 9, 'abono', 3, 'abonarPago', 3, 51, 'd', 1),
-(27, 1, '2020-09-08 23:16:22', 10, 'abono', 3, 'abonarPago', 3, 303, 'pago total', 1),
-(28, 1, '2020-09-08 23:17:27', 11, 'abono', 3, 'abonarPago', 3, 202, 'total', 1),
-(29, 0, '2020-09-08 23:17:52', 12, 'prestamo', 3, 'save', 3, 202, 'Creao prestamo', 99);
+INSERT INTO `tbl_log_prestamo` (`id_logp`, `movimiento_logp`, `fecha_logp`, `id_pres`, `controller_logp`, `id_autor_usu`, `accion_func_logp`, `id_clie`, `valor_pres_logp`, `nota_logp`, `forma_pago_logp`, `latitud_logp`, `longitud_logp`, `ip_logp`) VALUES
+(43, 0, '2020-09-10 02:28:38', 21, 'prestamo', 4, 'save', 12, 202, 'Creao prestamo', 99, '6.286714099999999', '-75.59060199999999', '::1'),
+(44, 0, '2020-09-10 02:29:02', 22, 'prestamo', 4, 'save', 11, 570, 'Creao prestamo', 99, '6.286714099999999', '-75.59060199999999', '::1'),
+(45, 0, '2020-09-10 02:29:18', 23, 'prestamo', 4, 'save', 13, 600, 'Creao prestamo', 99, '6.2867121', '-75.59061380000001', '::1'),
+(46, 1, '2020-09-10 02:30:17', 23, 'abono', 4, 'abonarPago', 13, 60, '', 0, '6.2867408', '-75.59064359999999', '::1'),
+(47, 1, '2020-09-10 02:31:23', 22, 'abono', 4, 'abonarPago', 11, 20, '', 1, '6.2867408', '-75.59064359999999', '::1'),
+(48, 1, '2020-09-10 02:37:18', 21, 'abono', 4, 'abonarPago', 12, 20, '', 1, '6.286728699999999', '-75.5907087', '::1');
 
 -- --------------------------------------------------------
 
@@ -556,11 +541,36 @@ CREATE TABLE `tbl_prestamo` (
 --
 
 INSERT INTO `tbl_prestamo` (`id_pres`, `id_clie`, `fecha_limite_pres`, `valor_pres`, `forma_pago_pres`, `numero_cuota_pres`, `valor_cuotas_pres`, `intereses_press`, `valor_neto_clie`) VALUES
-(8, 2, '2020-09-07 00:00:00', 202, 1, 1, 202, '1', 200),
-(9, 3, '2020-09-07 00:00:00', 0, 1, 20, 18, '20', 300),
-(10, 3, '2020-09-08 00:00:00', 0, 1, 1, 303, '1', 300),
-(11, 3, '2020-09-08 00:00:00', 0, 1, 1, 202, '1', 200),
-(12, 3, '2020-09-08 00:00:00', 202, 1, 1, 202, '1', 200);
+(21, 12, '2020-09-10 00:00:00', 182, 1, 1, 202, '1', 200),
+(22, 11, '2020-09-10 00:00:00', 550, 1, 10, 57, '90', 300),
+(23, 13, '2020-09-10 00:00:00', 540, 1, 10, 60, '100', 300);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tbl_ruta_historial`
+--
+
+CREATE TABLE `tbl_ruta_historial` (
+  `id_rutaH` bigint(20) NOT NULL,
+  `id_clien` bigint(20) NOT NULL,
+  `cumplimineto_rutaH` int(11) NOT NULL COMMENT '0-NO PAGO,1-PAGO',
+  `fecha_rutaH` datetime NOT NULL,
+  `id_pres` bigint(20) NOT NULL,
+  `id_log_pres_rutaH` bigint(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
+
+--
+-- Volcado de datos para la tabla `tbl_ruta_historial`
+--
+
+INSERT INTO `tbl_ruta_historial` (`id_rutaH`, `id_clien`, `cumplimineto_rutaH`, `fecha_rutaH`, `id_pres`, `id_log_pres_rutaH`) VALUES
+(10, 12, 48, '2020-09-10 02:55:54', 21, 48),
+(11, 11, 47, '2020-09-10 02:55:54', 22, 47),
+(12, 13, 46, '2020-09-10 02:55:54', 23, 46),
+(13, 12, 0, '2020-09-10 05:39:02', 21, 0),
+(14, 11, 0, '2020-09-10 05:39:02', 22, 0),
+(15, 13, 0, '2020-09-10 05:39:02', 23, 0);
 
 -- --------------------------------------------------------
 
@@ -622,8 +632,8 @@ CREATE TABLE `tbl_usuarios` (
 INSERT INTO `tbl_usuarios` (`id_usu`, `documento_usu`, `primer_nombre_usu`, `segundo_nombre_usu`, `primer_apellido_usu`, `segundo_apellido_usu`, `telefono_1_usu`, `telefono_2_usu`, `direcion_usu`, `sexo_usu`, `correo_usu`, `contrasena_usu`, `fecha_nacimineto_usu`, `foto_usu`, `estado_usu`, `rol_usu`, `estado_localidad_usu`, `ciudad_localidad_usu`, `id_coordinador_usu`) VALUES
 (1, 123456789, 'Administrado', '', 'Administrado', '', 1234567890, 1234567890, 'No hay', 0, 'brCredit@gmail.com', '$2y$09$kW4CevXhkZTQ3Pm.vh4r5e.zcdT8GFuXNSSHhunPf8T78FOlasJai', '1992-01-01 00:00:00', '20200826031244_0.png', 1, 0, '3', '219', 0),
 (2, 1111111111, 'coordinador', '', 'prueba', '', 1111111111, 1111111111, 'no hay', 0, 'coordinador@gmail.com', '$2y$09$CGCFUUzKUYoxwxa96bIlDOMXavvBEOHJRokhlVqKYF0s2BGStNPXS', '2007-08-16 00:00:00', 'usuario.jpg', 1, 1, '2', '105', 0),
-(3, 2222222222, 'vendedor', '', 'prueba', '', 2222222222, 2222222222, 'no hay', 0, 'vendedor@gmail.com', '$2y$09$lt2KXTDatmt3ieBT2uPdCeRrxEAUF8GGSWinjSxppjldHVtgNeO7e', '2007-08-16 00:00:00', 'usuario.jpg', 1, 2, '6', '702', 1),
-(4, 4444444444444, 'prueba', '', 'prueba', '', 55555555555555, 0, 'fffff', 0, 'prueba@GMAIL.COM', '$2y$09$exULs4LOlHnRF0jsNpcaBekB.pC5X1ctHWobB4xA0K6rG5zgu4yaG', '2007-08-19 00:00:00', 'usuario.jpg', 1, 2, '2', '101', 1);
+(3, 1, 'vendedor', '', 'prueba', '', 2222222222, 2222222222, 'no hay', 0, 'vendedor@gmail.com', '$2y$09$lt2KXTDatmt3ieBT2uPdCeRrxEAUF8GGSWinjSxppjldHVtgNeO7e', '2007-08-16 00:00:00', 'usuario.jpg', 1, 2, '6', '702', 1),
+(4, 4, 'prueba', '', 'prueba', '', 55555555555555, 0, 'fffff', 0, 'prueba@GMAIL.COM', '$2y$09$exULs4LOlHnRF0jsNpcaBekB.pC5X1ctHWobB4xA0K6rG5zgu4yaG', '2007-08-19 00:00:00', 'usuario.jpg', 1, 2, '2', '101', 1);
 
 --
 -- Índices para tablas volcadas
@@ -690,6 +700,12 @@ ALTER TABLE `tbl_prestamo`
   ADD PRIMARY KEY (`id_pres`);
 
 --
+-- Indices de la tabla `tbl_ruta_historial`
+--
+ALTER TABLE `tbl_ruta_historial`
+  ADD PRIMARY KEY (`id_rutaH`);
+
+--
 -- Indices de la tabla `tbl_tipo_gasto`
 --
 ALTER TABLE `tbl_tipo_gasto`
@@ -710,7 +726,7 @@ ALTER TABLE `tbl_usuarios`
 -- AUTO_INCREMENT de la tabla `tbl_cliente`
 --
 ALTER TABLE `tbl_cliente`
-  MODIFY `id_clie` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_clie` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT de la tabla `tbl_gasto`
@@ -722,13 +738,13 @@ ALTER TABLE `tbl_gasto`
 -- AUTO_INCREMENT de la tabla `tbl_log_cliente`
 --
 ALTER TABLE `tbl_log_cliente`
-  MODIFY `id_logc` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
+  MODIFY `id_logc` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=84;
 
 --
 -- AUTO_INCREMENT de la tabla `tbl_log_errores`
 --
 ALTER TABLE `tbl_log_errores`
-  MODIFY `int_id_loge` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
+  MODIFY `int_id_loge` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=93;
 
 --
 -- AUTO_INCREMENT de la tabla `tbl_log_gasto`
@@ -740,7 +756,7 @@ ALTER TABLE `tbl_log_gasto`
 -- AUTO_INCREMENT de la tabla `tbl_log_prestamo`
 --
 ALTER TABLE `tbl_log_prestamo`
-  MODIFY `id_logp` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `id_logp` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT de la tabla `tbl_log_tipo_gasto`
@@ -758,7 +774,13 @@ ALTER TABLE `tbl_log_usuarios`
 -- AUTO_INCREMENT de la tabla `tbl_prestamo`
 --
 ALTER TABLE `tbl_prestamo`
-  MODIFY `id_pres` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id_pres` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+
+--
+-- AUTO_INCREMENT de la tabla `tbl_ruta_historial`
+--
+ALTER TABLE `tbl_ruta_historial`
+  MODIFY `id_rutaH` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT de la tabla `tbl_tipo_gasto`
@@ -793,6 +815,26 @@ ALTER TABLE `tbl_log_errores`
 --
 ALTER TABLE `tbl_log_usuarios`
   ADD CONSTRAINT `tbl_log_usuarios_ibfk_1` FOREIGN KEY (`id_usu`) REFERENCES `tbl_usuarios` (`id_usu`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+DELIMITER $$
+--
+-- Eventos
+--
+CREATE DEFINER=`root`@`localhost` EVENT `eventoPagoHistrorial` ON SCHEDULE EVERY 23 DAY STARTS '2020-09-10 05:39:02' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
+INSERT INTO tbl_ruta_historial (id_rutaH, id_clien, cumplimineto_rutaH, fecha_rutaH,id_pres,id_log_pres_rutaH) 
+(SELECT NULL,
+tbl_cliente.id_clie,
+if(tbl_cliente.cumplimineto_client!=0,tbl_cliente.cumplimineto_client,0) AS cumplimineto_rutaH,
+now() AS fecha_rutaH,
+tbl_prestamo.id_pres,
+tbl_cliente.cumplimineto_client
+FROM tbl_cliente
+INNER JOIN tbl_prestamo ON (tbl_prestamo.id_clie=tbl_cliente.id_clie AND tbl_prestamo.valor_pres>0));
+
+UPDATE tbl_cliente SET cumplimineto_client = 0;
+END$$
+
+DELIMITER ;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

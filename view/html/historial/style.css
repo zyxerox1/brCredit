@@ -72,3 +72,12 @@
 .coutaTable{
   padding-left: 20px;
 }
+
+.edit{
+    position: relative;
+    float: right;
+    /* margin-bottom: -7px; */
+    margin-top: -36px;
+    /* padding-right: 17px; */
+    margin-right: 2pc;
+}

@@ -21,6 +21,8 @@ class historial_controller
         $data_filtro=$this->historial->obtener_filtro_cliente();
         require_once HTML_DIR . 'overall/header.php';
         require_once HTML_DIR . 'overall/topNav.php';
+        require_once HTML_DIR . 'historial/modalEditarAbono.php';
+        require_once HTML_DIR . 'historial/modal_confirmacion.php';
         require_once HTML_DIR . 'historial/historial.php';
         require_once HTML_DIR . 'overall/footer.php';
     }
@@ -31,4 +33,29 @@ class historial_controller
         $data=$this->historial->ver($_REQUEST);
         echo json_encode($data);
     }
+
+     public function obtenerDataCliente(){
+        $this->validacion->validarRol(2);
+        $data=$this->historial->DataCliente($_POST);
+        echo json_encode($data);
+    }
+
+    public function abonarPago(){
+      $errores=array();
+      if($_POST['idPres']==""){
+        $errores[] = array('error' => 1,"mensaje"=>"Error a completa el pago." );
+      }
+
+      if(count($errores)==0){
+          if ($_POST['valorAbono']=="") {
+              return array('control' =>"valorAbono" ,'error' => "Tiene que ingresar un valor"  );
+          }else{
+              $_POST['valorAbono'] = preg_replace('/[.,]/', '', $_POST['valorAbono']);
+          }
+
+          $errores=$this->historial->abonar($_POST['idPres'],$_POST['notaPago'],$_POST['valorAbono'],$_POST['latitud'],$_POST['longitud']);
+      }
+      echo json_encode($errores);
+    }
+
 }
