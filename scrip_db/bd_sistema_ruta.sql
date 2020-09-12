@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 12-09-2020 a las 19:26:05
+-- Tiempo de generación: 13-09-2020 a las 01:41:11
 -- Versión del servidor: 10.4.11-MariaDB
 -- Versión de PHP: 7.4.4
 
@@ -50,9 +50,9 @@ BEGIN
     INSERT INTO `tbl_log_errores` (`int_id_loge`, `text_accion_loge`, `text_descripcion_loge`, `date_fecha_loge`, `int_id_usu`,text_controller_loge,text_func_accion_loge) VALUES (NULL, accion,descripcion,now(),id_usu,controller,accion_func);
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `logGasto` (IN `movimiento` TEXT, IN `id_gasto` BIGINT, IN `controller` TEXT, IN `autor` BIGINT, IN `accion` TEXT)  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `logGasto` (IN `movimiento` TEXT, IN `id_gasto` BIGINT, IN `controller` TEXT, IN `autor` BIGINT, IN `accion` TEXT, IN `valor` DOUBLE, IN `nota` TEXT, IN `latitud` TEXT, IN `longitud` TEXT)  NO SQL
 BEGIN
-	INSERT INTO `tbl_log_gasto` (`id_logg`, `movimiento_logg`, `fecha_logg`, `id_gas`, `controller_logg`, `id_autor_gas`, `accion_func_logu`) VALUES (NULL, movimiento, now(), id_gasto, controller, autor, accion);
+	INSERT INTO `tbl_log_gasto` (`id_logg`, `movimiento_logg`, `fecha_logg`, `id_gas`, `controller_logg`, `id_autor_gas`, `accion_func_logu`,valor_logg, nota_logg, latitud_logg, longitud_logg) VALUES (NULL, movimiento, now(), id_gasto, controller, autor, accion,valor,nota,latitud,longitud);
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `loginCorreo` (IN `dataUsuario` TEXT)  NO SQL
@@ -184,11 +184,26 @@ CREATE TABLE `tbl_gasto` (
   `valor_gas` double NOT NULL,
   `fecha_gas` datetime NOT NULL,
   `evidencia_gas` text COLLATE utf8_swedish_ci DEFAULT NULL,
-  `nota_gas` text COLLATE utf8_swedish_ci DEFAULT NULL,
   `id_usu` bigint(20) NOT NULL,
   `id_tipo_tipog` bigint(20) NOT NULL,
-  `estado_gas` int(11) NOT NULL DEFAULT 0
+  `estado_gas` int(11) NOT NULL DEFAULT 0,
+  `pagado_gasto_gas` double NOT NULL DEFAULT 0,
+  `valor_total_gas` double NOT NULL DEFAULT 0,
+  `nota_gas` text COLLATE utf8_swedish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
+
+--
+-- Volcado de datos para la tabla `tbl_gasto`
+--
+
+INSERT INTO `tbl_gasto` (`id_gas`, `valor_gas`, `fecha_gas`, `evidencia_gas`, `id_usu`, `id_tipo_tipog`, `estado_gas`, `pagado_gasto_gas`, `valor_total_gas`, `nota_gas`) VALUES
+(27, 0, '2020-09-12 16:20:27', '20200912232027_3.png', 3, 7, 1, 0, 200, ''),
+(28, 200, '2020-09-12 17:30:46', '20200913003046_3.png', 3, 4, 1, 200, 200, 'dd'),
+(29, 200, '2020-09-12 18:27:56', '20200913012756_3.png', 3, 1, 3, 0, 200, 'gg'),
+(30, 0, '2020-09-12 18:29:28', '20200913012928_3.png', 3, 1, 1, 200, 200, 'ffff'),
+(31, 0, '2020-09-12 18:34:16', '20200913013416_3.png', 3, 1, 1, 200, 200, 'ddd'),
+(32, 200, '2020-09-12 18:37:15', '20200913013715_3.png', 3, 2, 3, 0, 200, 'dsadsa'),
+(33, 0, '2020-09-12 18:37:29', '20200913013729_3.png', 3, 1, 1, 321312, 321312, '231233');
 
 -- --------------------------------------------------------
 
@@ -293,7 +308,11 @@ INSERT INTO `tbl_log_cliente` (`id_logc`, `movimiento_logc`, `fecha_logc`, `id_u
 (80, 4, '2020-09-10 00:43:20', 13, 'abono', 4, 'abonarPago'),
 (81, 4, '2020-09-10 02:30:18', 13, 'abono', 4, 'abonarPago'),
 (82, 4, '2020-09-10 02:31:23', 11, 'abono', 4, 'abonarPago'),
-(83, 4, '2020-09-10 02:37:18', 12, 'abono', 4, 'abonarPago');
+(83, 4, '2020-09-10 02:37:18', 12, 'abono', 4, 'abonarPago'),
+(84, 4, '2020-09-12 14:35:41', 14, 'abono', 4, 'abonarPago'),
+(85, 4, '2020-09-12 15:23:00', 14, 'abono', 4, 'abonarPago'),
+(86, 4, '2020-09-12 15:44:49', 11, 'abono', 4, 'abonarPago'),
+(87, 4, '2020-09-12 16:00:41', 11, 'abono', 4, 'abonarPago');
 
 -- --------------------------------------------------------
 
@@ -400,7 +419,10 @@ INSERT INTO `tbl_log_errores` (`int_id_loge`, `text_accion_loge`, `text_descripc
 (89, 'Consulta de dataTable => SELECT \r\n                CONCAT_WS (\' \',clien.primer_nombre_clie,clien.segundo_nombre_clie,clien.primer_apellido_clie,clien.segundo_apellido_clie) as nombre,\r\n                press.valor_cuotas_pres as couta,\r\n                logPrestamo.valor_pres_logp as pago,\r\n                (SELECT SUM(tbl_prestamo.valor_pres) FROM tbl_prestamo WHERE tbl_prestamo.id_clie=clien.id_clie) as tVenta,\r\n                press.valor_pres as debe,\r\n                logPrestamo.id_logp as idPres\r\n                FROM tbl_ruta_historial as rh\r\n                INNER JOIN tbl_cliente AS clien ON (clien.id_clie=rh.id_clien)\r\n                INNER JOIN tbl_prestamo AS press ON (rh.id_pres=press.id_pres)\r\n                LEFT JOIN tbl_log_prestamo as logPrestamo  ON (logPrestamo.id_logp=rh.id_log_pres_rutaH)\r\n                WHERE clien.id_usu=4 ORDER BY clien.orden_ruta_clie ASC', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'\' at line 12', '2020-09-10 05:02:19', 4, 'historial', 'ver'),
 (90, 'Consulta de dataTable => SELECT \r\n                CONCAT_WS (\' \',clien.primer_nombre_clie,clien.segundo_nombre_clie,clien.primer_apellido_clie,clien.segundo_apellido_clie) as nombre,\r\n                press.valor_cuotas_pres as couta,\r\n                logPrestamo.valor_pres_logp as pago,\r\n                (SELECT SUM(tbl_prestamo.valor_pres) FROM tbl_prestamo WHERE tbl_prestamo.id_clie=clien.id_clie) as tVenta,\r\n                press.valor_pres as debe,\r\n                logPrestamo.id_logp as idPres\r\n                FROM tbl_ruta_historial as rh\r\n                INNER JOIN tbl_cliente AS clien ON (clien.id_clie=rh.id_clien)\r\n                INNER JOIN tbl_prestamo AS press ON (rh.id_pres=press.id_pres)\r\n                LEFT JOIN tbl_log_prestamo as logPrestamo  ON (logPrestamo.id_logp=rh.id_log_pres_rutaH)\r\n                WHERE clien.id_usu=4 ORDER BY clien.orden_ruta_clie ASC', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'\' at line 12', '2020-09-10 05:09:36', 4, 'historial', 'ver'),
 (91, 'Consulta de dataTable => SELECT \r\n                CONCAT_WS (\' \',clien.primer_nombre_clie,clien.segundo_nombre_clie,clien.primer_apellido_clie,clien.segundo_apellido_clie) as nombre,\r\n                press.valor_cuotas_pres as couta,\r\n                logPrestamo.valor_pres_logp as pago,\r\n                (SELECT SUM(tbl_prestamo.valor_pres) FROM tbl_prestamo WHERE tbl_prestamo.id_clie=clien.id_clie) as tVenta,\r\n                press.valor_pres as debe,\r\n                logPrestamo.id_logp as idPres,\r\n                rh.cumplimineto_rutaH as cumplimiento,\r\n                diasvTable.diasV\r\n                FROM tbl_ruta_historial as rh\r\n                INNER JOIN tbl_cliente AS clien ON (clien.id_clie=rh.id_clien)\r\n                INNER JOIN tbl_prestamo AS press ON (rh.id_pres=press.id_pres)\r\n                LEFT JOIN tbl_log_prestamo as logPrestamo  ON (logPrestamo.id_logp=rh.id_log_pres_rutaH)\r\n                LEFT JOIN (\r\n                    SELECT count(tbl_ruta_historial.id_rutaH) AS diasV,tbl_ruta_historial.id_clien,tbl_ruta_historial.cumplimineto_rutaH \r\n                    FROM tbl_ruta_historial\r\n                    WHERE diasvTable.cumplimineto_rutaH=0 \r\n                    GROUP BY tbl_ruta_historial.id_clien) as diasvTable ON (diasvTable.id_clien=clien.id_clie)\r\n                WHERE clien.id_usu=4 ORDER BY clien.orden_ruta_clie ASC', 'Unknown column \'diasvTable.cumplimineto_rutaH\' in \'where clause\'', '2020-09-10 06:27:02', 4, 'historial', 'ver'),
-(92, 'c= a= /-/ consulta=SELECT pres.valor_pres,pres.valor_cuotas_pres,pres.id_clie,client.cumplimineto_client\r\n                      FROM tbl_prestamo as pres\r\n                      INNER JOIN tbl_log_prestamo as presLog ON (presLog.id_pres=pres.id_pres) \r\n                      WHERE presLog.id_logp=48', 'Unknown column \'client.cumplimineto_client\' in \'field list\'', '2020-09-11 16:08:34', 4, 'historial', 'abonarPago');
+(92, 'c= a= /-/ consulta=SELECT pres.valor_pres,pres.valor_cuotas_pres,pres.id_clie,client.cumplimineto_client\r\n                      FROM tbl_prestamo as pres\r\n                      INNER JOIN tbl_log_prestamo as presLog ON (presLog.id_pres=pres.id_pres) \r\n                      WHERE presLog.id_logp=48', 'Unknown column \'client.cumplimineto_client\' in \'field list\'', '2020-09-11 16:08:34', 4, 'historial', 'abonarPago'),
+(93, 'Consulta de dataTable => SELECT \r\n                CONCAT_WS (\' \',clien.primer_nombre_clie,clien.segundo_nombre_clie,clien.primer_apellido_clie,clien.segundo_apellido_clie) as nombre,\r\n                press.valor_cuotas_pres as couta,\r\n                logPrestamo.valor_pres_logp as pago,\r\n                (SELECT SUM(tbl_prestamo.valor_pres) FROM tbl_prestamo WHERE tbl_prestamo.id_clie=clien.id_clie) as tVenta,\r\n                press.valor_pres as debe,\r\n                logPrestamo.id_logp as idPres,\r\n                press.id_pres as idPrestamos\r\n                rh.cumplimineto_rutaH as cumplimiento,\r\n                diasvTable.diasV,\r\n                clien.id_clie as idClie,\r\n                rh.id_rutaH AS idRuta\r\n                FROM tbl_ruta_historial as rh\r\n                INNER JOIN tbl_cliente AS clien ON (clien.id_clie=rh.id_clien)\r\n                INNER JOIN tbl_prestamo AS press ON (rh.id_pres=press.id_pres)\r\n                LEFT JOIN tbl_log_prestamo as logPrestamo  ON (logPrestamo.id_logp=rh.id_log_pres_rutaH)\r\n                LEFT JOIN (\r\n                    SELECT count(tbl_ruta_historial.id_rutaH) AS diasV,tbl_ruta_historial.id_clien,tbl_ruta_historial.cumplimineto_rutaH \r\n                    FROM tbl_ruta_historial\r\n                    WHERE tbl_ruta_historial.cumplimineto_rutaH=0 \r\n                    GROUP BY tbl_ruta_historial.id_clien) as diasvTable ON (diasvTable.id_clien=clien.id_clie)\r\n                WHERE clien.id_usu=4 ORDER BY rh.fecha_rutaH ASC', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'rh.cumplimineto_rutaH as cumplimiento,\r\n                diasvTable.diasV,\r\n     \' at line 9', '2020-09-12 14:23:03', 4, 'historial', 'ver'),
+(94, 'editar historial. => UPDATE tbl_ruta_historial SET cumplimineto_rutaH = \'49\', id_log_pres_rutaH=\'49\',movimiento_logp=3  WHERE id_rutaH =13', 'Unknown column \'movimiento_logp\' in \'field list\'', '2020-09-12 14:30:23', 4, 'historial', 'abonarPago'),
+(95, 'Cambio de estado a 1. => UPDATE `tbl_gasto` SET `estado_gas` = \'1\'  WHERE `tbl_gasto`.`id_gas` = ', 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near \'\' at line 1', '2020-09-12 18:18:25', 2, 'gasto', 'cambiarEstado');
 
 -- --------------------------------------------------------
 
@@ -415,8 +437,41 @@ CREATE TABLE `tbl_log_gasto` (
   `id_gas` bigint(20) NOT NULL,
   `controller_logg` text COLLATE utf8_swedish_ci DEFAULT NULL,
   `id_autor_gas` bigint(20) NOT NULL,
-  `accion_func_logu` text COLLATE utf8_swedish_ci NOT NULL
+  `accion_func_logu` text COLLATE utf8_swedish_ci NOT NULL,
+  `valor_logg` double NOT NULL DEFAULT 0,
+  `nota_logg` text COLLATE utf8_swedish_ci NOT NULL,
+  `latitud_logg` text COLLATE utf8_swedish_ci NOT NULL,
+  `longitud_logg` text COLLATE utf8_swedish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
+
+--
+-- Volcado de datos para la tabla `tbl_log_gasto`
+--
+
+INSERT INTO `tbl_log_gasto` (`id_logg`, `movimiento_logg`, `fecha_logg`, `id_gas`, `controller_logg`, `id_autor_gas`, `accion_func_logu`, `valor_logg`, `nota_logg`, `latitud_logg`, `longitud_logg`) VALUES
+(32, 0, '2020-09-12 16:20:27', 27, 'gasto', 3, 'save', 0, '', '', ''),
+(33, 0, '2020-09-12 17:30:46', 28, 'gasto', 3, 'save', 200, 'Creacion de gatos', '0', '0'),
+(34, 2, '2020-09-12 17:36:26', 27, 'gasto', 2, 'abonarGasto', 20, '', '6.2867743', '-75.5906481'),
+(35, 2, '2020-09-12 17:37:06', 27, 'gasto', 2, 'abonarGasto', 20, '', '6.2867733999999995', '-75.5906653'),
+(36, 2, '2020-09-12 17:37:46', 27, 'gasto', 2, 'abonarGasto', 20, '', '6.2868162', '-75.5906646'),
+(37, 2, '2020-09-12 17:44:49', 27, 'gasto', 2, 'abonarGasto', 20, '', '6.2868052', '-75.5906675'),
+(38, 2, '2020-09-12 17:47:07', 27, 'gasto', 2, 'abonarGasto', 20, '', '6.2868052', '-75.5906675'),
+(39, 2, '2020-09-12 17:58:54', 27, 'gasto', 2, 'abonarGasto', 20, '', '6.2867611', '-75.5906498'),
+(40, 2, '2020-09-12 18:09:12', 27, 'gasto', 2, 'abonarGasto', 100, '', '6.286785000000001', '-75.5906277'),
+(41, 1, '2020-09-12 18:20:50', 28, 'gasto', 2, 'cambiarEstado', 0, 'Cancelar gatos', '0', '0'),
+(42, 1, '2020-09-12 18:24:37', 28, 'gasto', 2, 'cambiarEstado', 200, 'Cancelar gatos', '0', '0'),
+(43, 1, '2020-09-12 18:24:49', 28, 'gasto', 2, 'cambiarEstado', 200, 'Cancelar gatos', '0', '0'),
+(44, 1, '2020-09-12 18:26:21', 28, 'gasto', 2, 'cambiarEstado', 200, 'Cancelar gatos', '0', '0'),
+(45, 0, '2020-09-12 18:27:56', 29, 'gasto', 3, 'save', 200, 'Creacion de gatos', '0', '0'),
+(46, 3, '2020-09-12 18:28:23', 29, 'gasto', 3, 'cambiarEstado', 200, 'Cancelar gatos', '0', '0'),
+(47, 0, '2020-09-12 18:29:28', 30, 'gasto', 3, 'save', 200, 'Creacion de gatos', '0', '0'),
+(48, 1, '2020-09-12 18:31:33', 30, 'gasto', 2, 'cambiarEstado', 200, 'Cancelar gatos', '0', '0'),
+(49, 0, '2020-09-12 18:34:16', 31, 'gasto', 3, 'save', 200, 'Creacion de gatos', '0', '0'),
+(50, 1, '2020-09-12 18:34:48', 31, 'gasto', 2, 'cambiarEstado', 200, 'Cancelar gatos', '0', '0'),
+(51, 0, '2020-09-12 18:37:15', 32, 'gasto', 3, 'save', 200, 'Creacion de gatos', '0', '0'),
+(52, 0, '2020-09-12 18:37:29', 33, 'gasto', 3, 'save', 321312, 'Creacion de gatos', '0', '0'),
+(53, 3, '2020-09-12 18:37:48', 32, 'gasto', 3, 'cambiarEstado', 200, 'Cancelar gatos', '0', '0'),
+(54, 1, '2020-09-12 18:38:37', 33, 'gasto', 2, 'cambiarEstado', 321312, 'Cancelar gatos', '0', '0');
 
 -- --------------------------------------------------------
 
@@ -438,20 +493,21 @@ CREATE TABLE `tbl_log_prestamo` (
   `forma_pago_logp` int(11) NOT NULL,
   `latitud_logp` text COLLATE utf8_swedish_ci DEFAULT '0',
   `longitud_logp` text COLLATE utf8_swedish_ci DEFAULT '0',
-  `ip_logp` text COLLATE utf8_swedish_ci DEFAULT '0'
+  `ip_logp` text COLLATE utf8_swedish_ci DEFAULT '0',
+  `apuntadaor_prestamo_logp` bigint(20) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
 
 --
 -- Volcado de datos para la tabla `tbl_log_prestamo`
 --
 
-INSERT INTO `tbl_log_prestamo` (`id_logp`, `movimiento_logp`, `fecha_logp`, `id_pres`, `controller_logp`, `id_autor_usu`, `accion_func_logp`, `id_clie`, `valor_pres_logp`, `nota_logp`, `forma_pago_logp`, `latitud_logp`, `longitud_logp`, `ip_logp`) VALUES
-(43, 0, '2020-09-10 02:28:38', 21, 'prestamo', 4, 'save', 12, 202, 'Creao prestamo', 99, '6.286714099999999', '-75.59060199999999', '::1'),
-(44, 0, '2020-09-10 02:29:02', 22, 'prestamo', 4, 'save', 11, 570, 'Creao prestamo', 99, '6.286714099999999', '-75.59060199999999', '::1'),
-(45, 0, '2020-09-10 02:29:18', 23, 'prestamo', 4, 'save', 13, 600, 'Creao prestamo', 99, '6.2867121', '-75.59061380000001', '::1'),
-(46, 1, '2020-09-10 02:30:17', 23, 'abono', 4, 'abonarPago', 13, 60, '', 0, '6.2867408', '-75.59064359999999', '::1'),
-(47, 1, '2020-09-10 02:31:23', 22, 'abono', 4, 'abonarPago', 11, 20, '', 1, '6.2867408', '-75.59064359999999', '::1'),
-(48, 1, '2020-09-10 02:37:18', 21, 'abono', 4, 'abonarPago', 12, 20, '', 1, '6.286728699999999', '-75.5907087', '::1');
+INSERT INTO `tbl_log_prestamo` (`id_logp`, `movimiento_logp`, `fecha_logp`, `id_pres`, `controller_logp`, `id_autor_usu`, `accion_func_logp`, `id_clie`, `valor_pres_logp`, `nota_logp`, `forma_pago_logp`, `latitud_logp`, `longitud_logp`, `ip_logp`, `apuntadaor_prestamo_logp`) VALUES
+(60, 3, '2020-09-12 16:00:41', 25, 'abono', 4, 'abonarPago', 11, 22, '', 0, '6.2866391', '-75.5905487', '::1', 61),
+(61, 3, '2020-09-12 16:05:34', 25, 'historial', 4, 'abonarPago', 11, 10, '', 3, '6.2867546999999995', '-75.5906655', '::1', 62),
+(62, 1, '2020-09-12 16:06:45', 25, 'historial', 4, 'abonarPago', 11, 11, '', 3, '6.2867204', '-75.5906224', '::1', 0),
+(63, 3, '2020-09-12 16:10:58', 25, 'historial', 4, 'abonarPago', 11, 20, '', 3, '6.2867757', '-75.5906526', '::1', 64),
+(64, 3, '2020-09-12 16:12:03', 25, 'historial', 4, 'abonarPago', 11, 9, '', 3, '6.2867757', '-75.5906526', '::1', 65),
+(65, 1, '2020-09-12 16:12:44', 25, 'historial', 4, 'abonarPago', 11, 10, '', 3, '6.2867386', '-75.5906328', '::1', 0);
 
 -- --------------------------------------------------------
 
@@ -478,7 +534,8 @@ INSERT INTO `tbl_log_tipo_gasto` (`id_logt`, `movimiento_logt`, `fecha_logt`, `i
 (2, 0, '2020-08-28 00:37:31', 3, 'tipo_gasto', 3, '0'),
 (3, 0, '2020-08-28 00:41:56', 4, 'tipo_gasto', 3, '0'),
 (4, 0, '2020-08-28 05:29:31', 5, 'tipo_gasto', 4, '0'),
-(5, 0, '2020-08-28 12:23:38', 6, 'tipo_gasto', 3, '0');
+(5, 0, '2020-08-28 12:23:38', 6, 'tipo_gasto', 3, '0'),
+(6, 0, '2020-09-12 16:19:13', 7, 'tipo_gasto', 3, '0');
 
 -- --------------------------------------------------------
 
@@ -541,9 +598,7 @@ CREATE TABLE `tbl_prestamo` (
 --
 
 INSERT INTO `tbl_prestamo` (`id_pres`, `id_clie`, `fecha_limite_pres`, `valor_pres`, `forma_pago_pres`, `numero_cuota_pres`, `valor_cuotas_pres`, `intereses_press`, `valor_neto_clie`) VALUES
-(21, 12, '2020-09-10 00:00:00', 182, 1, 1, 202, '1', 200),
-(22, 11, '2020-09-10 00:00:00', 550, 1, 10, 57, '90', 300),
-(23, 13, '2020-09-10 00:00:00', 540, 1, 10, 60, '100', 300);
+(25, 11, '2020-09-12 00:00:00', 199, 1, 10, 22, '10', 200);
 
 -- --------------------------------------------------------
 
@@ -565,12 +620,8 @@ CREATE TABLE `tbl_ruta_historial` (
 --
 
 INSERT INTO `tbl_ruta_historial` (`id_rutaH`, `id_clien`, `cumplimineto_rutaH`, `fecha_rutaH`, `id_pres`, `id_log_pres_rutaH`) VALUES
-(10, 12, 48, '2020-09-10 02:55:54', 21, 48),
-(11, 11, 47, '2020-09-10 02:55:54', 22, 47),
-(12, 13, 46, '2020-09-10 02:55:54', 23, 46),
-(13, 12, 0, '2020-09-10 05:39:02', 21, 0),
-(14, 11, 0, '2020-09-10 05:39:02', 22, 0),
-(15, 13, 0, '2020-09-10 05:39:02', 23, 0);
+(20, 11, 62, '2020-09-12 16:02:57', 25, 62),
+(21, 11, 65, '2020-09-12 16:08:36', 25, 65);
 
 -- --------------------------------------------------------
 
@@ -595,7 +646,8 @@ INSERT INTO `tbl_tipo_gasto` (`id_tipog`, `nombre_tipog`, `tipo_tipog`, `id_usu`
 (3, 'alimentacion', 2, 3),
 (4, 'autobus choque', 2, 3),
 (5, 'gasolina de usuario prueba', 2, 4),
-(6, 'Choque', 2, 3);
+(6, 'Choque', 2, 3),
+(7, 'prestamo', 2, 3);
 
 -- --------------------------------------------------------
 
@@ -732,37 +784,37 @@ ALTER TABLE `tbl_cliente`
 -- AUTO_INCREMENT de la tabla `tbl_gasto`
 --
 ALTER TABLE `tbl_gasto`
-  MODIFY `id_gas` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id_gas` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT de la tabla `tbl_log_cliente`
 --
 ALTER TABLE `tbl_log_cliente`
-  MODIFY `id_logc` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=84;
+  MODIFY `id_logc` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=88;
 
 --
 -- AUTO_INCREMENT de la tabla `tbl_log_errores`
 --
 ALTER TABLE `tbl_log_errores`
-  MODIFY `int_id_loge` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=93;
+  MODIFY `int_id_loge` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=96;
 
 --
 -- AUTO_INCREMENT de la tabla `tbl_log_gasto`
 --
 ALTER TABLE `tbl_log_gasto`
-  MODIFY `id_logg` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id_logg` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
 
 --
 -- AUTO_INCREMENT de la tabla `tbl_log_prestamo`
 --
 ALTER TABLE `tbl_log_prestamo`
-  MODIFY `id_logp` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `id_logp` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
 
 --
 -- AUTO_INCREMENT de la tabla `tbl_log_tipo_gasto`
 --
 ALTER TABLE `tbl_log_tipo_gasto`
-  MODIFY `id_logt` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_logt` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `tbl_log_usuarios`
@@ -774,19 +826,19 @@ ALTER TABLE `tbl_log_usuarios`
 -- AUTO_INCREMENT de la tabla `tbl_prestamo`
 --
 ALTER TABLE `tbl_prestamo`
-  MODIFY `id_pres` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id_pres` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT de la tabla `tbl_ruta_historial`
 --
 ALTER TABLE `tbl_ruta_historial`
-  MODIFY `id_rutaH` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id_rutaH` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT de la tabla `tbl_tipo_gasto`
 --
 ALTER TABLE `tbl_tipo_gasto`
-  MODIFY `id_tipog` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_tipog` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `tbl_usuarios`
@@ -820,7 +872,7 @@ DELIMITER $$
 --
 -- Eventos
 --
-CREATE DEFINER=`root`@`localhost` EVENT `eventoPagoHistrorial` ON SCHEDULE EVERY 23 DAY STARTS '2020-09-10 05:39:02' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
+CREATE DEFINER=`root`@`localhost` EVENT `eventoPagoHistrorial` ON SCHEDULE EVERY 23 DAY STARTS '2020-09-12 23:59:59' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
 INSERT INTO tbl_ruta_historial (id_rutaH, id_clien, cumplimineto_rutaH, fecha_rutaH,id_pres,id_log_pres_rutaH) 
 (SELECT NULL,
 tbl_cliente.id_clie,
