@@ -1,0 +1,46 @@
+.btn-home{
+	background: #06b9b9;
+    text-align: center;
+    width: 100%;
+    padding-bottom: 25px;
+    padding-top: 25px;
+    margin-bottom: 15px;
+}
+
+.btn-home:hover{
+	color: white;
+}
+
+.card-container{
+	padding: 30px;
+}
+
+.mensaje-btn{
+	text-align: center;
+	font-size: 15px;
+	margin-left: auto;
+    margin-right: auto;
+    color: white;
+}
+
+.icon-btn{
+	color: white;
+	text-align: center;
+	font-size: 80px;
+	margin-left: auto;
+    margin-right: auto;
+}
+
+.title-text{
+	font-size: 15px;
+	font-style: italic;
+}
+
+.title{
+	font-size: 35px;
+    font-style: oblique;
+}
+
+.btn-auditoria{
+	background: #b90606 !important;
+}

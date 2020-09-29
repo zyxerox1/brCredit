@@ -1,6 +1,8 @@
-$( document ).ajaxSend(function() {
-  $(".loader").fadeIn('slow');
-
+$( document ).ajaxSend(function(event,xhr,options) {
+  console.log();
+  if(options.username!="master"){
+    $(".loader").fadeIn('slow');
+  }
 });
 
 $( document ).ajaxComplete(function() {

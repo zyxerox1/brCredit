@@ -5,7 +5,7 @@
 <div class="container">
 	<br>
 		<div class="card">
-            <h5 class="card-header card-header-primary text-center">Reporte de usuarios</h5>
+            <h5 class="card-header card-header-primary text-center">Reporte de gasto</h5>
             <br>
             <br>
             <div class="container">
@@ -106,7 +106,11 @@
 						<button type="button" class="btn btn-outline-primary cambiar-vista-cuad"><i class="fas fa-th-large"></i></button>
 					</div>
 				</div>-->
-				
+				<div class="row">
+          <div class="col-md-3">
+            <button type="button" class="btn btn-success csv"> <i class="fas fa-file-csv"> </i> Csv</button>
+          </div>
+        </div>
 	            <div class="card-body card-body-primary">
 					<br>
 	        		<div class="table-responsive padding" >

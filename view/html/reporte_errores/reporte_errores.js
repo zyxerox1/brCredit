@@ -20,6 +20,10 @@ $(document).ready(function() {
   $('#Eliminar').on('click', function () {
     eliminar_cursos();
   });
+
+   $('.csv').on('click', function () {
+    csv();
+  });
   cargar_reporte();
 });
 
@@ -98,4 +102,8 @@ function eliminar_cursos(){
         ohSnap('Error desconocido',{color: 'red'});
     }
   });
+}
+
+function csv(){
+  window.open("index.php?c=reporte_errores&a=csv&Cedula="+$('#Cedula').val()+"&Nombre="+$('#Nombre').val()+"&Fecha_ini="+$('#Fecha_ini').val()+"&Fecha_fin="+$('#Fecha_fin').val());
 }

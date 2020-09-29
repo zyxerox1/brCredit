@@ -1,5 +1,5 @@
-
-
+</body>
+<footer>
 <!--   Core JS   -->
 <!--jquery-->
 <script src="./<?php echo(APP_PLUGIN)?>jquery/jquery.min.js" type="text/javascript"></script>
@@ -46,6 +46,6 @@
 <?php if(isset($c)){  ?>
     <script src="./view/html/<?php echo $c."/".$p.".js"; ?>?v=<?php echo(rand()); ?>"></script>
 <?php } ?>
+</footer>
 
-</body>
 </html>

@@ -18,6 +18,10 @@ $(document).ready(function() {
 
     cargar_reporte();
   });
+
+  $('.csv').on('click', function () {
+    window.open("index.php?c=reporte_log_gasto&a=csv&Cedula="+$('#Cedula').val()+"&Nombre="+$('#Nombre').val()+"&Fecha_ini="+$('#Fecha_ini').val()+"&Fecha_fin="+$('#Fecha_fin').val()+"&Nombre_au="+$('#Nombre_au').val()+"&Cedula_au="+$('#Cedula_au').val()+"&Movimiento="+$('#Movimiento').val());
+  });
   cargar_reporte();
 });
 

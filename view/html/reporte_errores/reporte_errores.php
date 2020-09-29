@@ -5,7 +5,7 @@
 <div class="container">
 	<br>
 		<div class="card">
-            <h5 class="card-header card-header-primary text-center">Reporte de usuarios</h5>
+            <h5 class="card-header card-header-primary text-center">Reporte de errores</h5>
             <br>
             <br>
             <div class="container">
@@ -60,20 +60,19 @@
                 <button type="button" id="Eliminar" class="btn btn-danger">Eliminar</button>
 			    </center>
             	<hr>
-	            <!--<div class="row">
+	       <div class="row">
 					<div class="col-md-3">
-						<button type="button" class="btn btn-outline-primary cambiar-vista-list"><i class="fas fa-tasks"></i></button>
-						<button type="button" class="btn btn-outline-primary cambiar-vista-cuad"><i class="fas fa-th-large"></i></button>
+						<button type="button" class="btn btn-success csv"> <i class="fas fa-file-csv"> </i> Csv</button>
 					</div>
-				</div>-->
+				</div>
 				
-	            <div class="card-body card-body-primary">
-					<br>
+	       <div class="card-body card-body-primary">
+					   <br>
 	        		<div class="table-responsive padding" >
 			            <table id="dataerrores" class="table table-bordred table-striped table-striped table-hover dt-responsive">
 			              	<thead class="heade-table">
-			                	<th class="text-color all">fecha</th>
-			                	<th class="text-color all">documento_suario</th>
+			                	<th class="text-color all">Fecha</th>
+			                	<th class="text-color all">Documento</th>
 				                <th class="text-color">Usuario</th>
 				                <th class="text-color">accion</th>
 				                <th class="text-color">descripcion</th>
