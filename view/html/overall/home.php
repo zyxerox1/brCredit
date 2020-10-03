@@ -72,7 +72,7 @@
 		} ?></h6>
 		<hr>
 	<div class="card card-container">   
-		<h5 class="card-header card-header-primary text-center">Menus</h5> 
+		<h5 class="card-header card-header-primary text-center"><i class="fas fa-bars"></i> Menus</h5> 
 		<div class="card-body card-body-primary">
 	        <div class="row containe-card">
 	        	<div class="col-md-3">
@@ -87,7 +87,7 @@
 	        	</div>
 
 	        	<div class="col-md-3">
-	        		<a class="btn btn-home">
+	        		<a class="btn btn-home btn-rutas" href="index.php?c=ruta">
 	        			<div class="row">
 	        				<i class="fas fa-route icon-btn"></i>
 	        			</div>

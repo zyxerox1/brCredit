@@ -20,7 +20,11 @@
         </div>
     </div>
    	<br>
-	<h4 class="tittle-reporte"></h4>
+    <button type="button" class="btn btn-primary btn-audit-accion " id="consultar">Generar reporte <i class="fas fa-arrow-right"></i></button>
+    <button type="button" class="btn btn-success btn-audit-accion " id="csv">Exportar csv <i class="fas fa-file-csv"> </i></button>
+    <br>
+    <br>
+    <h4 class="tittle-reporte"></h4>
 	<hr>
 	<div class="container-auditoria">
 		

@@ -1,27 +1,27 @@
 <?php
 
-require_once 'model/usuario_modelo.php';
+require_once 'model/ruta_modelo.php';
 
-class usuario_controller
+class ruta_controller
 {
     private $validacion;
-    private $usuario;
+    private $ruta;
     public function __construct()
     {
 
         $this->validacion  = new validaciones_controller();
-        $this->usuario  = new usuario_modelo();
+        $this->ruta  = new ruta_modelo();
     }
 
     public function index()
     {
-        $this->validacion->validarRol(0);
-        $c='usuario';//variable necesaria para encontrar la ruta del script js--se utiliza en le footer de la app
-        $p='usuario';
-        $data_filtro=$this->usuario->obtener_filtro_usuario();
+        $this->validacion->validarRol(1);
+        $c='ruta';//variable necesaria para encontrar la ruta del script js--se utiliza en le footer de la app
+        $p='ruta';
+        $data_filtro=$this->ruta->obtener_filtro_usuario();
         require_once HTML_DIR . 'overall/header.php';
         require_once HTML_DIR . 'overall/topNav.php';
-        require_once HTML_DIR . 'usuario/usuario.php';
+        require_once HTML_DIR . 'ruta/ruta.php';
         require_once HTML_DIR . 'overall/footer.php';
     }
 
@@ -29,12 +29,12 @@ class usuario_controller
     {   
         $this->validacion->validarRol(1);
         //variable necesaria para encontrar la ruta del script js--se utiliza en le footer de la app
-        $c='usuario';
+        $c='ruta';
         $p='crear';
         ////////////////////////////////////////////////////////////////////////////////////////////
         require_once HTML_DIR . 'overall/header.php';
         require_once HTML_DIR . 'overall/topNav.php';
-        require_once HTML_DIR . 'usuario/crear.php';
+        require_once HTML_DIR . 'ruta/crear.php';
         require_once HTML_DIR . 'overall/footer.php'; 
     }
 
@@ -42,26 +42,26 @@ class usuario_controller
     {   
         $this->validacion->validarRol(1);
         //variable necesaria para encontrar la ruta del script js--se utiliza en le footer de la app
-        $c='usuario';
+        $c='ruta';
         $p='editar';
         ////////////////////////////////////////////////////////////////////////////////////////////
-        $data=$this->usuario->query_usuario($_REQUEST);
+        $data=$this->ruta->query_usuario($_REQUEST);
         $_SESSION['id_update']=$_REQUEST['i'];
         require_once HTML_DIR . 'overall/header.php';
         require_once HTML_DIR . 'overall/topNav.php';
-        require_once HTML_DIR . 'usuario/editar.php';
+        require_once HTML_DIR . 'ruta/editar.php';
         require_once HTML_DIR . 'overall/footer.php'; 
     }
 
     public function cargar(){
-        $this->validacion->validarRol(0);
-        $data=$this->usuario->obtener_usuarios($_REQUEST);
+        $this->validacion->validarRol(1);
+        $data=$this->ruta->obtener_usuarios($_REQUEST);
         echo json_encode($data);
     }
 
     public function save()
     {   
-        $this->validacion->validarRol(0);
+        $this->validacion->validarRol(1);
         $errores=[];
         $img_name=0;
 
@@ -148,7 +148,7 @@ class usuario_controller
 
 
         if(count($errores)==0){
-            $result_editar_usuario=  $this->usuario->crear_usuario($_POST['primernombre'], $_POST['segundonombre'], $_POST['primerapellido'], $_POST['segundoapellido'], $_POST['Documento'], $_POST['Genero'], $_POST['Telefono_1'], $_POST['Telefono_2'], $_POST['Fecha'], $_POST['Direcion'], $_POST['Correo'], $this->encriptar($_POST['pas1']), $_POST['img_name'],$img_name,$_POST['perfil'],$_POST['estados'],$_POST['ciudades']);
+            $result_editar_usuario=  $this->ruta->crear_usuario($_POST['primernombre'], $_POST['segundonombre'], $_POST['primerapellido'], $_POST['segundoapellido'], $_POST['Documento'], $_POST['Genero'], $_POST['Telefono_1'], $_POST['Telefono_2'], $_POST['Fecha'], $_POST['Direcion'], $_POST['Correo'], $this->encriptar($_POST['pas1']), $_POST['img_name'],$img_name,2,$_POST['estados'],$_POST['ciudades']);
 
             if (isset($result_editar_usuario["control"]) && $result_editar_usuario["control"] !=1) {
               move_uploaded_file($_FILES['img']['tmp_name'], "view/assets/imagenes_usuario/".$result_editar_usuario["control"]);
@@ -160,7 +160,7 @@ class usuario_controller
 
     public function update()
     {   
-        $this->validacion->validarRol(0);
+        $this->validacion->validarRol(1);
         $errores=[];
         $img_name=0;
 
@@ -234,7 +234,7 @@ class usuario_controller
 
 
         if(count($errores)==0){
-            $result_editar_usuario=  $this->usuario->atualizar_usuario($_POST['primernombre'], $_POST['segundonombre'], $_POST['primerapellido'], $_POST['segundoapellido'], $_POST['Genero'], $_POST['Telefono_1'], $_POST['Telefono_2'], $_POST['Fecha'], $_POST['Direcion'], $_POST['Correo'],$img_name,$_SESSION['id_update'],$_POST['estados'],$_POST['ciudades']);
+            $result_editar_usuario=  $this->ruta->atualizar_usuario($_POST['primernombre'], $_POST['segundonombre'], $_POST['primerapellido'], $_POST['segundoapellido'], $_POST['Genero'], $_POST['Telefono_1'], $_POST['Telefono_2'], $_POST['Fecha'], $_POST['Direcion'], $_POST['Correo'],$img_name,$_SESSION['id_update'],$_POST['estados'],$_POST['ciudades']);
             if (isset($result_editar_usuario["text_img_perfil_usu"]) && $result_editar_usuario["text_img_perfil_usu"] !=1) {
               move_uploaded_file($_FILES['img']['tmp_name'], "view/assets/imagenes_usuario/".$result_editar_usuario["text_img_perfil_usu"]);
             }
@@ -245,7 +245,7 @@ class usuario_controller
 
     function encriptar($cadena)
     {   
-        $this->validacion->validarRol(0);
+        $this->validacion->validarRol(1);
         $timeTarget = 0.05; // 50 milisegundos 
         $coste = 8;
         $pass="";
@@ -260,13 +260,13 @@ class usuario_controller
     }
 
      public function cambiar_estado(){
-        $this->validacion->validarRol(0);
+        $this->validacion->validarRol(1);
         $errores=[];
         if(!isset($_POST['id']) || !isset($_POST['estado'])){
             $errores[]=array('control' =>"1" ,'error' =>"Algo salio mal");
         }else{
             $_POST['estado'] = (1 == $_POST['estado']) ? 0 : 1;
-            $errores=$this->usuario->cambiar_estado($_POST);
+            $errores=$this->ruta->cambiar_estado($_POST);
         }
         echo json_encode($errores);
     }

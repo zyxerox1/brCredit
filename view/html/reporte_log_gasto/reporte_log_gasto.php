@@ -106,12 +106,8 @@
 						<button type="button" class="btn btn-outline-primary cambiar-vista-cuad"><i class="fas fa-th-large"></i></button>
 					</div>
 				</div>-->
-				<div class="row">
-          <div class="col-md-3">
-            <button type="button" class="btn btn-success csv"> <i class="fas fa-file-csv"> </i> Csv</button>
-          </div>
-        </div>
-	            <div class="card-body card-body-primary">
+				
+	      <div class="card-body card-body-primary">
 					<br>
 	        		<div class="table-responsive padding" >
 			            <table id="datausuarios" class="table table-bordred table-striped table-striped table-hover dt-responsive">

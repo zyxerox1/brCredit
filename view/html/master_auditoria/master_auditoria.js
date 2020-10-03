@@ -1,12 +1,26 @@
 $(document).ready(function() {
-	$( "#auditoria" ).change(function() {
-		if($(this).val()!=0){
-			ajaxAuditoriaCambiar($(this).val(),$(this).find('option:selected').attr("data-tittle"));
+	
+
+	$( "#consultar" ).on('click', function () {
+		console.log("ddd");
+		if($("#auditoria" ).val()!=0){
+			ajaxAuditoriaCambiar($("#auditoria" ).val(),$("#auditoria" ).find('option:selected').attr("data-tittle"));
 		}else{
 			$(".container-auditoria").html("");
 			$(".tittle-reporte").html("");
 		}
 	});
+
+	$( "#csv" ).on('click', function () {
+		if($("#auditoria" ).val()!=0){
+			ajaxAuditoriaCambiar($("#auditoria" ).val(),$("#auditoria" ).find('option:selected').attr("data-tittle"));
+		}else{
+			ohSnap('Tiene que selecionar un reporte.',{color: 'red'});
+			$("#auditoria" ).focus();
+			shake($("#auditoria" ));
+		}
+	});
+	
 	//ajaxAuditoriaCambiar("reporte_log_usuario","Reporte de usuario");
 });
 
@@ -17,13 +31,9 @@ function ajaxAuditoriaCambiar(control,tittle=""){
 	    type: "get",
 	    username: "master",
 	    success:function(e){
-	    	$(".container-auditoria").animate({
-			    height: "toggle"
-			  }, 2000);
+	 		$(".container-auditoria").slideToggle(1000,"swing");
 	     	$(".container-auditoria").html(e);
-	     	$(".container-auditoria").animate({
-			    height: "toggle"
-			  }, 2000);
+	     	$(".container-auditoria").slideToggle(1000,"swing");
      	    var footer= document.getElementsByTagName('footer')[0];
 		    var script= document.createElement('script');
 		    script.src= './view/assets/js/script.js';

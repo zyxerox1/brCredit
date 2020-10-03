@@ -11,6 +11,19 @@ $( document ).ajaxComplete(function() {
     },1000);
 });
 
+$(".desplegue-btn").on('click', function () {
+  if($(this).hasClass('fa-chevron-down')){
+    $(this).parent(".card-header").parent(".card").find(".divDesplegableContainer").show("slow");
+    $(this).removeClass('fa-chevron-down');
+    $(this).addClass('fa-chevron-up');
+  }else if($(this).hasClass('fa-chevron-up')){
+    $(this).parent(".card-header").parent(".card").find(".divDesplegableContainer").hide("slow");
+    $(this).addClass('fa-chevron-down');
+    $(this).removeClass('fa-chevron-up');
+  }
+  console.log($(this).parent(".card-header").parent(".card"));
+});
+
 function format(input)
 {
   var num = input.value.replace(/\./g,'');

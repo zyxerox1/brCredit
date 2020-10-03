@@ -282,3 +282,7 @@ z-index: 99;
 .navbar{
   z-index: 9;
 }
+
+.desplegue-btn{
+  float: right;
+}
