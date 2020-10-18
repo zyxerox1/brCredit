@@ -98,9 +98,9 @@
 	        	</div>
 
 	        	<div class="col-md-3">
-	        		<a class="btn btn-home">
+	        		<a class="btn btn-home btn-cierre" href="index.php?c=cerrar">
 	        			<div class="row">
-	        				<i class="fas fa-times-circle icon-btn"></i>
+	        				<i class="fas fa-times-circle icon-btn "></i>
 	        			</div>
 	        			<div class="row">
 	        				<label class="mensaje-btn">Cerrar</label>
@@ -123,7 +123,7 @@
 	        <div class="row containe-card">
 
 	        	<div class="col-md-3">
-	        		<a class="btn btn-home">
+	        		<a class="btn btn-home btn-usuario" href="index.php?c=usuario">
 	        			<div class="row">
 	        				<i class="fas fa-users-cog icon-btn"></i>
 	        			</div>
@@ -134,7 +134,7 @@
 	        	</div>
 
 	        	<div class="col-md-3">
-	        		<a class="btn btn-home">
+	        		<a class="btn btn-home btn-cliente" href="index.php?c=cliente">
 	        			<div class="row">
 	        				<i class="fas fa-user-friends icon-btn"></i>
 	        			</div>

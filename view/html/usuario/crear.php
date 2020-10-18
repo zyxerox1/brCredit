@@ -30,29 +30,8 @@
                                 <center><label for="primernombre" class="text-color">Perfil del usuario*</label></center>
                               </div>
                           </div>
-                            <div class="row">
-                                <div class="col-md-3 offset-md-3">
-                                  <div class="form-check">
-                                    <label class="form-check-label">
-                                      <input class="form-check-input" type="radio" name="perfil" id="perfil1" value="1"> Coordinador
-                                      <span class="circle">
-                                        <span class="check"></span>
-                                      </span>
-                                    </label>
-                                  </div>
-                                </div>
-                                <div class="col-md-3">
-                                  <div class="form-check">
-                                    <label class="form-check-label">
-                                      <input class="form-check-input" type="radio" name="perfil" id="perfil2" value="2" checked> Vendedor
-                                      <span class="circle">
-                                        <span class="check"></span>
-                                      </span>
-                                    </label>
-                                  </div>
-                                </div>
-                              </div>
-                              <br>
+                    
+                          <br>
                           <div class="row">
                             <div class="col-md-6">
                               <div class="form-group">
@@ -197,6 +176,15 @@
                         </div>
                       </div>
                     </div>
+
+                <div class="row">
+                  <div class="col-md-6 offset-md-3">
+                    <div class="form-group is-filled">
+                      <label for="codigo" class="text-color ">Codigo de la ruta</label>
+                      <input type="text" class="form-control" id="codigo" name="codigo" required="required">
+                    </div>
+                  </div>
+                </div>
                 <button type="button" class="btn btn-danger btn-md cerrar-modal posicion-flotante-derecho" data-dismiss="modal" onClick="history.back()">Atras</button>
                 <button type="submit" class="btn btn-primary btn-md posicion-flotante-derecho">Guardar</button>
       

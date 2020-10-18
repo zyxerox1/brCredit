@@ -36,6 +36,9 @@
 <!--select 2-->
 <script src="./<?php echo(APP_PLUGIN)?>select2/select2.full.js"></script>
 
+<!--boostrapDialog-->
+<script src="./<?php echo(APP_PLUGIN)?>bootstrap4-dialog-bootstrap4-dev/js/bootstrap-dialog.min.js"></script>
+
 <!--Input-Spinner-->
 <!--<script src="./<?php //echo(APP_PLUGIN)?>Input-Spinner-Plugin-Bootstrap-4/bootstrap-input-spinner.js"></script>-->
 

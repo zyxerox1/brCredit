@@ -109,12 +109,12 @@ class ruta_controller
         if($this->validacion->soloNumeros($_POST['Telefono_1'])==false){
           $errores[] = array('control' =>"Telefono_1" ,'error' =>"El campo Telefono 1 solo debe contener numeros"  );
         }
-        if(strlen($_POST['Telefono_1'])<10){
+        if(strlen($_POST['Telefono_1'])<8){
           $errores[] = array('control' =>"Telefono_1" ,'error' =>"El numero Telefono 1 es corto");
         }
 
         if(strlen($_POST['Telefono_2'])!=0){
-           if(strlen($_POST['Telefono_2'])<10){
+           if(strlen($_POST['Telefono_2'])<8){
               $errores[] = array('control' =>"Telefono_2" ,'error' =>"El numero Telefono 2 es corto");
             } 
 
@@ -200,12 +200,12 @@ class ruta_controller
         if($this->validacion->soloNumeros($_POST['Telefono_1'])==false){
           $errores[] = array('control' =>"Telefono_1" ,'error' =>"El campo Telefono 1 solo debe contener numeros"  );
         }
-        if(strlen($_POST['Telefono_1'])<10){
+        if(strlen($_POST['Telefono_1'])<8){
           $errores[] = array('control' =>"Telefono_1" ,'error' =>"El numero Telefono 1 es corto");
         }
         
          if(strlen($_POST['Telefono_2'])!=0){
-           if(strlen($_POST['Telefono_2'])<10){
+           if(strlen($_POST['Telefono_2'])<8){
               $errores[] = array('control' =>"Telefono_2" ,'error' =>"El numero Telefono 2 es corto");
             } 
             if($this->validacion->soloNumeros($_POST['Telefono_2'])==false){

@@ -37,4 +37,14 @@ class validacion_modelo
         }
         return $this->valores;
     }
+
+    public function idMax(){
+        $this->valores = array();
+        $query = $this->DB->query("SELECT max(id_usu) as max FROM tbl_usuarios");
+        while ($fila = $query->fetch_assoc()) {
+            $this->valores[] = $fila;
+        }
+        return $this->valores;
+    }
+    
 }

@@ -15,7 +15,7 @@ class cliente_controller
 
     public function index()
     {
-        $this->validacion->validarRol(2);
+        $this->validacion->validarRol([1,2]);
         $c='cliente';//variable necesaria para encontrar la ruta del script js--se utiliza en le footer de la app
         $p='cliente';
         $data_filtro=$this->cliente->obtener_filtro_cliente();
@@ -56,8 +56,12 @@ class cliente_controller
     }
 
     public function cargar(){
-        $this->validacion->validarRol(2);
-        $data=$this->cliente->obtener_cliente($_REQUEST);
+        $this->validacion->validarRol([1,2]);
+        if($_SESSION["rol"]==1){
+          $data=$this->cliente->obtener_cliente_todos($_REQUEST);
+        }else{
+          $data=$this->cliente->obtener_cliente($_REQUEST);
+        }
         echo json_encode($data);
     }
 
@@ -121,12 +125,12 @@ class cliente_controller
         if($this->validacion->soloNumeros($_POST['Telefono_1'])==false){
           $errores[] = array('control' =>"Telefono_1" ,'error' =>"El campo Telefono 1 solo debe contener numeros"  );
         }
-        if(strlen($_POST['Telefono_1'])<10){
+        if(strlen($_POST['Telefono_1'])<8){
           $errores[] = array('control' =>"Telefono_1" ,'error' =>"El numero Telefono 1 es corto");
         }
 
         if(strlen($_POST['Telefono_2'])!=0){
-           if(strlen($_POST['Telefono_2'])<10){
+           if(strlen($_POST['Telefono_2'])<8){
               $errores[] = array('control' =>"Telefono_2" ,'error' =>"El numero Telefono 2 es corto");
             } 
 
@@ -209,12 +213,12 @@ class cliente_controller
         if($this->validacion->soloNumeros($_POST['Telefono_1'])==false){
           $errores[] = array('control' =>"Telefono_1" ,'error' =>"El campo Telefono 1 solo debe contener numeros"  );
         }
-        if(strlen($_POST['Telefono_1'])<10){
+        if(strlen($_POST['Telefono_1'])<8){
           $errores[] = array('control' =>"Telefono_1" ,'error' =>"El numero Telefono 1 es corto");
         }
         
          if(strlen($_POST['Telefono_2'])!=0){
-           if(strlen($_POST['Telefono_2'])<10){
+           if(strlen($_POST['Telefono_2'])<8){
               $errores[] = array('control' =>"Telefono_2" ,'error' =>"El numero Telefono 2 es corto");
             } 
             if($this->validacion->soloNumeros($_POST['Telefono_2'])==false){

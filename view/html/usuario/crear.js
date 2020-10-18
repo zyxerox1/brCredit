@@ -113,7 +113,21 @@ function registrar_usuario(action,datos) {
             check_todo_input_verificado();
             validate_errores_peticion_ajax(obj);
           }else if(obj["error"]==0){
-            setTimeout(function() {window.location.href = 'index.php?c=usuario' },1000);
+      
+            BootstrapDialog.alert({
+              title: 'Informaciòn!',
+              message: 'El codigo completo de la ruta del usuario es: "'+obj["codigo"]+'"',
+              type: BootstrapDialog.TYPE_PRIMARY, // <-- Default value is BootstrapDialog.TYPE_PRIMARY
+              closable: true, // <-- Default value is false
+              draggable: true, // <-- Default value is false
+              buttonLabel: 'Ok', // <-- Default value is 'OK',
+              callback: function(result) {
+                  setTimeout(function() {window.location.href = 'index.php?c=usuario' },1000);
+              }
+            });
+
+            $(".modal-backdrop").removeClass("modal-backdrop");
+            
             //setTimeout(function() {window.history.go(-1) },1000);
             ohSnap('Se guardo correctamente',{color: 'green'});
           }else{

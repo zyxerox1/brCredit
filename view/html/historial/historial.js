@@ -75,9 +75,9 @@ function cargar_cliente(){
           "data": "nombre",
           "render": function ( data, type, row, meta ) {
             if(row.cumplimiento==0){
-              return "<div class='nombreTableR'><h5>Nombre: "+data+"</h5><h5 class='valTable'>Sin validar</h5></div>";
+              return "<div class='nombreTableR'><h5>Nombre: "+data+"</h5><h5 class='valTable'>Sin validar <i class='fas fa-thumbs-down'></i></h5></div>";
             }else{
-              return "<div class='nombreTableV'><h5>Nombre: "+data+"</h5><h5 class='valTable'>Validado</h5></div>";
+              return "<div class='nombreTableV'><h5>Nombre: "+data+"</h5><h5 class='valTable'>Validado <i class='fas fa-thumbs-up'></i></h5></div>";
             }
           }
         },

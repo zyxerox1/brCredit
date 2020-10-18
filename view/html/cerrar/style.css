@@ -1,0 +1,108 @@
+.btn-accion{
+	width: 240px;
+}
+
+.cardss> thead> tr {
+    display: none;
+}
+
+.cardss >tbody >img {
+    height: 100px;
+}
+
+.cardss> thead> tr> th, .cardss > tbody>tr> td{
+    padding: 0.15rem !important;
+    vertical-align: top;
+    border-top: none !important;
+}
+
+.cardss> tbody> tr {
+    float: left;
+    margin: 10px;
+    border: 1px solid #aaa;
+    /*box-shadow: 3px 3px 6px rgba(0,0,0,0.25);*/
+    background-color: white !important;
+    background: #ffffff !important;
+    width: 99%;
+    /*width: 272%;*/
+        padding-top: 14px;
+    padding-left: 14px;
+}
+
+.cardss> tbody>tr> td {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    text-align: left;
+  
+}
+
+.cardss .img_card_tabla {
+    height: 160px;
+}
+
+.cardss > .img_card_tabla > img {
+  height: 133px !important;
+  width: 302px !important;
+}
+
+.cardss> th, .cardss> td {
+    padding: 0.75rem;
+    vertical-align: top;
+    border-top: none !important;
+}
+
+
+.campoNombre{
+	margin-top: 12px;	
+}
+
+.valTable{
+	position: relative;
+    float: right;
+    margin-right: 50px;
+    color: green;
+}
+
+.InvalTable{
+	position: relative;
+    float: right;
+    margin-right: 50px;
+    color: red;
+}
+.verDetalle{
+	cursor: pointer;
+	color: #007bff !important;
+}
+.result{
+	position: relative;
+	float: right;
+	margin-right: 10%;
+}
+.container-data{
+
+}
+
+.span-text{
+	font-size: 12px;
+    font-style: oblique;
+}
+
+.container-tab{
+	border: solid #e9ecef 1px;
+    padding: 5px;
+    border-radius: 5px;
+    padding-top: 10px;
+    background-color: #e9ecef;
+    opacity: 1;
+}
+
+.text-tab{
+	text-align: center;
+    margin-top: 10px;
+}
+
+.icon-tab{
+	margin-right: 30px;
+    font-size: 30px;
+}

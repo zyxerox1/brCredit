@@ -15,7 +15,7 @@ class usuario_controller
 
     public function index()
     {
-        $this->validacion->validarRol(0);
+        $this->validacion->validarRol(1);
         $c='usuario';//variable necesaria para encontrar la ruta del script js--se utiliza en le footer de la app
         $p='usuario';
         $data_filtro=$this->usuario->obtener_filtro_usuario();
@@ -54,14 +54,14 @@ class usuario_controller
     }
 
     public function cargar(){
-        $this->validacion->validarRol(0);
+        $this->validacion->validarRol(1);
         $data=$this->usuario->obtener_usuarios($_REQUEST);
         echo json_encode($data);
     }
 
     public function save()
     {   
-        $this->validacion->validarRol(0);
+        $this->validacion->validarRol(1);
         $errores=[];
         $img_name=0;
 
@@ -109,12 +109,12 @@ class usuario_controller
         if($this->validacion->soloNumeros($_POST['Telefono_1'])==false){
           $errores[] = array('control' =>"Telefono_1" ,'error' =>"El campo Telefono 1 solo debe contener numeros"  );
         }
-        if(strlen($_POST['Telefono_1'])<10){
+        if(strlen($_POST['Telefono_1'])<8){
           $errores[] = array('control' =>"Telefono_1" ,'error' =>"El numero Telefono 1 es corto");
         }
 
         if(strlen($_POST['Telefono_2'])!=0){
-           if(strlen($_POST['Telefono_2'])<10){
+           if(strlen($_POST['Telefono_2'])<8){
               $errores[] = array('control' =>"Telefono_2" ,'error' =>"El numero Telefono 2 es corto");
             } 
 
@@ -142,25 +142,32 @@ class usuario_controller
            $errores[] = array('control' =>"pas2" ,'error' =>"El password debe ser iguales.");
         }
 
+        if(strlen($_POST['codigo'])==""){
+          $errores[] = array('control' =>"codigo" ,'error' =>"El codigo no puede estar vacio.");
+        }else{
+          $_POST['codigo']=$_POST['codigo']."-".date('s').$this->validacion->idMax().substr($_POST['Documento'], -4, 4);
+        }
+
+
         if(isset($_FILES["img"])){
           $img_name=1;
         } 
 
 
         if(count($errores)==0){
-            $result_editar_usuario=  $this->usuario->crear_usuario($_POST['primernombre'], $_POST['segundonombre'], $_POST['primerapellido'], $_POST['segundoapellido'], $_POST['Documento'], $_POST['Genero'], $_POST['Telefono_1'], $_POST['Telefono_2'], $_POST['Fecha'], $_POST['Direcion'], $_POST['Correo'], $this->encriptar($_POST['pas1']), $_POST['img_name'],$img_name,$_POST['perfil'],$_POST['estados'],$_POST['ciudades']);
+            $result_editar_usuario=  $this->usuario->crear_usuario($_POST['primernombre'], $_POST['segundonombre'], $_POST['primerapellido'], $_POST['segundoapellido'], $_POST['Documento'], $_POST['Genero'], $_POST['Telefono_1'], $_POST['Telefono_2'], $_POST['Fecha'], $_POST['Direcion'], $_POST['Correo'], $this->encriptar($_POST['pas1']), $_POST['img_name'],$img_name,2,$_POST['estados'],$_POST['ciudades'],$_POST['codigo']);
 
             if (isset($result_editar_usuario["control"]) && $result_editar_usuario["control"] !=1) {
               move_uploaded_file($_FILES['img']['tmp_name'], "view/assets/imagenes_usuario/".$result_editar_usuario["control"]);
             }
-          $errores=array('control' =>0 ,'error' => 0);
+          $errores=array('control' =>0 ,'error' => 0, 'codigo' => $_POST['codigo']);
         }
         echo json_encode($errores);  
     }
 
     public function update()
     {   
-        $this->validacion->validarRol(0);
+        $this->validacion->validarRol(1);
         $errores=[];
         $img_name=0;
 
@@ -200,12 +207,12 @@ class usuario_controller
         if($this->validacion->soloNumeros($_POST['Telefono_1'])==false){
           $errores[] = array('control' =>"Telefono_1" ,'error' =>"El campo Telefono 1 solo debe contener numeros"  );
         }
-        if(strlen($_POST['Telefono_1'])<10){
+        if(strlen($_POST['Telefono_1'])<8){
           $errores[] = array('control' =>"Telefono_1" ,'error' =>"El numero Telefono 1 es corto");
         }
         
          if(strlen($_POST['Telefono_2'])!=0){
-           if(strlen($_POST['Telefono_2'])<10){
+           if(strlen($_POST['Telefono_2'])<8){
               $errores[] = array('control' =>"Telefono_2" ,'error' =>"El numero Telefono 2 es corto");
             } 
             if($this->validacion->soloNumeros($_POST['Telefono_2'])==false){
@@ -245,7 +252,7 @@ class usuario_controller
 
     function encriptar($cadena)
     {   
-        $this->validacion->validarRol(0);
+        $this->validacion->validarRol(1);
         $timeTarget = 0.05; // 50 milisegundos 
         $coste = 8;
         $pass="";
@@ -260,7 +267,7 @@ class usuario_controller
     }
 
      public function cambiar_estado(){
-        $this->validacion->validarRol(0);
+        $this->validacion->validarRol(1);
         $errores=[];
         if(!isset($_POST['id']) || !isset($_POST['estado'])){
             $errores[]=array('control' =>"1" ,'error' =>"Algo salio mal");

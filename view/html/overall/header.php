@@ -37,6 +37,9 @@
     <!--toggle-->
     <link href="./<?php echo(APP_PLUGIN)?>toggle/bootstrap4-toggle.min.css" rel="stylesheet"/>
     
+    <!--boostrapDialog-->
+    <link href="./<?php echo(APP_PLUGIN)?>bootstrap4-dialog-bootstrap4-dev/css/bootstrap-dialog.min.css" rel="stylesheet"/>
+    
     <!-- Archivos necesarios de style -->
     <link rel="stylesheet" type="text/css" href="./view/assets/css/style.css" />
 

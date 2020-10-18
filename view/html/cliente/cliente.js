@@ -92,12 +92,15 @@ function gelocalizacion(){
 
 function calcularValorCoutaDia(){
   if($("#ncoutas").val()!="" && $("#inter").val()!="" && $("#Valor").val()!=""){
-    var valor = $("#Valor").val();
+    var valor = $("#Valor").val().replace('.', "");
     var numeroCouta = $("#ncoutas").val();
     var interes = $("#inter").val();
+
     interes=(interes*valor)/100;
     valor=parseInt(valor)+parseInt(interes);
-    $("#Valorc").html("$"+parseInt(valor)/parseInt(numeroCouta)+".00");
+
+
+    $("#Valorc").html("$"+parseInt(valor)/parseInt(numeroCouta));
   }
 }
 

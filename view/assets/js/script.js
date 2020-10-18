@@ -1,5 +1,4 @@
 $( document ).ajaxSend(function(event,xhr,options) {
-  console.log();
   if(options.username!="master"){
     $(".loader").fadeIn('slow');
   }
@@ -12,6 +11,7 @@ $( document ).ajaxComplete(function() {
 });
 
 $(".desplegue-btn").on('click', function () {
+  console.log("ddd");
   if($(this).hasClass('fa-chevron-down')){
     $(this).parent(".card-header").parent(".card").find(".divDesplegableContainer").show("slow");
     $(this).removeClass('fa-chevron-down');
@@ -39,6 +39,7 @@ function format(input)
 
 function formatValor(valor)
 {
+  console.log(valor);
   var num = valor.replace(/\./g,'');
   if(!isNaN(num)){
     num = num.toString().split('').reverse().join('').replace(/(?=\d*\.?)(\d{3})/g,'$1.');

@@ -73,6 +73,11 @@ class validaciones_controller
         return $resultado;
     }
 
+    public function idMax(){
+        $id = $this->model_l->idMax();
+        return $id[0]['max'];
+    }
+
     public function validar_correo_update($cadena,$validar_correo_update){
         $resultado=false;
         $nickname = $this->model_l->validar_correo_update($cadena,$validar_correo_update);
