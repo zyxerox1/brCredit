@@ -19,6 +19,19 @@ $(document).ready(function() {
     }
   });
 
+  $( "#ncoutas" ).change(function() {
+    if ($(this).val()==11) {
+      $("#inter").val('10');
+    }else if ($(this).val()==15){
+      $("#inter").val('14');
+    }else if ($(this).val()==20){
+      $("#inter").val('20');
+    }else if ($(this).val()==24){
+      $("#inter").val('20');
+    }
+    calcularValorCoutaDia();
+  });
+
   var fecha_edad=new Date();
   $('.datetimepicker').datetimepicker({ 
     defaultDate: fecha_edad,

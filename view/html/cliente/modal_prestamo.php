@@ -70,11 +70,23 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-6 ">
+            <!--<div class="col-md-6 ">
               <div class="form-group">
                 <label for="ncoutas" class="text-color ">Numero de coutas*</label>
                 <input type="number" class="form-control" value="1" name="ncoutas" id="ncoutas" required="required">
               </div>
+            </div>-->
+
+            <div class="col-md-6 container-select2">
+                <div class="form-group">
+                    <label for="ncoutas" class="text-color">Numero de coutas*</label>
+                    <select class="select2N form-control pmd-select2" id="ncoutas" name="ncoutas" required="required">
+                        <option value="11" selected="selected">11</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                        <option value="24">24</option>
+                    </select>
+                </div>
             </div>
           </div>
 
@@ -82,7 +94,7 @@
             <div class="col-md-6">
               <label for="inter" class="text-color">Intereses*</label>
               <div class="input-group form-group">
-                <input type="text" class="form-control Spinner" name="inter" id="inter" onkeyup="format(this)" onchange="format(this)" min="0" max="" value="1" step="1" required="required">
+                <input type="text" class="form-control Spinner" name="inter" id="inter" onkeyup="format(this)" onchange="format(this)" min="0" max="" value="1" step="1" disabled="disabled" required="required">
                 <div class="input-group-append">
                   <span class="input-group-text">%</span>
                 </div>

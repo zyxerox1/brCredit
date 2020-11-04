@@ -3,6 +3,7 @@ var tipo=99;
 var latitud=0;
 var longitud=0;
 var ipRed=0;
+var codAtual=0;
 $(document).ready(function() {
   cargar_cliente();
   $('#buscar').on('click', function () {
@@ -103,7 +104,12 @@ function cargar_cliente(){
            "data": "orden",
            "render": function ( data, type, row, meta ) {
               var html="";
-              html+='<button class="btn btn-outline-primary auto" style="float:left" id="auto" data-cliente="'+row.id+'" data-prestamo="'+row.idPres+'"><i class="fas fa-cogs"></i> Automatico</button>';
+              if(row.cumplimiento!=0){
+                html+='<button class="btn btn-outline-success auto" style="float:left" id="auto" data-cliente="'+row.id+'"  data-prestamo="'+row.idPres+'" data-cod="'+row.codAtual+'"><i class="fas fa-cogs"></i> Actualizar</button>';
+              }else{
+                html+='<button class="btn btn-outline-primary auto" style="float:left" id="auto" data-cliente="'+row.id+'" data-prestamo="'+row.idPres+'" data-cod="0"><i class="fas fa-cogs"></i> Automatico</button>';
+              }
+              
               return html;
            }
          },
@@ -112,7 +118,12 @@ function cargar_cliente(){
            "data": "orden",
            "render": function ( data, type, row, meta ) {
               var html="";
-              html+='<button class="btn btn-outline-primary manual" style="float:right" id="manual" data-cliente="'+row.id+'" data-prestamo="'+row.idPres+'"><i class="fas fa-hands-wash"></i> Manual</button>';
+              if(row.cumplimiento!=0){
+                html+='<button class="btn btn-outline-success manual" style="float:right" id="manual" data-cliente="'+row.id+'" data-prestamo="'+row.idPres+'" data-cod="'+row.codAtual+'"><i class="fas fa-hands-wash"></i> Manual</button>';
+              }else{
+                html+='<button class="btn btn-outline-primary manual" style="float:right" id="manual" data-cliente="'+row.id+'" data-prestamo="'+row.idPres+'" data-cod="0"><i class="fas fa-hands-wash"></i> Manual</button>';
+              }
+              
               return html;
            }
          }],
@@ -123,22 +134,24 @@ function cargar_cliente(){
           $('.auto').on('click', function () {
             var i=$(this).attr('data-cliente');
             var prestamo=$(this).attr('data-prestamo');
+            codAtual=$(this).attr('data-cod');
             tipo=0;
-            modalAbonoAuto(i,0,prestamo);
+            modalAbonoAuto(i,0,prestamo,codAtual);
           });
 
           $('.manual').on('click', function () {
             var i=$(this).attr('data-cliente');
             var prestamo=$(this).attr('data-prestamo');
+            codAtual=$(this).attr('data-cod');
             tipo=1;
-            modalAbonoAuto(i,1,prestamo);
+            modalAbonoAuto(i,1,prestamo,codAtual);
           });
         }
     });
   }
 
 
-function modalAbonoAuto(id,tipo,prestamo){
+function modalAbonoAuto(id,tipo,prestamo,codAtual=0){
   ip=prestamo;
   $.ajax({
     data: {
@@ -186,6 +199,7 @@ function registrar_abono(action,datos) {
   formData.append('tipo',tipo);
   formData.append('latitud',latitud);
   formData.append('longitud',longitud);
+  formData.append('codAtual',codAtual);
   $.ajax({
       data: formData,
       url: action,

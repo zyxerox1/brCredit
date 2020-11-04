@@ -59,9 +59,9 @@ class abono_controller
           }else{
               $_POST['valorAbono'] = preg_replace('/[.,]/', '', $_POST['valorAbono']);
           }
-          $errores=$this->abono->abonar($_POST['tipo'],$_POST['idPres'],$_POST['notaPago'],$_POST['valorAbono'],$_POST['latitud'],$_POST['longitud']);
+          $errores=$this->abono->abonar($_POST['tipo'],$_POST['idPres'],$_POST['notaPago'],$_POST['valorAbono'],$_POST['latitud'],$_POST['longitud'],$_POST['codAtual']);
         }else if($_POST['tipo']==0){
-          $errores=$this->abono->abonar($_POST['tipo'],$_POST['idPres'],$_POST['notaPago'],0,$_POST['latitud'],$_POST['longitud']);
+          $errores=$this->abono->abonar($_POST['tipo'],$_POST['idPres'],$_POST['notaPago'],0,$_POST['latitud'],$_POST['longitud'],$_POST['codAtual']);
         }
       }
       echo json_encode($errores);

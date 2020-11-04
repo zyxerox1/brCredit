@@ -109,7 +109,7 @@
 	        	</div>
 
 	        	<div class="col-md-3">
-	        		<a class="btn btn-home">
+	        		<a class="btn btn-home btn-Cartera" href="index.php?c=cartera">
 	        			<div class="row">
 	        				<i class="fas fa-wallet icon-btn"></i>
 	        			</div>

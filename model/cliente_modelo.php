@@ -32,8 +32,12 @@ class cliente_modelo
         $this->DB_QUERY->save($query);
     }
 
-    public function crear_usuario($primernombre, $segundonombre, $primerapellido, $segundoapellido, $Documento, $Genero, $Telefono_1, $Telefono_2, $Fecha, $Direcion, $Correo, $img_name,$estados,$ciudades,$ccr,$Direcionc){
+    public function crear_usuario($primernombre, $segundonombre, $primerapellido, $segundoapellido, $Documento, $Genero, $Telefono_1, $Telefono_2, $Fecha, $Direcion, $Correo, $img_name,$estados,$ciudades,$ccr,$Direcionc,$valormin=200,$valormax=300,$ruta=0){
 
+      if($ruta==0){
+         $ruta=$_SESSION["id_usu_credit"];
+      }
+     
         $user = array();
 
         if($img_name==1){
@@ -43,17 +47,43 @@ class cliente_modelo
             $img_name='usuario.jpg';
             $user["text_img_perfil_usu"]=1;
         }
-
+        $this->DB_QUERY->begin();
         $query = "SELECT max(orden_ruta_clie) AS orden_ruta_clie FROM tbl_cliente";
         $data=$this->DB_QUERY->query($query);
         $data[0]["orden_ruta_clie"]+=1;
-    	$query = "INSERT INTO tbl_cliente (id_clie, documento_clie, documento_ref_clie, primer_nombre_clie, segundo_nombre_clie, primer_apellido_clie, segundo_apellido_clie, telefono_1_clie, telefono_2_clie, direcion_clie, direcion_cobro_clie, sexo_clie, correo_clie, fecha_nacimineto_clie, foto_clie, estado_localidad_clie, ciudad_localidad_clie, id_usu,prestamo_minimo_client,prestamo_maximo_client, orden_ruta_clie) VALUES (NULL, $Documento, $ccr,'$primernombre', '$segundonombre', '$primerapellido', '$segundoapellido', $Telefono_1, $Telefono_2, '$Direcion', '$Direcionc','$Genero', '$Correo', '$Fecha','$img_name',$estados,$ciudades,".$_SESSION["id_usu_credit"].",".PRESTAMO_MINIMO.",".PRESTAMO_MAXIMO.",".$data[0]["orden_ruta_clie"].");";
+    	  $query = "INSERT INTO tbl_cliente (id_clie, documento_clie, documento_ref_clie, primer_nombre_clie, segundo_nombre_clie, primer_apellido_clie, segundo_apellido_clie, telefono_1_clie, telefono_2_clie, direcion_clie, direcion_cobro_clie, sexo_clie, correo_clie, fecha_nacimineto_clie, foto_clie, estado_localidad_clie, ciudad_localidad_clie, id_usu,prestamo_minimo_client,prestamo_maximo_client, orden_ruta_clie) VALUES (NULL, $Documento, $ccr,'$primernombre', '$segundonombre', '$primerapellido', '$segundoapellido', $Telefono_1, $Telefono_2, '$Direcion', '$Direcionc','$Genero', '$Correo', '$Fecha','$img_name',$estados,$ciudades,$ruta,$valormin,$valormax,".$data[0]["orden_ruta_clie"].");";
         $id=$this->DB_QUERY->save($query,'creacion de cliente.');
         $this->log_cliente(0,$id);
+        $this->DB_QUERY->commit();
         return array('control' =>$user["text_img_perfil_usu"] ,'error' => 0,'resp'=>$id);
     }
 
     /*////////////////////////////////consulta//////////////////////////////////////////////////*/
+    /*consulta de filtro*/
+    public function obtener_filtro_cliente($id=0){
+      $query="";
+      if ($id==0) {
+        $query="CALL obtenerFiltroCliente(".$_SESSION["id_usu_credit"].")";
+      }else{
+        $query="CALL obtenerFiltroCliente(".$id.")";
+      }
+      $data=$this->DB_QUERY->query($query);
+      return $data;
+    }
+
+    public function obtenerFiltroRuta(){
+      $query="CALL FiltroRuta()";
+      $data=$this->DB_QUERY1->query($query);
+      return $data;
+    }
+
+
+    public function query_cliente($params){
+        $query="CALL buscarCliente(".$params['i'].")";
+        $data=$this->DB_QUERY->query($query);
+        return $data;
+    }
+
     public function obtener_cliente($params){
 
         $query="SELECT clien.id_clie as id, 
@@ -87,29 +117,35 @@ class cliente_modelo
     }
 
     public function obtener_cliente_todos($params){
-        $query="SELECT clien.id_clie as id, 
-                       clien.documento_clie as CC, 
-                      CONCAT_WS (' ',clien.primer_nombre_clie,clien.segundo_nombre_clie,clien.primer_apellido_clie,clien.segundo_apellido_clie) as nombre,
-                      clien.telefono_1_clie as t1, 
-                      clien.telefono_2_clie as t2,
-                      clien.correo_clie as Correo,
-                      clien.documento_clie as Direcionr,
-                      clien.documento_ref_clie as Direcionc, 
-                      clien.fecha_nacimineto_clie as fecha_cobro,
-                      if(pres.valor_pres IS NOT NULL,pres.valor_pres,0) as valorDeuda,
-                      if(pres.id_pres IS NOT NULL,pres.id_pres,0) as id_cobro,
-                      clien.orden_ruta_clie as orden
-                      FROM tbl_cliente as clien 
-                      LEFT JOIN tbl_prestamo as pres on (pres.id_clie=clien.id_clie AND (pres.valor_pres>0)) 
-                      WHERE 1";
+      if($params['ruta']==""){
+        $data=$this->DB_QUERY->queryDatatable($params,'');
+        return $data; 
+      }
+       $query="SELECT CONCAT_WS(' ',clien.primer_nombre_clie,clien.segundo_nombre_clie) AS Nombres,
+       CONCAT_WS(' ',clien.primer_apellido_clie,clien.segundo_apellido_clie) AS Apellidos,
+                        clien.telefono_1_clie AS Telefono,
+                        if(clien.cumplimineto_client>0,'Si','No') AS Moroso,
+                        clien.estado_clie AS Estado,
+                        clien.direcion_clie AS Direcion,
+                        COUNT(pres.id_pres) AS ventas,
+                        SUM(logPress.valor_pres_logp) AS vendido,
+                        SUM(logPress.valor_pres_logp-pres.valor_pres) AS pagado,
+                        CONCAT_WS(' - ',clien.prestamo_minimo_client,clien.prestamo_maximo_client) AS Limite,
+                        clien.documento_ref_clie AS Referencia,
+                        clien.id_clie AS id
+                FROM tbl_cliente as clien
+                LEFT JOIN tbl_prestamo AS pres ON (pres.id_clie=clien.id_clie)
+                LEFT JOIN tbl_log_prestamo AS logPress ON (logPress.id_pres=pres.id_pres AND logPress.movimiento_logp=0)
+                WHERE clien.id_usu=".$params['ruta'];
+
         if(isset($params['Nombre']) && $params['Nombre']!=0){
           $query.=" AND clien.id_clie = ".$params['Nombre'];
         }
         if(isset($params['Cedula']) && $params['Cedula']!=0){
             $query.=" AND clien.documento_clie = ".$params['Cedula'];
         }
-
-        $query.=" ORDER BY clien.orden_ruta_clie ASC";
+        
+        $query.=" GROUP BY clien.id_clie ORDER BY clien.orden_ruta_clie ASC";
 
         //$tablaSearch="AND int_documento_usu LIKE '%".$params['search']['value']."%'";
 
@@ -117,18 +153,7 @@ class cliente_modelo
         return $data;
     }
 
-    public function obtener_filtro_cliente(){
-        $query="CALL obtenerCliente(".$_SESSION["id_usu_credit"].")";
-        $data=$this->DB_QUERY->query($query);
-        return $data;
-    }
 
-
-    public function query_cliente($params){
-        $query="CALL buscarCliente(".$params['i'].")";
-        $data=$this->DB_QUERY->query($query);
-        return $data;
-    }
 
     public function DataCliente($params){
         $query="SELECT CONCAT_WS(' ',client.primer_nombre_clie,client.segundo_nombre_clie,client.primer_apellido_clie,client.segundo_apellido_clie) as nombre,client.foto_clie as foto,
@@ -152,12 +177,27 @@ class cliente_modelo
 
     /*////////////////////////////////atualizar//////////////////////////////////////////////////*/
     
-    public function atualizar_cliente($primernombre, $segundonombre, $primerapellido, $segundoapellido,$Genero, $Telefono_1, $Telefono_2, $Fecha, $Direcion, $Correo, $img_name,$id,$estados,$ciudad,$ccr,$Direcioncobro){
+    public function cambiar_estado($params){
+      $this->DB_QUERY->begin();
+      $query="UPDATE tbl_cliente SET estado_clie = ".$params['estado']." WHERE tbl_cliente.id_clie = '".$params['id']."'";
+      $id=$this->DB_QUERY->save($query,'cambiar estado del cliente.');
+      $this->log_cliente(6,$params['id']);
+      $this->DB_QUERY->commit();
+      return array('control' =>0 ,'error' => 0);
+    }
+
+    public function atualizar_cliente($primernombre, $segundonombre, $primerapellido, $segundoapellido,$Genero, $Telefono_1, $Telefono_2, $Fecha, $Direcion, $Correo, $img_name,$id,$estados,$ciudad,$ccr,$Direcioncobro,$valormin=200,$valormax=300,$ruta=0){
 
         $user = array();
-
+        $this->DB_QUERY->begin();
         $img="";
         $correo="";
+        $datosAdmin="";
+        if($_SESSION['rol']==1){
+          $datosAdmin=",prestamo_minimo_client='$valormin',
+                       prestamo_maximo_client='$valormax',
+                       id_usu='$ruta'";
+        }
         if($img_name==1){
             $query="SELECT foto_clie FROM tbl_cliente WHERE id_clie=".$id;
             $data=$this->DB_QUERY->query($query);
@@ -189,11 +229,13 @@ class cliente_modelo
                     documento_ref_clie='$ccr',
                     direcion_cobro_clie='$Direcioncobro',
                     correo_clie='$Correo'
+                    $datosAdmin
                     $img
                   WHERE tbl_cliente.id_clie =".$id;
 
         $this->DB_QUERY->save($query,'atualizar cliente.');
         $this->log_cliente(1,$id);
+        $this->DB_QUERY->commit();
         return $user;
     }
 
@@ -231,7 +273,6 @@ class cliente_modelo
         $this->log_cliente(2,$params['id']);
 
         return array('error' => 0);
-
     }
     
 }

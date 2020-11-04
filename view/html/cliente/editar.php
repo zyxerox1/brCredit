@@ -160,6 +160,54 @@
                             </div>
                           </div>
                   </div>
+
+                  <?php if ($_SESSION['rol']==1): ?>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <label for="valormin" class="text-color">Valor minimo del prestamo*</label>
+                        <div class="input-group form-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text">$</span>
+                          </div>
+                          <input type="text" class="form-control Spinner" name="valormin" id="valormin" onkeyup="format(this)" onchange="format(this)" min="0"  onload="format(this)" value="<?php echo $data[0]['prestamo_minimo_client']; ?>" step="1" required="required">
+                          <div class="input-group-append">
+                            <span class="input-group-text">.00</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <label for="valormax" class="text-color">Valor maximo del prestamo*</label>
+                        <div class="input-group form-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text">$</span>
+                          </div>
+                          <input type="text" class="form-control Spinner" name="valormax" id="valormax" onkeyup="format(this)" onchange="format(this)" min="0" onload="format(this)" value="<?php echo $data[0]['prestamo_maximo_client']; ?>" step="1" required="required">
+                          <div class="input-group-append">
+                            <span class="input-group-text">.00</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-8 offset-md-2">
+                        <div class="form-group">
+                          <label for="estados" class="text-color">ruta*</label>
+                          <select class="select-2 form-control" id="ruta" name="ruta" required="required">
+                              <option value="0">Selecione un ruta...</option>
+                              <?php foreach ($data_filtro_ruta as $key => $dataRuta) { ?>
+                                <?php if ($data[0]['id_usu']==$dataRuta['id']){ ?>
+                                  <option value="<?php echo $dataRuta['id']; ?>" selected="selected"><?php echo $dataRuta['cedula']." - ".$dataRuta['codigo'] ?></option>
+                                <?php }else{ ?> 
+                                <option value="<?php echo $dataRuta['id']; ?>"><?php echo $dataRuta['cedula']." - ".$dataRuta['codigo'] ?></option>
+                                <?php } ?>
+                              <?php } ?>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                <?php endif ?>
                 <button type="button" class="btn btn-danger btn-md cerrar-modal posicion-flotante-derecho" data-dismiss="modal" onClick="history.back()" >Atras</button>
                 <button type="submit" class="btn btn-primary btn-md posicion-flotante-derecho">Guardar</button>
       

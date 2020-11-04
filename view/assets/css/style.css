@@ -286,3 +286,7 @@ z-index: 99;
 .desplegue-btn{
   float: right;
 }
+
+.btn-atras{
+  cursor: pointer;
+}

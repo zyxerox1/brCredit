@@ -64,12 +64,24 @@ class query_modelo
         }
     }
 
+    public function begin(){
+        $this->DB->autocommit(false);
+    }
+
+    public function commit(){
+        $this->DB->commit();
+    }
+
+    public function rollback(){
+        $this->DB->rollback();
+    }
+
     public function query($sql="SELECT now()",$control="",$acion=""){
         $data = array();
         /*parametro de errores{*/
         $accion='c='.$control.' a='.$acion.' /-/ consulta='.$sql;
         /*}///////////////////*/
-        $query = mysqli_query($this->DB, $sql) or die('501'.$this->LOG->log_errores($accion,mysqli_error($this->DB),$control,$acion));
+        $query = mysqli_query($this->DB, $sql) or die('501'.$this->DB->rollback().$this->LOG->log_errores($accion,mysqli_error($this->DB),$control,$acion));
         while ($fila = $query->fetch_assoc()) {
             $data[] = $fila;
         }
@@ -77,7 +89,7 @@ class query_modelo
     } 
 
     public function save($sql="",$accion=""){
-        mysqli_query($this->DB, $sql) or die('501' . $this->LOG->log_errores($accion." => ".$sql,mysqli_error($this->DB)));
+        mysqli_query($this->DB, $sql) or die('501'.$this->DB->rollback().$this->LOG->log_errores($accion." => ".$sql,mysqli_error($this->DB)));
         $id = mysqli_insert_id($this->DB);
         if($id==""){
             $id = 0;

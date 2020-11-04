@@ -17,7 +17,7 @@
 
 .mensaje-btn{
 	text-align: center;
-	font-size: 15px;
+	font-size: 25px;
 	margin-left: auto;
     margin-right: auto;
     color: white;
@@ -61,6 +61,6 @@
 	background: #b9ab06 !important;
 }
 
-.btn-cliente{
-	background: #b9ab06 !important;
+.btn-Cartera{
+	background: #ff0000 !important;
 }

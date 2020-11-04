@@ -10,6 +10,11 @@ $( document ).ajaxComplete(function() {
     },1000);
 });
 
+$(".btn-atras").on('click', function () {
+  window.history.back();
+  return false;
+});
+
 $(".desplegue-btn").on('click', function () {
   console.log("ddd");
   if($(this).hasClass('fa-chevron-down')){
@@ -39,7 +44,6 @@ function format(input)
 
 function formatValor(valor)
 {
-  console.log(valor);
   var num = valor.replace(/\./g,'');
   if(!isNaN(num)){
     num = num.toString().split('').reverse().join('').replace(/(?=\d*\.?)(\d{3})/g,'$1.');
@@ -48,6 +52,21 @@ function formatValor(valor)
   }
   return valor; 
 }
+
+function formaterNumeroDecimales(numero){
+  if(numero===null){
+    numero=0;
+  }
+  numero=numero.toString();
+  var valor = numero.split(".", 2);
+  if(valor.length==2){
+    numero=formatValor(valor[0])+"."+valor[1];
+  }else{
+    numero=formatValor(numero)+".00";
+  }
+  return numero;
+}
+
 
  /*configurar el Spinner*/
 /*var config = {
@@ -157,12 +176,19 @@ function readTextFile(file, callback) {
 }
 
 $(document).ready(function() {
-   $( ".select2" ).each(function( index ) {
-        $(".select2").select2({
-          theme: 'bootstrap4',
-          dropdownParent: $(".container-select2:eq("+index+")"),
-           width: '100%'
-        });
+  //select 2 antiguo
+  $( ".select2" ).each(function( index ) {
+    console.log($(".container-select2:eq("+index+")"));
+    $(".select2").select2({
+      theme: 'bootstrap4',
+      dropdownParent: $(".container-select2:eq("+index+")"),
+      width: '100%'
     });
-   
+  });
+  //select 2 antiguo sin dropdownParent
+  $(".select-2").select2({
+    theme: 'bootstrap4',
+    width: '100%'
+  });
+
 });
