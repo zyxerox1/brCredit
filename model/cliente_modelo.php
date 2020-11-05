@@ -48,7 +48,7 @@ class cliente_modelo
             $user["text_img_perfil_usu"]=1;
         }
         $this->DB_QUERY->begin();
-        $query = "SELECT max(orden_ruta_clie) AS orden_ruta_clie FROM tbl_cliente";
+        $query = "SELECT max(orden_ruta_clie) AS orden_ruta_clie FROM tbl_cliente WHERE id_usu=".$ruta;
         $data=$this->DB_QUERY->query($query);
         $data[0]["orden_ruta_clie"]+=1;
     	  $query = "INSERT INTO tbl_cliente (id_clie, documento_clie, documento_ref_clie, primer_nombre_clie, segundo_nombre_clie, primer_apellido_clie, segundo_apellido_clie, telefono_1_clie, telefono_2_clie, direcion_clie, direcion_cobro_clie, sexo_clie, correo_clie, fecha_nacimineto_clie, foto_clie, estado_localidad_clie, ciudad_localidad_clie, id_usu,prestamo_minimo_client,prestamo_maximo_client, orden_ruta_clie) VALUES (NULL, $Documento, $ccr,'$primernombre', '$segundonombre', '$primerapellido', '$segundoapellido', $Telefono_1, $Telefono_2, '$Direcion', '$Direcionc','$Genero', '$Correo', '$Fecha','$img_name',$estados,$ciudades,$ruta,$valormin,$valormax,".$data[0]["orden_ruta_clie"].");";
@@ -197,6 +197,18 @@ class cliente_modelo
           $datosAdmin=",prestamo_minimo_client='$valormin',
                        prestamo_maximo_client='$valormax',
                        id_usu='$ruta'";
+
+                      $query = "SELECT id_usu FROM tbl_cliente WHERE id_clie=".$id;
+                      $dataAdmin=$this->DB_QUERY->query($query);
+                      if($dataAdmin[0]['id_usu']!=$ruta){
+
+                        $query = "SELECT max(orden_ruta_clie) AS orden_ruta_clie FROM tbl_cliente WHERE id_usu=".$ruta;
+                        $data=$this->DB_QUERY->query($query);
+                        $data[0]["orden_ruta_clie"]+=1;
+                        $datosAdmin.=",orden_ruta_clie='".$data[0]["orden_ruta_clie"]."'";
+                      }
+        
+
         }
         if($img_name==1){
             $query="SELECT foto_clie FROM tbl_cliente WHERE id_clie=".$id;
@@ -240,6 +252,7 @@ class cliente_modelo
     }
 
     public function cambiarOrdenRutero($params){
+        $this->DB_QUERY->begin();
         $DataClienteModifica=0;
         $query="SELECT orden_ruta_clie FROM tbl_cliente WHERE id_clie=".$params['id'];
         $DataCliente=$this->DB_QUERY->query($query);
@@ -265,13 +278,13 @@ class cliente_modelo
         $this->DB_QUERY2->save($query,'cambiar orden cliente.');
         $this->log_cliente(2,$DataClienteModifica[0]['id_clie']);
 
-          $query = "UPDATE tbl_cliente 
+        $query = "UPDATE tbl_cliente 
                   SET 
                     orden_ruta_clie=".$DataClienteModifica[0]['orden_ruta_clie']."
                   WHERE tbl_cliente.id_clie =".$params['id'];
-         $this->DB_QUERY3->save($query,'cambiar orden cliente.');
+        $this->DB_QUERY3->save($query,'cambiar orden cliente.');
         $this->log_cliente(2,$params['id']);
-
+        $this->DB_QUERY->commit();
         return array('error' => 0);
     }
     

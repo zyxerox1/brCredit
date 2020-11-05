@@ -139,7 +139,12 @@
 	        				<i class="fas fa-user-friends icon-btn"></i>
 	        			</div>
 	        			<div class="row">
-	        				<label class="mensaje-btn">Clientes</label>
+	        				<?php if ($_SESSION['rol']==1): ?>
+	        					<label class="mensaje-btn">Lista clientes</label>
+	        				<?php endif ?>
+	        				<?php if ($_SESSION['rol']==2): ?>
+	        					<label class="mensaje-btn">Mis clientes</label>
+	        				<?php endif ?>
 	        			</div>
 	        		</a>
 	        	</div>

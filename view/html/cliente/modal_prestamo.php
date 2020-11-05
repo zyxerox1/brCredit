@@ -49,7 +49,7 @@
                   </ul>
                 </div>
               </div>
-              <a href="#" class="btn btn-primary">Concultar historial de prestamo</a>
+              <a href="index.php?c=historial" target="_blank" class="btn btn-primary">Concultar historial de prestamo</a>
             </div>
           </div>
         </div>
@@ -94,7 +94,7 @@
             <div class="col-md-6">
               <label for="inter" class="text-color">Intereses*</label>
               <div class="input-group form-group">
-                <input type="text" class="form-control Spinner" name="inter" id="inter" onkeyup="format(this)" onchange="format(this)" min="0" max="" value="1" step="1" disabled="disabled" required="required">
+                <input type="text" class="form-control Spinner" name="inter" id="inter" onkeyup="format(this)" onchange="format(this)" min="0" max="" value="10" step="1" disabled="disabled" required="required">
                 <div class="input-group-append">
                   <span class="input-group-text">%</span>
                 </div>

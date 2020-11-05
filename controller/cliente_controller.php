@@ -111,11 +111,11 @@ class cliente_controller
 
 
         if($this->validacion->soloNumeros($_POST['ccr'])==false){
-          $errores[] = array('control' =>"Documento" ,'error' =>"El campo Documento solo debe contener numeros");
+          $errores[] = array('control' =>"ccr" ,'error' =>"El campo Documento referencia solo debe contener numeros");
         }
         
         if(strlen($_POST['ccr'])<7){
-          $errores[] = array('control' =>"Documento" ,'error' =>"El campo Documento es corto");
+          $errores[] = array('control' =>"ccr" ,'error' =>"El campo Documento referencia es corto");
         }
 
         if($_POST['Genero']==""){
@@ -266,11 +266,11 @@ class cliente_controller
         }
 
         if($this->validacion->soloNumeros($_POST['ccr'])==false){
-          $errores[] = array('control' =>"Documento" ,'error' =>"El campo Documento solo debe contener numeros");
+          $errores[] = array('control' =>"ccr" ,'error' =>"El campo Documento referencia solo debe contener numeros");
         }
         
         if(strlen($_POST['ccr'])<7){
-          $errores[] = array('control' =>"Documento" ,'error' =>"El campo Documento es corto");
+          $errores[] = array('control' =>"ccr" ,'error' =>"El campo Documento referencia es corto");
         }
 
         if($this->validacion->muyJoven($_POST['Fecha'])==false){

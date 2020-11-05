@@ -14,6 +14,7 @@
 
         <button type="button" id="crear" onclick="window.location.href = 'index.php?c=cliente&a=crear'" class="btn btn-primary btn-confirmar">Crear cliente</button>
         <hr>
+        <?php if($_SESSION["rol"]==1): ?>
         <div class="row">
           <div class="col-md-6 offset-md-3">
               <div class="form-group">
@@ -28,7 +29,7 @@
               </div>
           </div>
         </div>
-        
+        <?php endif ?>
         <div class="row container-filtro-cliente" <?php if($_SESSION["rol"]==1): ?>
           style="display: none;"
           <?php endif ?>>

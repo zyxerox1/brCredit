@@ -292,6 +292,7 @@ function registrar_prestamo(action,datos) {
   formData.append('id',ip);
   formData.append('latitud',latitud);
   formData.append('longitud',longitud);
+  formData.append('inter',$("#inter").val());
   $.ajax({
       data: formData,
       url: action,
