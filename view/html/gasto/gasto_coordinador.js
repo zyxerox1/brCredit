@@ -61,7 +61,7 @@ function cargar_gasto(){
         "autoWidth": true,
         "ajax": {
           "data": {
-            'Cedula':$('#Cedula').val(),
+            'codigo':$('#codigo').val(),
             'Nombre':$('#Nombre').val(),
             'Fecha_ini':$('#Fecha_ini').val(),
             'Fecha_fin':$('#Fecha_fin').val(),
@@ -87,6 +87,7 @@ function cargar_gasto(){
         "columns": [
           { data: 'cc' },
           { data: 'nombre'},
+          { data: 'ruta'},
           { data: 'telefono'},
           { data: 'correo' },
           { data: 'valor' },
@@ -97,19 +98,19 @@ function cargar_gasto(){
           { data: 'id' },
       ],
       "columnDefs": [ {
-           "targets": 4,
+           "targets": 5,
            "data": "valor",
            "render": function ( data, type, row, meta ) {
-             return "$"+formatValor(data)+".00";
+             return "$"+formaterNumeroDecimales(data);
            }
          },{
-           "targets": 8,
+           "targets": 9,
            "data": "evidencia",
            "render": function ( data, type, row, meta ) {
               return '<a class="btn btn-outline-primary" target="_blank" href="./view/assets/evidenciasGastosPropios/'+data+'"><i class="fas fa-file-download"></i></a>';
            }
          },{
-           "targets": 9,
+           "targets": 10,
            "data": "id",
            "render": function ( data, type, row, meta ) {
            		if(row.estado==0){
@@ -171,7 +172,7 @@ function modalCambiar(i){
 		 		$('.estado').html("Anulado");
 		 	}
 
-			$('.valor').html('$'+formatValor(obj["data"][0].valor_gas)+".00");
+			$('.valor').html('$'+formaterNumeroDecimales(obj["data"][0].valor_gas));
 		 	$('.nombre').html(obj["data"][0].primer_nombre_usu+" "+obj["data"][0].segundo_nombre_usu);
 			$('.apellido').html(obj["data"][0].primer_apellido_usu+" "+obj["data"][0].segundo_apellido_usu);
 			$('.telefono1').html(obj["data"][0].telefono_1_usu);
@@ -183,13 +184,13 @@ function modalCambiar(i){
 
 			for (var i = 0; i < obj["suma"].length; i++) {
 				if(obj["suma"][i].estado==0){
-					$('#Vpendientes').html('$'+formatValor(obj["suma"][i].total)+".00");
+					$('#Vpendientes').html('$'+formaterNumeroDecimales(obj["suma"][i].total));
 				}if(obj["suma"][i].estado==1){
-					$('#Vcancelador').html('$'+formatValor(obj["suma"][i].total)+".00");
+					$('#Vcancelador').html('$'+formaterNumeroDecimales(obj["suma"][i].total));
 				}if(obj["suma"][i].estado==2){
-					$('#Vabonos').html('$'+formatValor(obj["suma"][i].total)+".00");
+					$('#Vabonos').html('$'+formaterNumeroDecimales(obj["suma"][i].total));
 				}if(obj["suma"][i].estado==3){
-					$('#Vanulado').html('$'+formatValor(obj["suma"][i].total)+".00");
+					$('#Vanulado').html('$'+formaterNumeroDecimales(obj["suma"][i].total));
 				}
 			}
 			$('.cancelar').attr('href','index.php?c=gasto&a=cambiarEstado&id='+obj["data"][0].id_gas);

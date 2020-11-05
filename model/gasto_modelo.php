@@ -42,11 +42,12 @@ class gasto_modelo
             $img='evidencia.png';
             $data["img"]=1;
         }
-       
+        $this->DB_QUERY->begin();
         $query = "INSERT INTO `tbl_gasto` (`id_gas`, `valor_gas`, `fecha_gas`, `evidencia_gas`, `nota_gas`, `id_usu`,id_tipo_tipog,valor_total_gas) VALUES (NULL, '$valor', now(), '$img', '$nota', '".$_SESSION["id_usu_credit"]."','$Tipo','$valor')";
 
         $id=$this->DB_QUERY->save($query,'Creaciòn de gasto propio del vendedor.');
         $this->log_gasto(0,$id,'Creacion de gatos',$valor);
+        $this->DB_QUERY->commit();
         return array('control' =>$data["img"] ,'error' => 0);
     }
 
@@ -54,9 +55,15 @@ class gasto_modelo
 
 
     public function query_usuario(){
-        $query="CALL obtenerUsuarioCoordinador(".$_SESSION["rol"].")";
+        $query="CALL obtenerVendedores()";
         $data=$this->DB_QUERY->query($query);
         return $data;
+    }
+
+    public function obtenerFiltroRuta(){
+      $query="CALL FiltroRuta()";
+      $data=$this->DB_QUERY1->query($query);
+      return $data;
     }
 
     public function obtenerGasto(){
@@ -82,7 +89,8 @@ class gasto_modelo
                 gasto.fecha_gas as fecha,
                 gasto.evidencia_gas as evidencia,
                 gasto.id_gas as id,
-                gasto.estado_gas as estado
+                gasto.estado_gas as estado,
+                usu.codigo_ruta as ruta
                 FROM tbl_gasto as gasto
                 INNER JOIN tbl_usuarios as usu on (usu.id_usu=gasto.id_usu)
                 INNER JOIN tbl_log_gasto as log on (gasto.id_gas=log.id_gas)
@@ -93,8 +101,8 @@ class gasto_modelo
         if(isset($params['Nombre']) && $params['Nombre']!=0){
           $query.=" AND usu.id_usu = ".$params['Nombre'];
         }
-        if(isset($params['Cedula']) && $params['Cedula']!=0){
-            $query.=" AND usu.documento_usu = ".$params['Cedula'];
+        if(isset($params['codigo']) && $params['codigo']!=0){
+            $query.=" AND usu.id_usu = ".$params['codigo'];
         }
         if(isset($params['Fecha_fin']) && $params['Fecha_fin']!=""){
             $query.=" AND gasto.fecha_gas <= '".$params['Fecha_fin']."'";
@@ -103,14 +111,15 @@ class gasto_modelo
             $query.=" AND gasto.fecha_gas >= '".$params['Fecha_ini']."'";
         }
         if(isset($params['Valor_max']) && $params['Valor_max']!=""){
-            $query.=" AND gasto.valor_gas <= '".$params['Fecha_fin']."'";
+            $params['Valor_max']=str_replace( '.', '',$params['Valor_max'] );
+            $query.=" AND gasto.valor_gas <= '".$params['Valor_max']."'";
         }
         if(isset($params['Valor_mini']) && $params['Valor_mini']!=""){
-            $query.=" AND gasto.valor_gas >= '".$params['Fecha_ini']."'";
+            $params['Valor_mini']=str_replace( '.', '',$params['Valor_mini'] );
+            $query.=" AND gasto.valor_gas >= '".$params['Valor_mini']."'";
         }
 
         $query.=" GROUP BY gasto.id_gas";
-
 
         //$tablaSearch="AND int_documento_usu LIKE '%".$params['search']['value']."%'";
 
@@ -155,6 +164,7 @@ class gasto_modelo
     }
 
     public function abonar($idGasto, $notaGasto, $valorAbono, $latitud, $longitud){ 
+        $this->DB_QUERY->begin();
         $valor=0;
         $estado='';
         $query="SELECT estado_gas,valor_gas FROM `tbl_gasto` WHERE id_gas=".$idGasto;
@@ -178,11 +188,13 @@ class gasto_modelo
         
         $id=$this->DB_QUERY->save($query,'Abono.');
         $this->log_gasto(2,$idGasto,$notaGasto,$valorAbono,$latitud,$longitud);
+        $this->DB_QUERY->commit();
         return array('control' =>0 ,'error' => 0);
 
     }
 
     public function cambiarEstado($params,$tipo){
+        $this->DB_QUERY->begin();
         $valor='';
         $query="SELECT estado_gas,valor_gas FROM `tbl_gasto` WHERE id_gas=".$params['id'];
         $data=$this->DB_QUERY1->query($query);
@@ -199,6 +211,7 @@ class gasto_modelo
         if($tipo==3){
             return array('control' =>0 ,'error' => 0);
         }
+        $this->DB_QUERY->commit();
         return "";
     }
     

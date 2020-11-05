@@ -150,12 +150,17 @@
 	        	</div>
 
 	        	<div class="col-md-3">
-	        		<a class="btn btn-home">
+	        		<a class="btn btn-home btn-gasto" href="index.php?c=gasto">
 	        			<div class="row">
 	        				<i class="fas fa-receipt icon-btn"></i>
 	        			</div>
 	        			<div class="row">
-	        				<label class="mensaje-btn">Gastos</label>
+	        				<?php if ($_SESSION['rol']==1): ?>
+	        					<label class="mensaje-btn">Gastos</label>
+	        				<?php endif ?>
+	        				<?php if ($_SESSION['rol']==2): ?>
+	        					<label class="mensaje-btn">Mi gastos</label>
+	        				<?php endif ?>
 	        			</div>
 	        		</a>
 	        	</div>
@@ -163,10 +168,10 @@
 	        	<div class="col-md-3">
 	        		<a class="btn btn-home">
 	        			<div class="row">
-	        				<i class="fab fa-users-cog icon-btn"></i>
+	        				<i class="fas fa-people-arrows icon-btn"></i>
 	        			</div>
 	        			<div class="row">
-	        				<label class="mensaje-btn">Gestor de usuario</label>
+	        				<label class="mensaje-btn">Retiro</label>
 	        			</div>
 	        		</a>
 	        	</div>

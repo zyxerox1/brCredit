@@ -42,11 +42,11 @@
 }
 
 .btn-auditoria{
-	background: #b90606 !important;
+	background: #043e5a !important;
 }
 
 .btn-rutas{
-	background: #ae06b9 !important;
+	background: #5e07a0 !important;
 }
 
 .btn-cierre{
@@ -54,7 +54,7 @@
 }
 
 .btn-usuario{
-	background: #2ab906 !important;
+	background: #1ca214 !important;
 }
 
 .btn-cliente{
@@ -63,4 +63,12 @@
 
 .btn-Cartera{
 	background: #ff0000 !important;
+}
+
+.btn-gasto{
+	background: #000000 !important;
+}
+
+.btn-retiro{
+	background: #f39d00 !important;
 }

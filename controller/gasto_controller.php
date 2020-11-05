@@ -26,6 +26,7 @@ class gasto_controller
         if($_SESSION["rol"]==1){
             $p='gasto_coordinador';
             $data_filtro=$this->gasto->query_usuario($_REQUEST);
+            $data_filtro_ruta=$this->gasto->obtenerFiltroRuta();
         }
          if($_SESSION["rol"]==2){
             $p='gasto_vendedor';

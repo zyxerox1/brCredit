@@ -92,8 +92,8 @@
               <thead class="thead-dark">
                 <tr>
                   <th scope="col">Pendientes</th>
-                  <th scope="col">Cancelador</th>
-                  <th scope="col">Abonos de coordinador</th>
+                  <th scope="col">Cancelado</th>
+                  <th scope="col">Abonos de administrador</th>
                   <th scope="col">Anulados</th>
                 </tr>
               </thead>

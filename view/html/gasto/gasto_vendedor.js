@@ -86,7 +86,9 @@ function cargar_gasto(){
            			var html='<a class="btn btn-outline-warning cambiar" data-i='+data+'><i class="fas fa-exclamation"></i> Pendiente</a>';
            		}else if(row.estado==1){
            			var html='<a class="btn btn-outline-success cambiar" style="color: white" data-i='+data+'><i class="fas fa-thumbs-up"></i> Gasto cancelado</a>';
-           		}
+           		}else if(row.estado==2){
+                var html='<a class="btn btn-outline-primary cambiar btnAbonar" style="color: #007bff" data-i='+data+'><i class="fas fa-receipt"></i> Gasto abonado</a>';
+              }
               else if(row.estado==3){
                 var html='<a class="btn btn-outline-secondary cambiar" style="color: white" data-i='+data+'><i class="fas fa-window-close"></i> Gasto anulado</a>';
               }

@@ -18,24 +18,26 @@
                             <select class="select2 form-control pmd-select2" id="Nombre" name="Nombre" required="required">
                                 <option value="0" selected="selected">Busqueda por nombre</option>
                                	<?php foreach ($data_filtro as $key => $Nombrevalue) { ?>
-                               		<option value="<?php echo $Nombrevalue['id_usu']; ?>"><?php echo $Nombrevalue['primer_nombre_usu']." ".$Nombrevalue['segundo_nombre_usu']." ".$Nombrevalue['primer_apellido_usu']." ".$Nombrevalue['segundo_apellido_usu'] ?></option>
+                               		<option value="<?php echo $Nombrevalue['id_usu']; ?>"><?php echo $Nombrevalue['primer_nombre_usu']." ".$Nombrevalue['segundo_nombre_usu']." ".$Nombrevalue['primer_apellido_usu']." ".$Nombrevalue['segundo_apellido_usu']." - ".$Nombrevalue['documento_usu'] ?></option>
                                 	
                                	<?php } ?>
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-6 container-select2">
-                        <div class="form-group pmd-textfield pmd-textfield-floating-label">
-                            <label for="Cedula" class="text-color bmd-label-floating">Cédula</label>
-                            <select class="select2 form-control pmd-select2" id="Cedula" name="Cedula" required="required">
-                                <option value="0" selected="selected">Búsqueda por documento</option>
-                               	<?php foreach ($data_filtro as $key => $Nombrevaluec) { ?>
-                               		<option value="<?php echo $Nombrevaluec['documento_usu']; ?>"><?php echo $Nombrevaluec['documento_usu'] ?></option>
-                                	
-                               	<?php } ?>
-                            </select>
-                        </div>
-                    </div>
+                    
+			          <div class="col-md-6">
+			              <div class="form-group">
+			                  <label for="codigo" class="text-color">Codigo del ruta</label>
+			                  <select class="select-2 form-control" id="codigo" name="codigo" required="required">
+			                      <option value="0" selected="selected">Busqueda por ruta</option>
+			                      <?php foreach ($data_filtro_ruta as $key => $dataRuta) { ?>
+			                          <option value="<?php echo $dataRuta['id']; ?>"><?php echo $dataRuta['codigo'] ?></option>
+			                          
+			                      <?php } ?>
+			                  </select>
+			              </div>
+			          </div>
+			        
 			    </div>
 			    <?php } ?>
 			    <div class="row">
@@ -94,19 +96,15 @@
 				</div>-->
 				
 	            <div class="card-body card-body-primary">
-	            	<div class="row">
-						<div class="col-md-6">
-							<button type="button" id="buscar" onclick="window.location.href = ''" class="btn btn-primary btn-confirmar">Calculador</button>
-						</div>
-					</div>
 					<br>
 	        		<div class="table-responsive padding" >
-			            <table id="dataGasto" class="table table-bordred table-striped table-striped table-hover dt-responsive">
+			            <table id="dataGasto" class="table table-bordred table-striped table-striped table-hover nowrap">
 			              <thead class="heade-table">
 			                
 			                <?php if($_SESSION["rol"]==1){ ?>
 			                	<th class="text-color all">CC</th>
-			                	<th class="text-color all">Nombres</th>
+			                	<th class="text-color all">Hecho por</th>
+				                <th class="text-color">Ruta</th>
 				                <th class="text-color">Teléfonos</th>
 				                <th class="text-color">Correo</th>
 				                <th class="text-color">Valor</th>
