@@ -16,7 +16,6 @@ $(".btn-atras").on('click', function () {
 });
 
 $(".desplegue-btn").on('click', function () {
-  console.log("ddd");
   if($(this).hasClass('fa-chevron-down')){
     $(this).parent(".card-header").parent(".card").find(".divDesplegableContainer").show("slow");
     $(this).removeClass('fa-chevron-down');

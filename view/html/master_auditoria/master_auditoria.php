@@ -4,7 +4,7 @@
 <br>
 <div class="container">
 	<br>
-	<h4><i class="fab fa-audible"></i> Auditoria</h4>
+    <h4 class="btn-atras"><i class="fas fa-reply-all"></i> <i class="fab fa-audible"></i> Auditoria</h4>
 	<hr>
 	<div class="row">
         <div class="col-md-6 offset-md-3 container-select2Master">
@@ -21,7 +21,7 @@
     </div>
    	<br>
     <button type="button" class="btn btn-primary btn-audit-accion " id="consultar">Generar reporte <i class="fas fa-arrow-right"></i></button>
-    <button type="button" class="btn btn-success btn-audit-accion " id="csv">Exportar csv <i class="fas fa-file-csv"> </i></button>
+    <button type="button" class="btn btn-success btn-audit-accion " style="display: none;"  id="csv">Exportar csv <i class="fas fa-file-csv"> </i></button>
     <br>
     <br>
     <h4 class="tittle-reporte"></h4>

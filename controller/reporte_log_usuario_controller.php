@@ -19,8 +19,8 @@ class reporte_log_usuario_controller
         $c='reporte_log_usuario'; //carpeta;
         $p='reporte_log_usuario';//nombre del archivo js
 
-        $data_filtro=$this->reporte->query_usuario($_REQUEST);
-        $data_filtro_autor=$this->reporte->query_usuario_autor();
+        $data_filtro=$this->reporte->query_usuario();
+        $data_filtro_autor=$this->reporte->query_usuario();
 
         require_once HTML_DIR . 'overall/header.php';
         require_once HTML_DIR . 'overall/topNav.php';
@@ -33,15 +33,15 @@ class reporte_log_usuario_controller
         $this->validacion->validarRol(1);
        
         //variable necesaria para encontrar la ruta del script js--se utiliza en le footer de la app
-        $carpeta='reporte_log_gasto'; //carpeta;
-        $archivo='reporte_log_gasto';//nombre del archivo js
+        $carpeta='reporte_log_usuario'; //carpeta;
+        $archivo='reporte_log_usuario';//nombre del archivo js
         $data_filtro=$this->reporte->query_usuario();
         if(isset($carpeta)){  
         ?>
             <link rel="stylesheet" type="text/css" href="./view/html/<?php echo $carpeta; ?>/style.css?v=<?php echo(rand()); ?>"/>
         <?php 
 
-        require_once HTML_DIR . 'reporte_log_gasto/reporte_log_gasto.php';
+        require_once HTML_DIR . 'reporte_log_usuario/reporte_log_usuario.php';
 
         ?>
             <script src="./view/html/<?php echo $carpeta."/".$archivo.".js"; ?>?v=<?php echo(rand()); ?>"></script>

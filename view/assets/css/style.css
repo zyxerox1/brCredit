@@ -290,3 +290,7 @@ z-index: 99;
 .btn-atras{
   cursor: pointer;
 }
+
+.nowrap-column{
+    white-space: pre;
+}

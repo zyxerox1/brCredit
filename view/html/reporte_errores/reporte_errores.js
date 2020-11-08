@@ -20,10 +20,6 @@ $(document).ready(function() {
   $('#Eliminar').on('click', function () {
     eliminar_cursos();
   });
-
-   $('.csv').on('click', function () {
-    csv();
-  });
   cargar_reporte();
 });
 
@@ -65,7 +61,9 @@ function cargar_reporte(){
           { data: 'controller' },
           { data: 'function' }
       ],
-      "columnDefs": [],
+      "columnDefs": [
+      { className: "nowrap-column", "targets": [ 0 ] }
+      ],
         "processing": true,
         "serverSide": true,
         "pageLength" : 10,

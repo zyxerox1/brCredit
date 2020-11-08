@@ -75,49 +75,52 @@
 		<h5 class="card-header card-header-primary text-center"><i class="fas fa-bars"></i> Menus</h5> 
 		<div class="card-body card-body-primary">
 	        <div class="row containe-card">
-	        	<div class="col-md-3">
-	        		<a class="btn btn-home btn-auditoria" href="index.php?c=master_auditoria">
-	        			<div class="row">
-	        				<i class="fab fa-audible icon-btn"></i>
-	        			</div>
-	        			<div class="row">
-	        				<label class="mensaje-btn">Auditorias</label>
-	        			</div>
-	        		</a>
-	        	</div>
+	        	<?php if ($_SESSION['rol']==1): ?>
+	        		<div class="col-md-3">
+		        		<a class="btn btn-home btn-auditoria" href="index.php?c=master_auditoria">
+		        			<div class="row">
+		        				<i class="fab fa-audible icon-btn"></i>
+		        			</div>
+		        			<div class="row">
+		        				<label class="mensaje-btn">Auditorias</label>
+		        			</div>
+		        		</a>
+		        	</div>
 
-	        	<div class="col-md-3">
-	        		<a class="btn btn-home btn-rutas" href="index.php?c=ruta">
-	        			<div class="row">
-	        				<i class="fas fa-route icon-btn"></i>
-	        			</div>
-	        			<div class="row">
-	        				<label class="mensaje-btn">Rutas</label>
-	        			</div>
-	        		</a>
-	        	</div>
+		        	<div class="col-md-3">
+		        		<a class="btn btn-home btn-rutas" href="index.php?c=ruta">
+		        			<div class="row">
+		        				<i class="fas fa-route icon-btn"></i>
+		        			</div>
+		        			<div class="row">
+		        				<label class="mensaje-btn">Rutas</label>
+		        			</div>
+		        		</a>
+		        	</div>
 
-	        	<div class="col-md-3">
-	        		<a class="btn btn-home btn-cierre" href="index.php?c=cerrar">
-	        			<div class="row">
-	        				<i class="fas fa-times-circle icon-btn "></i>
-	        			</div>
-	        			<div class="row">
-	        				<label class="mensaje-btn">Cerrar</label>
-	        			</div>
-	        		</a>
-	        	</div>
+		        	<div class="col-md-3">
+		        		<a class="btn btn-home btn-cierre" href="index.php?c=cerrar">
+		        			<div class="row">
+		        				<i class="fas fa-times-circle icon-btn "></i>
+		        			</div>
+		        			<div class="row">
+		        				<label class="mensaje-btn">Cerrar</label>
+		        			</div>
+		        		</a>
+		        	</div>
 
-	        	<div class="col-md-3">
-	        		<a class="btn btn-home btn-Cartera" href="index.php?c=cartera">
-	        			<div class="row">
-	        				<i class="fas fa-wallet icon-btn"></i>
-	        			</div>
-	        			<div class="row">
-	        				<label class="mensaje-btn">Cartera</label>
-	        			</div>
-	        		</a>
-	        	</div>
+		        	<div class="col-md-3">
+		        		<a class="btn btn-home btn-Cartera" href="index.php?c=cartera">
+		        			<div class="row">
+		        				<i class="fas fa-wallet icon-btn"></i>
+		        			</div>
+		        			<div class="row">
+		        				<label class="mensaje-btn">Cartera</label>
+		        			</div>
+		        		</a>
+		        	</div>
+	        	<?php endif ?>
+	
 	        </div>
 
 	        <div class="row containe-card">

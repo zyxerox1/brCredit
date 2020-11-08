@@ -19,9 +19,7 @@ $(document).ready(function() {
     cargar_reporte();
   });
 
-  $('.csv').on('click', function () {
-    window.open("index.php?c=reporte_log_usuario&a=csv&Cedula="+$('#Cedula').val()+"&Nombre="+$('#Nombre').val()+"&Fecha_ini="+$('#Fecha_ini').val()+"&Fecha_fin="+$('#Fecha_fin').val()+"&Nombre_au="+$('#Nombre_au').val()+"&Cedula_au="+$('#Cedula_au').val()+"&Movimiento="+$('#Movimiento').val());
-  });
+  
   cargar_reporte();
 });
 
@@ -38,8 +36,8 @@ function cargar_reporte(){
             'Nombre':$('#Nombre').val(),
             'Fecha_ini':$('#Fecha_ini').val(),
             'Fecha_fin':$('#Fecha_fin').val(),
-            'Nombre_au':$('#Nombre_au').val(),
-            'Cedula_au':$('#Cedula_au').val(),
+            //'Nombre_au':$('#Nombre_au').val(),
+            //'Cedula_au':$('#Cedula_au').val(),
             'Movimiento': $('#Movimiento').val()
           },
           "url": MY_AJAX_ACTION_URL
@@ -53,7 +51,7 @@ function cargar_reporte(){
           "processing": 'Cargando...'
         },
         "bLengthChange" : true,
-        "info": false,
+        "info": true,
         "search": true,
         "sort": true,
         "stripeClasses": [ "odd nutzer_tr", "even nutzer_tr"],
@@ -65,7 +63,9 @@ function cargar_reporte(){
           { data: 'autor' },
           { data: 'documento_autor' }
       ],
-      "columnDefs": [],
+      "columnDefs": [
+        { className: "nowrap-column", "targets": [ 1 ] }
+      ],
         "processing": true,
         "serverSide": true,
         "pageLength" : 10,
@@ -75,3 +75,7 @@ function cargar_reporte(){
     });
    
   }
+
+function csv(){
+  window.open("index.php?c=reporte_log_usuario&a=csv&Cedula="+$('#Cedula').val()+"&Nombre="+$('#Nombre').val()+"&Fecha_ini="+$('#Fecha_ini').val()+"&Fecha_fin="+$('#Fecha_fin').val()+"&Movimiento="+$('#Movimiento').val());
+}

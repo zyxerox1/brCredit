@@ -38,12 +38,12 @@ class reporte_log_usuario_modelo
         if(isset($params['Cedula']) && $params['Cedula']!=0){
             $query.=" AND usu.documento_usu = ".$params['Cedula'];
         }
-        if(isset($params['Nombre_au']) && $params['Nombre_au']!=999){
+        /*if(isset($params['Nombre_au']) && $params['Nombre_au']!=999){
           $query.=" AND log.id_autor_usu = ".$params['Nombre_au'];
         }
         if(isset($params['Cedula_au']) && $params['Cedula_au']!=0){
             $query.=" AND Autor.documento_usu = ".$params['Cedula'];
-        }
+        }*/
         if(isset($params['Fecha_fin']) && $params['Fecha_fin']!=""){
             $query.=" AND log.fecha_logu <= '".$params['Fecha_fin']."'";
         }
@@ -63,19 +63,13 @@ class reporte_log_usuario_modelo
         return $data;
     }
 
-    public function query_usuario_autor(){
-        $query="CALL obtenerAdministradores()";
-        $data=$this->DB_QUERY1->query($query);
-        return $data;
-    }
-
     public function query_usuario(){
         $query="CALL obtenerUsuario()";
         $data=$this->DB_QUERY->query($query);
         return $data;
     }
 
-    public function csv(){
+    public function csv($params){
         $query="SELECT CASE
                 WHEN log.movimiento_logu = 0 THEN 'Creaciòn'
                 WHEN log.movimiento_logu = 1 THEN 'Actualizacòn'
@@ -100,12 +94,12 @@ class reporte_log_usuario_modelo
         if(isset($params['Cedula']) && $params['Cedula']!=0){
             $query.=" AND usu.documento_usu = ".$params['Cedula'];
         }
-        if(isset($params['Nombre_au']) && $params['Nombre_au']!=999){
+        /*if(isset($params['Nombre_au']) && $params['Nombre_au']!=999){
           $query.=" AND log.id_autor_usu = ".$params['Nombre_au'];
         }
         if(isset($params['Cedula_au']) && $params['Cedula_au']!=0){
             $query.=" AND Autor.documento_usu = ".$params['Cedula'];
-        }
+        }*/
         if(isset($params['Fecha_fin']) && $params['Fecha_fin']!=""){
             $query.=" AND log.fecha_logu <= '".$params['Fecha_fin']."'";
         }
@@ -115,7 +109,6 @@ class reporte_log_usuario_modelo
         if(isset($params['Movimiento']) && $params['Movimiento']!=999){
             $query.=" AND log.movimiento_logu = '".$params['Movimiento']."'";
         }
-
         $data=$this->DB_QUERY->query($query);
 
         return $data;

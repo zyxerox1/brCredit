@@ -69,10 +69,10 @@
               <div class="table-responsive padding" >
                   <table id="dataerrores" class="table table-bordred table-striped table-striped table-hover">
                       <thead class="heade-table">
-                        <th class="text-color all">Fecha</th>
-                        <th class="text-color all">Documento</th>
+                        <th class="text-color">Fecha</th>
+                        <th class="text-color">Documento</th>
                         <th class="text-color">Usuario</th>
-                        <th class="text-color">accion</th>
+                        <th class="text-color">Consulta</th>
                         <th class="text-color">descripcion</th>
                         <th class="text-color">controller</th>
                         <th class="text-color">function</th>

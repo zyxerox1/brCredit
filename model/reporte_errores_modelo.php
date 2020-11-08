@@ -28,7 +28,7 @@ class reporte_errores_modelo
             WHERE 1";
 
         if(isset($params['Nombre']) && $params['Nombre']!=0){
-          $query.=" AND usu.int_id_usu = ".$params['Nombre'];
+          $query.=" AND log.int_id_usu  = ".$params['Nombre'];
         }
         if(isset($params['Cedula']) && $params['Cedula']!=0){
             $query.=" AND usu.documento_usu = ".$params['Cedula'];
@@ -73,7 +73,6 @@ class reporte_errores_modelo
             $query.=" AND log.date_fecha_loge >= '".$params['Fecha_ini']."'";
         }
         $data=$this->DB_QUERY->query($query);
-
         return $data;
     }
 
