@@ -20,7 +20,6 @@ class reporte_log_gasto_controller
         $p='reporte_log_gasto';//nombre del archivo js
 
         $data_filtro_vendedores=$this->reporte->query_vendedores();
-        $data_filtro_coordinadores=$this->reporte->query_coordinadores();
 
         require_once HTML_DIR . 'overall/header.php';
         require_once HTML_DIR . 'overall/topNav.php';
@@ -36,7 +35,7 @@ class reporte_log_gasto_controller
         $carpeta='reporte_log_gasto'; //carpeta;
         $archivo='reporte_log_gasto';//nombre del archivo js
         $data_filtro_vendedores=$this->reporte->query_vendedores();
-        $data_filtro_coordinadores=$this->reporte->query_coordinadores();
+
         if(isset($carpeta)){  
         ?>
             <link rel="stylesheet" type="text/css" href="./view/html/<?php echo $carpeta; ?>/style.css?v=<?php echo(rand()); ?>"/>
@@ -67,14 +66,14 @@ class reporte_log_gasto_controller
             $f = fopen('php://memory', 'w');
     
             //set column headers 
-            $fields = array('Movimiento', 'Fecha', 'Usuario', 'Documento del usuario', 'Valor', 'Tipo');
+            $fields = array('Movimiento', 'Fecha', 'Usuario', 'Documento del usuario', 'Valor neto','Debe','Pago','Tipo','Nota','Mapa');
+
             fputcsv($f, $fields, $delimiter);
 
             foreach ($data as $key => $value) {
-               $lineData = array($value['movimiento'], $value['fecha'], $value['usuario'], $value['documento_suario'], $value['valor'], $value['tipo']);
+               $lineData = array($value['movimiento'], $value['fecha'], $value['usuario'], $value['documento_suario'], $value['neto'], $value['valor'], $value['pagado'], $value['tipo'],$value['nota'], $value['mapa']);
                 fputcsv($f, $lineData, $delimiter);
             }
-            
             
             //move back to beginning of file
             fseek($f, 0);

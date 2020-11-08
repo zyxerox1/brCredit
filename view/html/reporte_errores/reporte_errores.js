@@ -48,7 +48,7 @@ function cargar_reporte(){
           "processing": 'Cargando...'
         },
         "bLengthChange" : true,
-        "info": false,
+        "info": true,
         "search": true,
         "sort": true,
         "stripeClasses": [ "odd nutzer_tr", "even nutzer_tr"],

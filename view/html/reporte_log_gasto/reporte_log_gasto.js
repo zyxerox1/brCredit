@@ -19,9 +19,6 @@ $(document).ready(function() {
     cargar_reporte();
   });
 
-  $('.csv').on('click', function () {
-    window.open("index.php?c=reporte_log_gasto&a=csv&Cedula="+$('#Cedula').val()+"&Nombre="+$('#Nombre').val()+"&Fecha_ini="+$('#Fecha_ini').val()+"&Fecha_fin="+$('#Fecha_fin').val()+"&Nombre_au="+$('#Nombre_au').val()+"&Cedula_au="+$('#Cedula_au').val()+"&Movimiento="+$('#Movimiento').val());
-  });
   cargar_reporte();
 });
 
@@ -38,8 +35,6 @@ function cargar_reporte(){
             'Nombre':$('#Nombre').val(),
             'Fecha_ini':$('#Fecha_ini').val(),
             'Fecha_fin':$('#Fecha_fin').val(),
-            'Nombre_au':$('#Nombre_au').val(),
-            'Cedula_au':$('#Cedula_au').val(),
             'Movimiento': $('#Movimiento').val()
           },
           "url": MY_AJAX_ACTION_URL
@@ -53,7 +48,7 @@ function cargar_reporte(){
           "processing": 'Cargando...'
         },
         "bLengthChange" : true,
-        "info": false,
+        "info": true,
         "search": true,
         "sort": true,
         "stripeClasses": [ "odd nutzer_tr", "even nutzer_tr"],
@@ -62,10 +57,50 @@ function cargar_reporte(){
           { data: 'fecha'},
           { data: 'usuario'},
           { data: 'documento_suario' },
+          { data: 'neto' },
           { data: 'valor' },
-          { data: 'tipo' }
+          { data: 'pagado' },
+          { data: 'tipo' },
+          { data: 'nota' },
+          { data: 'mapa' }
       ],
-      "columnDefs": [],
+      "columnDefs": [{ 
+        className: "nowrap-column", "targets": [ 1 ] 
+      },{
+           "targets": 4,
+           "data": "neto",
+           "render": function ( data, type, row, meta ) {
+              return "$"+formaterNumeroDecimales(data);
+           }
+         
+      },{
+           "targets": 5,
+           "data": "valor",
+           "render": function ( data, type, row, meta ) {
+              return "$"+formaterNumeroDecimales(data);
+           }
+         
+      },{
+           "targets": 6,
+           "data": "pagado",
+           "render": function ( data, type, row, meta ) {
+              return "$"+formaterNumeroDecimales(data);
+           }
+         
+      },{
+          "className": "nowrap-column",
+           "targets": 9,
+           "data": "mapa",
+           "render": function ( data, type, row, meta ) {
+              if(row.coor==0){
+                 return '<a class="btn btn-primary" href="'+data+'" target="_blank">Ver posiciòn</a>';
+              }else{
+                return 'No tiene posiciòn';
+              }
+             
+           }
+      }
+      ],
         "processing": true,
         "serverSide": true,
         "pageLength" : 10,
@@ -74,4 +109,8 @@ function cargar_reporte(){
         }
     });
    
+  }
+
+  function csv(){
+    window.open("index.php?c=reporte_log_gasto&a=csv&Cedula="+$('#Cedula').val()+"&Nombre="+$('#Nombre').val()+"&Fecha_ini="+$('#Fecha_ini').val()+"&Fecha_fin="+$('#Fecha_fin').val()+"&Movimiento="+$('#Movimiento').val());
   }

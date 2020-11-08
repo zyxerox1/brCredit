@@ -46,7 +46,7 @@ class reporte_errores_modelo
         return $data;
     }
 
-    public function csv(){
+    public function csv($params){
         $query="SELECT 
                 log.text_accion_loge AS accion,
                 log.text_descripcion_loge AS descripcion,
@@ -61,7 +61,7 @@ class reporte_errores_modelo
             WHERE 1";
 
         if(isset($params['Nombre']) && $params['Nombre']!=0){
-          $query.=" AND usu.int_id_usu = ".$params['Nombre'];
+          $query.=" AND log.int_id_usu = ".$params['Nombre'];
         }
         if(isset($params['Cedula']) && $params['Cedula']!=0){
             $query.=" AND usu.documento_usu = ".$params['Cedula'];
