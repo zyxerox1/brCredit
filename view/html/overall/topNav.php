@@ -44,29 +44,29 @@
 
       <?php if($_SESSION["rol"]==2){ ?>
 
-      <li class="nav-item dropdown active">
+      <!--<li class="nav-item dropdown active">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Clientes<span class="sr-only">(current)</span>
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           <a class="dropdown-item" href="index.php?c=cliente">Mis clientes</a>
           <a class="dropdown-item" href="index.php?c=cliente&a=crear">Crear clientes</a>
         </div>
-      </li>
+      </li>-->
 
       <li class="nav-item active">
         <a class="nav-link" href="index.php?c=abono">Registrar abono <span class="sr-only">(current)</span></a>
       </li>
-      <li class="nav-item dropdown active">
+      <!--<li class="nav-item dropdown active">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Gasto propio<span class="sr-only">(current)</span>
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           <a class="dropdown-item" href="index.php?c=gasto">Mi gastos</a>
           <a class="dropdown-item" href="index.php?c=gasto&a=registrar">Registrar gasto propio <span class="sr-only">(current)</span></a>
         </div>
-      </li>
-      <li class="nav-item active">
+      </li>-->
+      <!--<li class="nav-item active">
         <a class="nav-link" href="index.php?c=historial">Historial de abono <span class="sr-only">(current)</span></a>
-      </li>
+      </li>-->
       <!--<li class="nav-item active">
         <a class="nav-link" href="#">Aumenta saldo cliente <span class="sr-only">(current)</span></a>
       </li>-->

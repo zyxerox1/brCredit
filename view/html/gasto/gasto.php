@@ -9,7 +9,8 @@
             <br>
             <br>
             <div class="container">
-            	<br>
+            	<button type="button" id="crear" onclick="window.location.href = 'index.php?c=gasto&a=registrar'" class="btn btn-primary btn-confirmar">Registrar gasto propio</button>
+        		<hr>
             	<?php if($_SESSION["rol"]==1){ ?>
             	<div class="row">
                     <div class="col-md-6 container-select2">

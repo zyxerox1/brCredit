@@ -13,6 +13,8 @@
       <div class="card-body card-body-primary">
 
         <button type="button" id="crear" onclick="window.location.href = 'index.php?c=cliente&a=crear'" class="btn btn-primary btn-confirmar">Crear cliente</button>
+
+        <button type="button" id="historial" onclick="window.location.href = 'index.php?c=historial'" class="btn btn-primary">Ver historial de los clientes</button>
         <hr>
         <?php if($_SESSION["rol"]==1): ?>
         <div class="row">
@@ -81,9 +83,9 @@
               <?php if($_SESSION["rol"]==2): ?>
                 <th class="text-color all">CC</th>
                 <th class="text-color all">Nombre completo</th>
-                <th class="text-color">Telefono 1</th>
-                <th class="text-color">Direcion de residencia</th>
-                <th class="text-color">Direcion de cobro</th>
+                <th class="text-color">Nro cuotas</th>
+                <th class="text-color">Total prestamo</th>
+                <th class="text-color">Dias vencidos</th>
                 <th class="text-color all">Prestamos</th>
                 <th class="text-color all">Editar</th>
                 <th class="text-color all">Orden</th>

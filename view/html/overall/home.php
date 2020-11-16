@@ -104,7 +104,7 @@
 		        				<i class="fas fa-times-circle icon-btn "></i>
 		        			</div>
 		        			<div class="row">
-		        				<label class="mensaje-btn">Cerrar</label>
+		        				<label class="mensaje-btn">Cierres</label>
 		        			</div>
 		        		</a>
 		        	</div>

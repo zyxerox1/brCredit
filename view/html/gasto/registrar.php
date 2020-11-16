@@ -4,6 +4,8 @@
 <br>
 <div class="container">
 	<br>
+    <h4 class="btn-atras"><i class="fas fa-reply-all"></i>Atras</h4>
+	<hr>
 	<div class="card">
         <h5 class="card-header card-header-primary text-center">Registrar datos</h5>
         <br>

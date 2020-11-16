@@ -148,14 +148,20 @@ function cargar_cliente(){
         "columns": [
           { data: 'CC' },
           { data: 'nombre'},
-          { data: 't1' },
-          { data: 'Direcionr' },
-          { data: 'Direcionc' },
+          { data: 'cuota' },
+          { data: 'valor' },
+          { data: 'totalCarVenNro' },
           { data: 'id_cobro'},
           { data: 'id' },
           { data: 'orden' },
       ],
-      "columnDefs": [ {
+      "columnDefs": [{
+           "targets": 3,
+           "data": "id",
+           "render": function ( data, type, row, meta ) {
+              return "$"+formaterNumeroDecimales(data);
+           }
+          },{
            "targets": 5,
            "data": "id_cobro",
            "render": function ( data, type, row, meta ) {

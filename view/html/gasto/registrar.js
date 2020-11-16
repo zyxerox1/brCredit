@@ -116,6 +116,7 @@ function crear_gasto(action,datos) {
             $('#Tipo').val('0'); 
           	$('#Tipo').trigger('change');;
             $('#input-b5').fileinput('clear');
+            setTimeout(function() {window.location.href = 'index.php?c=gasto' },1000);
             ohSnap('Se guardo correctamente',{color: 'green'});
           }else{
             ohSnap('Error desconocido.',{color: 'green'});

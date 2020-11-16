@@ -70,11 +70,9 @@ class abono_modelo
                       if(pres.valor_pres IS NOT NULL,pres.valor_pres,0) as valorDeuda,
                       if(pres.id_pres IS NOT NULL,pres.id_pres,0) as id_cobro,
                       pres.id_pres as idPres,
-                      clien.cumplimineto_client as cumplimiento,
-                      logPres.id_logp as codAtual
+                      clien.cumplimineto_client as cumplimiento
                       FROM tbl_cliente as clien 
                       LEFT JOIN tbl_prestamo as pres on (pres.id_clie=clien.id_clie AND (pres.valor_pres>0)) 
-                      LEFT JOIN tbl_log_prestamo as logPres ON (DATE_FORMAT(logPres.fecha_logp, '%Y-%c-%d') =DATE_FORMAT(now(), '%Y-%c-%d') AND logPres.apuntadaor_prestamo_logp=0 AND pres.id_pres=logPres.id_pres)
                       WHERE pres.valor_pres>0 AND clien.id_usu = ".$_SESSION["id_usu_credit"];
         if(isset($params['Nombre']) && $params['Nombre']!=0){
           $query.=" AND clien.id_clie = ".$params['Nombre'];
@@ -118,18 +116,20 @@ class abono_modelo
         $valorAtualizar="";
         $query="";
         $query1="";
-
+        $this->DB_QUERY->begin();
         $query="SELECT pres.valor_pres,pres.valor_cuotas_pres,pres.id_clie,client.cumplimineto_client, logPres.id_logp,logPres.valor_pres_logp
                       FROM tbl_prestamo as pres
                       INNER JOIN tbl_cliente as client ON (client.id_clie=pres.id_clie) 
-                      LEFT JOIN tbl_log_prestamo as logPres ON (DATE_FORMAT(logPres.fecha_logp, '%Y-%c-%d') =DATE_FORMAT(now(), '%Y-%c-%d') AND logPres.apuntadaor_prestamo_logp=0 AND pres.id_pres=logPres.id_pres)
+                      LEFT JOIN tbl_log_prestamo as logPres ON (client.cumplimineto_client=logPres.id_logp)
                       WHERE pres.id_pres=".$idPres;
         $data=$this->DB_QUERY->query($query);
 
         //actualizacion del abono
         if($data[0]['cumplimineto_client']!=0){
             if($data[0]['id_logp']==$codAtual){
+                
                 $data[0]['valor_pres']=$data[0]['valor_pres']+$data[0]['valor_pres_logp'];
+                    
                 //validacion de tipo
                 if($tipo==0){
                     $valorAtualizar=$data[0]['valor_pres']-$data[0]['valor_cuotas_pres'];
@@ -145,6 +145,7 @@ class abono_modelo
             }
 
             $id=$this->log_abono(2,$idPres,$data[0]['id_clie'],$nota,$valor,$tipo,$latitud,$longitud);
+
             $query1 = "UPDATE tbl_cliente SET cumplimineto_client = '$id' WHERE id_clie =".$data[0]['id_clie'];
 
             $query2 = "UPDATE tbl_log_prestamo SET apuntadaor_prestamo_logp = '$id' WHERE id_logp =".$data[0]['id_logp'];
@@ -183,7 +184,7 @@ class abono_modelo
             $this->DB_QUERY->save($query,'Abonar.');
             $this->DB_QUERY1->save($query1,'Abonar cliente.');
         }
-
+        $this->DB_QUERY->commit();
         return array('error' => 0); 
     }
 }

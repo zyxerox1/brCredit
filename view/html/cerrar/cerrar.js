@@ -655,7 +655,7 @@ function dibujarContenedorDetalle(obj,usu,tipo,cerrado){
 						                  html+='<th class="text-color all">Valor (Sin interes)</th>';
 						                  html+='<th class="text-color all">Valor (Con interes)</th>';
 						                  html+='<th class="text-color all">Interese implicados</th>';
-						                  html+='<th class="text-color all">Producto</th>';
+						                  html+='<th class="text-color all">Antiguedad cliente</th>';
 						                html+='</thead>';
 						                html+='<tbody>';
 						                html+='</tbody>';

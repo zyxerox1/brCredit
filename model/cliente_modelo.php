@@ -89,17 +89,17 @@ class cliente_modelo
         $query="SELECT clien.id_clie as id, 
                        clien.documento_clie as CC, 
                       CONCAT_WS (' ',clien.primer_nombre_clie,clien.segundo_nombre_clie,clien.primer_apellido_clie,clien.segundo_apellido_clie) as nombre,
-                      clien.telefono_1_clie as t1, 
-                      clien.telefono_2_clie as t2,
+                      pres.numero_cuota_pres as cuota,
                       clien.correo_clie as Correo,
-                      clien.direcion_clie as Direcionr,
-                      clien.direcion_cobro_clie as Direcionc, 
-                      clien.fecha_nacimineto_clie as fecha_cobro,
+                      logpres.valor_pres_logp as valor, 
+                      SUM(IF(DATE_FORMAT(pres.fecha_limite_pres, '%Y-%c-%d')>DATE_FORMAT(now(), '%Y-%c-%d'),1,0)) AS totalCarVenNro,
+
                       if(pres.valor_pres IS NOT NULL,pres.valor_pres,0) as valorDeuda,
                       if(pres.id_pres IS NOT NULL,pres.id_pres,0) as id_cobro,
                       clien.orden_ruta_clie as orden
                       FROM tbl_cliente as clien 
                       LEFT JOIN tbl_prestamo as pres on (pres.id_clie=clien.id_clie AND (pres.valor_pres>0)) 
+                      LEFT JOIN tbl_log_prestamo as logpres on (pres.id_pres=logpres.id_pres AND logpres.movimiento_logp=0) 
                       WHERE clien.id_usu = ".$_SESSION["id_usu_credit"];
         if(isset($params['Nombre']) && $params['Nombre']!=0){
           $query.=" AND clien.id_clie = ".$params['Nombre'];
@@ -108,7 +108,7 @@ class cliente_modelo
             $query.=" AND clien.documento_clie = ".$params['Cedula'];
         }
 
-        $query.=" ORDER BY clien.orden_ruta_clie ASC";
+        $query.=" GROUP BY clien.id_clie ORDER BY clien.orden_ruta_clie ASC";
 
         //$tablaSearch="AND int_documento_usu LIKE '%".$params['search']['value']."%'";
 

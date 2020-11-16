@@ -154,8 +154,8 @@ class cerrar_modelo
                        SUM(if(logPres.movimiento_logp=0,1,0)) as numnuevaVentas,
                        SUM(if(logPres.movimiento_logp=0,logPres.valor_pres_logp,0)) as nuevaVentas,
                        ValorPres.totalCarVen as carteravencidas,
-                       retirosTabla.retiros as Retiros,
-                       retirosTabla.numRetiros as numretiros,
+                       if(retirosTabla.retiros is null,0,retirosTabla.retiros) as Retiros,
+                       if(retirosTabla.numRetiros is null,0,retirosTabla.retiros) as numretiros,
                        
                        if(hv.validar_histV is null,'N/a',CONCAT_WS (' ',usuAdmin.primer_nombre_usu,
                           usuAdmin.segundo_nombre_usu,
@@ -215,11 +215,12 @@ class cerrar_modelo
                     press.valor_neto_clie AS ValorSin,
                     logPress.valor_pres_logp AS ValorCon,
                     press.intereses_press AS Interese,
-                    'Prestamo' AS Producto
+                    if(logClien.id_logc is null,'Antiguo','Nuevos') AS Producto
                     FROM tbl_prestamo AS press
                     INNER JOIN tbl_cliente AS client ON (client.id_clie=press.id_clie)
                     INNER JOIN tbl_log_prestamo AS logPress ON (logPress.id_pres=press.id_pres AND logPress.movimiento_logp=0)
                     INNER JOIN tbl_usuarios AS usu ON (usu.id_usu=client.id_usu)
+                    LEFT JOIN tbl_log_cliente AS logClien ON (logClien.id_usu=client.id_clie AND logClien.movimiento_logc=0 AND DATE_FORMAT(logClien.fecha_logc, '%Y-%c-%d')=DATE_FORMAT(now(), '%Y-%c-%d') )
                     WHERE usu.id_usu=".$param["usu"];
             
         $data=$this->DB_QUERY->queryDatatable($param,$query);

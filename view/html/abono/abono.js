@@ -105,7 +105,7 @@ function cargar_cliente(){
            "render": function ( data, type, row, meta ) {
               var html="";
               if(row.cumplimiento!=0){
-                html+='<button class="btn btn-outline-success auto" style="float:left" id="auto" data-cliente="'+row.id+'"  data-prestamo="'+row.idPres+'" data-cod="'+row.codAtual+'"><i class="fas fa-cogs"></i> Actualizar</button>';
+                html+='<button class="btn btn-outline-success auto" style="float:left" id="auto" data-cliente="'+row.id+'"  data-prestamo="'+row.idPres+'" data-cod="'+row.cumplimiento+'"><i class="fas fa-cogs"></i> Actualizar</button>';
               }else{
                 html+='<button class="btn btn-outline-primary auto" style="float:left" id="auto" data-cliente="'+row.id+'" data-prestamo="'+row.idPres+'" data-cod="0"><i class="fas fa-cogs"></i> Automatico</button>';
               }
@@ -119,7 +119,7 @@ function cargar_cliente(){
            "render": function ( data, type, row, meta ) {
               var html="";
               if(row.cumplimiento!=0){
-                html+='<button class="btn btn-outline-success manual" style="float:right" id="manual" data-cliente="'+row.id+'" data-prestamo="'+row.idPres+'" data-cod="'+row.codAtual+'"><i class="fas fa-hands-wash"></i> Manual</button>';
+                html+='<button class="btn btn-outline-success manual" style="float:right" id="manual" data-cliente="'+row.id+'" data-prestamo="'+row.idPres+'" data-cod="'+row.cumplimiento+'"><i class="fas fa-hands-wash"></i> Manual</button>';
               }else{
                 html+='<button class="btn btn-outline-primary manual" style="float:right" id="manual" data-cliente="'+row.id+'" data-prestamo="'+row.idPres+'" data-cod="0"><i class="fas fa-hands-wash"></i> Manual</button>';
               }

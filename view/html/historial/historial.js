@@ -108,7 +108,7 @@ function cargar_cliente(){
               }
               html+="<button type='button'class='btn btn-primary edit' "+dataControl+" data-tipo='"+tipo+"' data-clie='"+row.idClie+"' data-abono='"+row.pago+"' data-his='"+row.idRuta+"' id='EditarPrestamo'><i class='fas fa-user-edit'></i> Editar</button>";
             }
-            return html;
+            return " ";
           }
         },{
           "targets": 3,
