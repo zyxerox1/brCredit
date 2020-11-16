@@ -1,4 +1,7 @@
+var latitudCerrar=0;
+var longitudCerrar=0;
 $(document).ready(function() {
+	gelocalizacioncerrar();
 	$('.datetimepicker').datetimepicker({ 
 	format: 'YYYY-MM-DD',
 	icons: {
@@ -17,12 +20,80 @@ $(document).ready(function() {
 	$('#consultar').on('click', function () {
     	cargar_reporte();
   	});
+
+	$('#cerrarTodo').on('click', function () {
+       BootstrapDialog.show({
+            title: '<h6 style="color:black">Esta seguro que deseà cerrar todo!</h6>',
+            message: '<ul><li type="disc">Abstengase de realizar esta funcion si no es un dia no trabajable</li></ul>',
+            type: BootstrapDialog.TYPE_WARNING,
+			draggable: true,
+            buttons: [{
+                label: 'Si',
+                cssClass: 'btn-success',
+                action: function(dialogRef){
+                    cerrarTodo();
+                    dialogRef.close();
+                }
+            }]
+        });
+
+    	$(".modal-backdrop").removeClass("modal-backdrop");
+  	});
+  	
 });
 
+function geo_successCoorCerrar(position) {
+  latitudCerrar=position.coords.latitude;
+  longitudCerrar=position.coords.longitude;
+  $(".locationCoor").html('<input hidden value="'+latitudCerrar+'" name="latitud"><input hidden value="'+longitudCerrar+'" name="longitud">');
+}
+
+function geo_errorCoorCerrar() {
+  alert("Si no conocemos tu ubicacion puede generar errores a la de hacer tu cierre");
+}
+
+function gelocalizacioncerrar(){
+  alert("Por favor permita la localizacion, Si no conocemos tu ubicacion puede generar errores a la de hacer tu cierre");
+  var geo_optionscoorCerrar = {
+    enableHighAccuracy: true, 
+    maximumAge        : 30000, 
+    timeout           : 27000
+  };
+
+  var wpid = navigator.geolocation.getCurrentPosition(geo_successCoorCerrar, geo_errorCoorCerrar, geo_optionscoorCerrar);
+}
+
+function cerrarTodo(success=0){
+	
+	$.ajax({
+      data:{	
+		'latitud':latitudCerrar,
+		'logitud':longitudCerrar
+      },
+      url: "index.php?c=cerrar&a=cerrarTodo",
+      type: "post",
+      success:function(e){
+          var obj = JSON.parse(e);
+          if(obj["error"]!=0){
+            ohSnap('Error desconocido.',{color: 'red'});
+          }else if(obj["error"]==0){
+          	ohSnap('Se cerro correctamente.',{color: 'green'});
+          }else{
+            ohSnap('Error desconocido de sistema.',{color: 'red'});
+          }
+      },
+      error:function(){
+          ohSnap('Error desconocido de sistema',{color: 'red'});
+      }
+  });
+}
+
 function cargar_reporte(){
-	if($('#codigo').val()==0){
-		ohSnap('Tiene que selecionar una ruta.',{color: 'red'});
+	if($('#codigo').val()==0 && $('#Fecha_ini').val()=="" && $('#Fecha_fin').val()=="" && $('#Estado').val()==111){
+		ohSnap('Tiene que selecionar un filtro.',{color: 'red'});
 		shake($('#codigo'));
+		shake($('#Fecha_ini'));
+		shake($('#Fecha_fin'));
 		return false;
 	}
     if ( $.fn.dataTable.isDataTable( '#datahistoria' ) ) {
@@ -34,6 +105,7 @@ function cargar_reporte(){
         "ajax": {
             "data": {
 	            'codigo':$('#codigo').val(),
+	            'Estado':$('#Estado').val(),
 	            'Fecha_ini':$('#Fecha_ini').val(),
 	            'Fecha_fin':$('#Fecha_fin').val()
             },
@@ -62,7 +134,7 @@ function cargar_reporte(){
            "data": "nombre",
            "render": function ( data, type, row, meta ) {
               $(".tittle-vendedor").html('<i class="fas fa-route icon-btn"></i> '+row.codigo);
-              if(row.cerrado==0){
+              if(row.validar==0){
               	return '<i class="fas fa-user-tie"></i> '+data+"<h6 class='InvalTable'>Sin validar <i class='fas fa-thumbs-down'></i></h6>";
               }else{
               	return '<i class="fas fa-user-tie"></i> '+data+"<h6 class='valTable'>Validado <i class='fas fa-thumbs-up'></i></h6>";
@@ -98,70 +170,80 @@ function cargar_reporte(){
 				  case 6:
 				  	html+="Sábado, "+dia+" de";
 				  break;
-				  case 7:
+				  case 0:
 				  	html+="Domingo, "+dia+" de";
 				  break;
 				}
 				switch (mes) {
-				  case 1:
+				  case 0:
 				  	html+=" Enero de "+anio;
 				  break;
-				  case 2:
+				  case 1:
 				  	html+=" Febrero de "+anio;
 				  break;
-				  case 3:
+				  case 2:
 				  	html+=" Marzo de "+anio;
 				  break;
-				  case 4:
+				  case 3:
 				  	html+=" Abril de "+anio;
 				  break;
-				  case 5:
+				  case 4:
 				  	html+=" Mayo de "+anio;
 				  break;
-				  case 6:
+				  case 5:
 				  	html+=" Junio de "+anio;
 				  break;
-				  case 7:
+				  case 6:
 				  	html+=" Julio de "+anio;
 				  break;
-				  case 8:
+				  case 7:
 				  	html+=" Agosto de "+anio;
 				  break;
-				  case 9:
+				  case 8:
 				  	html+=" Septiembre de "+anio;
 				  break;
-				  case 10:
+				  case 9:
 				  	html+=" Octubre de "+anio;
 				  break;
-				  case 11:
+				  case 10:
 				  	html+=" Noviembre de "+anio;
 				  break;
-				  case 12:
+				  case 11:
 				  	html+=" Diciembre de "+anio;
 				  break;
 				}
-				if(row.id==0){
-					html+=" (Hoy)"
-				}
+
+				if(row.cerrado==0){
+	              	html+="<h6 class='InvalTable'>Pediente por cerrar <i class='fas fa-times-circle'></i></h6>";
+	            }else{
+	              	html+="<h6 class='valTable'>Cerrado</h6>";
+	            }
               return html;
            }
          },{
            "targets": 2,
            "data": "id",
            "render": function ( data, type, row, meta ) {
-              return '<a class="verDetalle" data-ver="0" data-id="'+data+'" data-usu="'+row.usu+'"><i class="fas fa-search-plus"></i> Detalle</a><div class="containerDetalle'+data+'" ></div>';
+              return '<a class="verDetalle" data-ver="0" data-id="'+data+'" data-usu="'+row.usu+'" data-fecha="'+row.fecha+'" data-tipo="'+row.tipo+'" data-cerrado="'+row.cerrado+'"><i class="fas fa-search-plus"></i> Detalle</a><div class="containerDetalle'+data+'" ></div>';
            }
          }],
         "processing": true,
         "serverSide": true,
-        "pageLength" : 200,
+        "pageLength" : 50,
         drawCallback: function () {
        		$('.verDetalle').on('click', function () {
        			var id = $(this).attr("data-id");
        			var usu = $(this).attr("data-usu");
        			var ver = $(this).attr("data-ver");
+       			var fecha = $(this).attr("data-fecha");
+            var tipo= $(this).attr("data-tipo");
+            var cerrado=$(this).attr("data-cerrado");
+       			fecha = new Date(fecha);
+       			var mes=parseInt(fecha.getMonth());
+       			mes+=1;
+       			fecha=fecha.getFullYear()+"-"+mes+"-"+fecha.getDate();
        			if(ver==0){
-       				ContenedorDetalle(id,usu);
+       				ContenedorDetalle(id,usu,fecha,tipo,cerrado);
        				$(this).attr("data-ver",1);	
        			}else{
        				$(".containerDetalle"+id).html("");
@@ -343,7 +425,6 @@ function ajaxGasto(usu){
 
 
 function despleque(e,tab,usu){
-	  console.log("ddd");
 	  if($(e).hasClass('fa-chevron-down')){
 	    $(e).parent(".card-header").parent(".card").find(".divDesplegableContainer").show("slow");
 	    $(e).removeClass('fa-chevron-down');
@@ -365,22 +446,46 @@ function despleque(e,tab,usu){
 	
 }
 
-function ContenedorDetalle(id,usu){
+function Rechazar(usu){
+    $.ajax({
+      data: {
+        'usu':usu,
+        'latitud':latitudCerrar,
+        'logitud':longitudCerrar
+      },
+      url: "index.php?c=cerrar&a=rechazar",
+      type: "post",
+      success:function(e){
+        var obj = JSON.parse(e);
+        ohSnap('Se cerro correctamente',{color: 'green'});
+        cargar_reporte();
+      },
+      error:function(){
+          ohSnap('Error desconocido',{color: 'red'});
+      }
+  });
+}
+
+function ContenedorDetalle(id,usu,fecha,tipo,cerrado){
   	$.ajax({
 	    data: {
-	      'usu':usu
+	      'usu':usu,
+	      'fecha':fecha
 	    },
 	    url: "index.php?c=cerrar&a=detalle",
 	    type: "post",
 	    success:function(e){
 	    	var obj = JSON.parse(e);
-			$(".containerDetalle"+id).html(dibujarContenedorDetalle(obj,usu));
+	    	if(obj.length==0){
+	    		ohSnap('No se encontraron datos.',{color: 'red'});
+	    	}else{
+	    		$(".containerDetalle"+id).html(dibujarContenedorDetalle(obj,usu,tipo,cerrado));	
+	    	}
 	    },
 	    error:function(){
 	        ohSnap('Error desconocido',{color: 'red'});
 	    }
 	});
-	
 }
 
 function formateNumero(numero){
@@ -391,7 +496,7 @@ function formateNumero(numero){
 	return numero;
 }
 
-function dibujarContenedorDetalle(obj,usu){
+function dibujarContenedorDetalle(obj,usu,tipo,cerrado){
 
 	var pagado=obj[0]['Pagado'];
 	var ValorArecuado=obj[0]['ValorArecuado'];
@@ -402,7 +507,7 @@ function dibujarContenedorDetalle(obj,usu){
 	obj[0]['gasto']=formateNumero(obj[0]['gasto']);
 
 	var diferencia= parseFloat(pagado)  - parseFloat(ValorArecuado);
-	diferencia=formateNumero(diferencia.toString());
+	diferencia=formaterNumeroDecimales(diferencia.toString());
 
 	var sinpaga= parseInt(obj[0]['totalRuta'])  - parseInt(obj[0]['cobros']);
 
@@ -410,7 +515,7 @@ function dibujarContenedorDetalle(obj,usu){
 		tipoDiferecia='style="color: green"';
 		diferencia="+$"+diferencia;
 	}else{
-		diferencia="-$"+diferencia;
+		diferencia="$"+diferencia;
 	}
 
 	var html="";
@@ -451,51 +556,49 @@ function dibujarContenedorDetalle(obj,usu){
 
 			html+='<div class="row">';
 				html+='<div class="col-md-6">';
-					html+='<label class="datoCobro">Saldo de inicio:</label><label class="result">$'+formatValor("0")+'</label>';
+					html+='<label class="datoCobro">Saldo de inicio:</label><label class="result">$'+formaterNumeroDecimales(obj[0]["saldoInicial"])+'</label>';
 				html+='</div>';
 			html+='</div>';
 
 			html+='<div class="row">';
 				html+='<div class="col-md-6">';
-					html+='<label class="datoCobro">Recuados('+formatValor("40")+'):</label><label class="result">+$'+formatValor("0")+'</label>';
+					html+='<label class="datoCobro">Recuados('+formatValor(obj[0]["numRecaudo"])+'):</label><label class="result">$'+formaterNumeroDecimales(obj[0]["recaudo"])+'</label>';
 				html+='</div>';
 				html+='<div class="col-md-6">';
-					html+='<label class="datoCobro">Total de cartera:</label><label class="result">$'+formatValor("0")+'</label>';
-				html+='</div>';
-			html+='</div>';
-
-			html+='<div class="row">';
-				html+='<div class="col-md-6">';
-					html+='<label class="datoCobro">Inversiones('+formatValor("0")+'):</label><label class="result">'+formatValor("0")+'</label>';
-				html+='</div>';
-				html+='<div class="col-md-6">';
-					html+='<label class="datoCobro">Total de cartera vencidas:</label><label class="result">$'+formatValor("0")+'</label>';
+					html+='<label class="datoCobro">Total de cartera:</label><label class="result">$'+formaterNumeroDecimales(obj[0]["cartera"])+'</label>';
 				html+='</div>';
 			html+='</div>';
 
 			html+='<div class="row">';
 				html+='<div class="col-md-6">';
-					html+='<label class="datoCobro">Nueva ventas:</label><label class="result">$'+formatValor("0")+'</label>';
-				html+='</div>';
+          html+='<label class="datoCobro">Nueva ventas('+formatValor(obj[0]["numnuevaVentas"])+'):</label><label class="result">$'+formatValor(obj[0]["nuevaVentas"])+'</label>';
+        html+='</div>';
 				html+='<div class="col-md-6">';
-					html+='<label class="datoCobro">Revisado por:</label><label class="result">'+'Administrador'+'</label>';
+					html+='<label class="datoCobro">Total de cartera vencidas:</label><label class="result">$'+formaterNumeroDecimales(obj[0]["carteravencidas"])+'</label>';
+				html+='</div>';
+			html+='</div>';
+
+			html+='<div class="row">';
+				html+='<div class="col-md-6">';
+          html+='<label class="datoCobro">Retiros('+formatValor(obj[0]["numretiros"])+'):</label><label class="result">$'+formaterNumeroDecimales(obj[0]["Retiros"])+'</label>';
+        html+='</div>';
+				html+='<div class="col-md-6">';
+					html+='<label class="datoCobro">Revisado por:</label><label class="result">'+obj[0]["vali"]+'</label>';
 				html+='</div>';
 			html+='</div>';
 
 			html+='<div class="row">';
 				html+='<div class="col-md-6">';
 					html+='<div class="row">';
+						
 						html+='<div class="col-md-12">';
-							html+='<label class="datoCobro">Retiros:</label><label class="result">$'+formatValor("0")+'</label>';
+							html+='<label class="datoCobro">Gastos:</label><label class="result">$'+formaterNumeroDecimales(obj[0]['gasto'])+'</label>';
 						html+='</div>';
 						html+='<div class="col-md-12">';
-							html+='<label class="datoCobro">Gastos:</label><label class="result">$'+formatValor(obj[0]['gasto'])+'</label>';
+							html+='<label class="datoCobro">Saldo final:</label><label class="result">$'+formaterNumeroDecimales(obj[0]['caja'])+'</label>';
 						html+='</div>';
 						html+='<div class="col-md-12">';
-							html+='<label class="datoCobro">Saldo final:</label><label class="result">$'+formatValor("0")+'</label>';
-						html+='</div>';
-						html+='<div class="col-md-12">';
-							html+='<p class="span-text">(Saldo final+Recuados-inversiones)-(gasto+venta+retiro)</p>';
+							html+='<p class="span-text">(Saldo final+Recuados)-(gasto+venta+retiro)</p>';
 						html+='</div>';
 
 					html+='</div>';
@@ -508,6 +611,12 @@ function dibujarContenedorDetalle(obj,usu){
 				html+='</div>';
 			html+='</div>';
 
+      if(tipo==0 && cerrado!=0){
+        html+='<button type="button" class="btn btn-danger offset-md-5" id="Rechazar" onclick="Rechazar('+usu+')">Rechazar <i class="fas fa-times-circle"></i></i></button>';
+         html+='<hr>';
+      }
+      
+     
 			////nota
 			html+='<div class="container-tab">';
 				html+='<div class="card">';

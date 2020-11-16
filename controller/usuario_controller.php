@@ -174,7 +174,7 @@ class usuario_controller
         if($this->validacion->soloLetras($_POST['primernombre'])==false){
            $errores[] = array('control' =>"primernombre" ,'error' =>"El campo de primer nombre solo debe contener letras"  );
         }
-        if ($_POST['segundonombre']!="") {
+        if ($_POST['segundonombre']!=" ") {
           if($this->validacion->soloLetras($_POST['segundonombre'])==false){
             $errores[] = array('control' =>"segundonombre" ,'error' =>"El campo de segundo nombre solo debe contener letras"  );
           }
@@ -184,7 +184,7 @@ class usuario_controller
           $errores[] = array('control' =>"primerapellido" ,'error' =>"El campo de primer apellido solo debe contener letras"  );
         }
 
-        if ($_POST['segundoapellido']!="") {
+        if ($_POST['segundoapellido']!=" ") {
           if($this->validacion->soloLetras($_POST['segundoapellido'])==false){
             $errores[] = array('control' =>"segundoapellido" ,'error' =>"El campo de segundo apellido solo debe contener letras"  );
           }

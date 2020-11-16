@@ -7,7 +7,6 @@ $(document).ready(function() {
   });
 });
 
-
 function cargar_usuarios(){
   if ( $.fn.dataTable.isDataTable( '#datausuarios' ) ) {
    $("#datausuarios").dataTable().fnDestroy();
@@ -32,7 +31,7 @@ function cargar_usuarios(){
         },
         //"stateSave": true,
         "bLengthChange" : true,
-        "info": false,
+        "info": true,
         "search": true,
         "sort": true,
         "stripeClasses": [ "odd nutzer_tr", "even nutzer_tr"],
@@ -49,6 +48,40 @@ function cargar_usuarios(){
           { data: 'id' },
       ],
       "columnDefs": [ {
+           "targets": 0,
+           "data": "Ciudad",
+           "render": function ( data, type, row, meta ) {
+              for(var i = 0; i < arrayCiudadData.length; i += 1){
+                if(arrayCiudadData[i].ID == data){
+                     return arrayCiudadData[i].Nome;
+                }
+              }
+           }
+         },{
+           "targets": 2,
+           "data": "Saldo",
+           "render": function ( data, type, row, meta ) {
+              return "$"+formaterNumeroDecimales(data);
+           }
+         },{
+           "targets": 3,
+           "data": "Cartera",
+           "render": function ( data, type, row, meta ) {
+              return "$"+formaterNumeroDecimales(data);
+           }
+         },{
+           "targets": 4,
+           "data": "Cartera_vencidas",
+           "render": function ( data, type, row, meta ) {
+              return "$"+formaterNumeroDecimales(data);
+           }
+         },{
+           "targets": 5,
+           "data": "Dias",
+           "render": function ( data, type, row, meta ) {
+              return "$"+formaterNumeroDecimales(data);
+           }
+         },{
            "targets": 8,
            "data": "Estado",
            "render": function ( data, type, row, meta ) {
@@ -69,7 +102,7 @@ function cargar_usuarios(){
          }],
         "processing": true,
         "serverSide": true,
-        "pageLength" : 11,
+        "pageLength" : 10,
         drawCallback: function () {
           $('.estado_usu').on('click', function () {
             var id_u=$(this).attr("data-estado");

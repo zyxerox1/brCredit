@@ -97,7 +97,6 @@ class validaciones_controller
 
     public function validarRol($rol){
         if(is_array($rol)){
-
             if(!in_array($_SESSION["rol"],$rol)){
                 require_once ACCESSO_DEGADO;
                 exit();
@@ -108,6 +107,18 @@ class validaciones_controller
                 exit();
             }
         }
-        
+
+        $cierre = $this->model_l->validar_cierre();
+        $_SESSION["cierre"]=$cierre[0]['cerrar'];
+        if($cierre[0]['cerrar']!=0){
+            $c='overall'; //carpeta;
+            $p='script';//nombre del archivo js
+            require_once HTML_DIR . 'overall/header.php';
+            require_once HTML_DIR . 'overall/topNav.php';
+            require_once HTML_DIR . 'overall/home.php';
+            require_once HTML_DIR . 'overall/footer.php';
+            echo "<script> ohSnap('El dia ya esta cerrado.',{color: 'red'}); </script>";
+            exit();
+        }
     }
 }

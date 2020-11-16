@@ -15,6 +15,57 @@ $(".btn-atras").on('click', function () {
   return false;
 });
 
+$(".cerrraDia").on('click', function () {
+  gelocalizacioncoor();
+    cerrraDia();
+});
+
+function geo_successCoor(position) {
+  latitud=position.coords.latitude;
+  longitud=position.coords.longitude;
+  $(".locationCoor").html('<input hidden value="'+latitud+'" name="latitud"><input hidden value="'+longitud+'" name="longitud">');
+}
+
+function geo_errorCoor() {
+  alert("Si no conocemos tu ubicacion puede generar errores a la de hacer tu cierre");
+}
+
+function gelocalizacioncoor(){
+  alert("Por favor permita la localizacion, Si no conocemos tu ubicacion puede generar errores a la de hacer tu cierre");
+  var geo_optionscoor = {
+    enableHighAccuracy: true, 
+    maximumAge        : 30000, 
+    timeout           : 27000
+  };
+
+  var wpid = navigator.geolocation.getCurrentPosition(geo_successCoor, geo_errorCoor, geo_optionscoor);
+}
+
+function cerrraDia(){
+  $.ajax({
+      data: {
+        'latitud':latitud,
+        'logitud':longitud
+      },
+      url: "index.php?c=home&a=cerrarDia",
+      type: "post",
+      success:function(e){
+        var data = JSON.parse(e);
+        if(data["error"]!=0){
+          ohSnap('Error desconocido del sistema',{color: 'red'});
+        }else if(data["error"]==0){
+          ohSnap('Ha cerrado el dia correctamente',{color: 'green'});
+          setTimeout(function() {window.location.href = 'index.php' },1000);
+        }else{
+          error_501();
+        }
+      },
+      error:function(){
+          ohSnap('Error desconocido',{color: 'red'});
+      }
+    });
+}
+
 $(".desplegue-btn").on('click', function () {
   if($(this).hasClass('fa-chevron-down')){
     $(this).parent(".card-header").parent(".card").find(".divDesplegableContainer").show("slow");
@@ -175,6 +226,7 @@ function readTextFile(file, callback) {
 }
 
 $(document).ready(function() {
+
   //select 2 antiguo
   $( ".select2" ).each(function( index ) {
     console.log($(".container-select2:eq("+index+")"));

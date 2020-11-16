@@ -1,3 +1,4 @@
+<div class="locationCoor"></div>
 <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
   <a class="navbar-brand mb-0 h1" href="index.php"><img src="./<?php echo(APP_ICON)?>?v=1" width="30" height="30" alt="" class="d-inline-block align-top" > <?php echo APP_TITTLE;?></a>
 
@@ -8,7 +9,7 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <?php if($_SESSION["rol"]==1){?>
-      <li class="nav-item dropdown active">
+      <!--<li class="nav-item dropdown active">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Usuarios<span class="sr-only">(current)</span>
         </a>
@@ -16,14 +17,14 @@
           <a class="dropdown-item" href="index.php?c=usuario">Usuarios</a>
           <a class="dropdown-item" href="index.php?c=usuario&a=crear">Crear usuario</a>
         </div>
-      </li>
-      <li class="nav-item active">
+      </li>-->
+      <!--<li class="nav-item active">
         <a class="nav-link" href="#">Lista cliente <span class="sr-only">(current)</span></a>
-      </li>
-      <li class="nav-item active">
+      </li>-->
+      <!--<li class="nav-item active">
         <a class="nav-link" href="index.php?c=gasto">Autorizar pago de gasto <span class="sr-only">(current)</span></a>
-      </li>
-      <li class="nav-item active">
+      </li>-->
+      <!--<li class="nav-item active">
         <a class="nav-link" href="#">Atrazo pagos <span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item active">
@@ -38,7 +39,7 @@
           <a class="dropdown-item" href="index.php?c=reporte_log_gasto">Reporte de auditoria de gasto</a>
           <a class="dropdown-item" href="index.php?c=reporte_errores">Reporte de auditoria de errores</a>
         </div>
-      </li>
+      </li>-->
       <?php } ?>
 
       <?php if($_SESSION["rol"]==2){ ?>
@@ -73,8 +74,9 @@
 
     </ul>
     <form class="form-inline my-2 my-lg-0">
-      <!--<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>-->
+      <?php if ($_SESSION['rol']==2 && $_SESSION["cierre"]==0): ?>
+        <a class="btn btn-outline-success my-2 my-sm-0 cerrraDia">Cerrar dia</a>
+      <?php endif ?>
       <a class="btn btn-outline-danger my-3 my-sm-0 cerrra" href="index.php?c=home&a=cerrar">Cerrar sesiòn</a>
     </form>
   </div>

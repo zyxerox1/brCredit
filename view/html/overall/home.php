@@ -124,7 +124,7 @@
 	        </div>
 
 	        <div class="row containe-card">
-
+	        	<?php if ($_SESSION['rol']==1): ?>
 	        	<div class="col-md-3">
 	        		<a class="btn btn-home btn-usuario" href="index.php?c=usuario">
 	        			<div class="row">
@@ -135,7 +135,7 @@
 	        			</div>
 	        		</a>
 	        	</div>
-
+	        	<?php endif ?>
 	        	<div class="col-md-3">
 	        		<a class="btn btn-home btn-cliente" href="index.php?c=cliente">
 	        			<div class="row">
@@ -162,14 +162,26 @@
 	        					<label class="mensaje-btn">Gastos</label>
 	        				<?php endif ?>
 	        				<?php if ($_SESSION['rol']==2): ?>
-	        					<label class="mensaje-btn">Mi gastos</label>
+	        					<label class="mensaje-btn">Mis gastos</label>
 	        				<?php endif ?>
 	        			</div>
 	        		</a>
 	        	</div>
-
+	        	<?php if ($_SESSION['rol']==2): ?>
+	        		<div class="col-md-3">
+		        		<a class="btn btn-home btn-Cartera" href="index.php?c=balance">
+		        			<div class="row">
+		        				<i class="fas fa-wallet icon-btn"></i>
+		        			</div>
+		        			<div class="row">
+		        				<label class="mensaje-btn">Balance</label>
+		        			</div>
+		        		</a>
+		        	</div>
+	        	<?php endif ?>
+	        	<?php if ($_SESSION['rol']==1): ?>
 	        	<div class="col-md-3">
-	        		<a class="btn btn-home">
+	        		<a class="btn btn-home btn-retiro" href="index.php?c=retiro">
 	        			<div class="row">
 	        				<i class="fas fa-people-arrows icon-btn"></i>
 	        			</div>
@@ -178,6 +190,7 @@
 	        			</div>
 	        		</a>
 	        	</div>
+	        	<?php endif ?>
 	        </div>
 
    		</div>

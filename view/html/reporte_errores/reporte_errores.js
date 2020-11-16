@@ -88,8 +88,7 @@ function eliminar_cursos(){
         check_todo_input_verificado();
         validate_errores_peticion_ajax(data);
       }else if(data["error"]==0){
-        $('#Fecha_ini').val('');
-        $('#Fecha_fin').val('');
+        
         cargar_reporte();
         ohSnap('Se elimino correctamente',{color: 'green'});
       }else{

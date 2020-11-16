@@ -36,6 +36,7 @@ class login_modelo
                 $user[] = $nombre;
                 $user[] = $fila->documento_usu;
                 $user[] = $fila->rol_usu;
+                $user[] = $fila->cerrar_usu;
             } else {
                 $user[] = 5; //Usuario valido, contraseña incorrecta
                 $user[] = "";

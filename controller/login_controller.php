@@ -43,6 +43,7 @@ class login_controller
                 $_SESSION["nombre"] = $data[3];
                 $_SESSION["documento"] = $data[4];
                 $_SESSION["rol"] = $data[5];
+                $_SESSION["cierre"] = $data[6];
                 //$this->LOG->log_usuario(2);
                 //validacion de error
                 header('location: index.php?c=home');
@@ -51,7 +52,7 @@ class login_controller
                 echo "<script> ohSnap('Usuario o contraseña incorrecta.',{color: 'red'}); </script>";
             } elseif ($data[0] == 6) {
                 $this->index();
-                echo "<script> ohSnap('La direccón de correo o nombre de usuario no es válida.',{color: 'red'}); </script>";
+                echo "<script> ohSnap('No se pudo iniciar session.',{color: 'red'}); </script>";
             }
         }
     }

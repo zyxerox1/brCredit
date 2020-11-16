@@ -46,5 +46,14 @@ class validacion_modelo
         }
         return $this->valores;
     }
+
+    public function validar_cierre(){
+        $this->valores = array();
+        $query = $this->DB->query("SELECT tbl_usuarios.cerrar_usu as cerrar FROM tbl_usuarios WHERE tbl_usuarios.id_usu=".$_SESSION['id_usu_credit']);
+        while ($fila = $query->fetch_assoc()) {
+            $this->valores[] = $fila;
+        }
+        return $this->valores;
+    }
     
 }

@@ -16,8 +16,8 @@ class reporte_log_usuario_modelo
     public function obtenerReporte($params){
         $query="SELECT CASE
                 WHEN log.movimiento_logu = 0 THEN 'Creaciòn'
-                WHEN log.movimiento_logu = 1 THEN 'Actualizacòn'
-                WHEN log.movimiento_logu = 3 THEN 'Cambiar estado'
+                WHEN log.movimiento_logu = 1 THEN 'Actualizaciòn'
+                WHEN log.movimiento_logu = 3 THEN 'Cambiò estado'
                 ELSE 'Movimiento descodocido por el sistema.'
                 END as movimiento,
                 log.fecha_logu AS fecha,
@@ -72,8 +72,8 @@ class reporte_log_usuario_modelo
     public function csv($params){
         $query="SELECT CASE
                 WHEN log.movimiento_logu = 0 THEN 'Creaciòn'
-                WHEN log.movimiento_logu = 1 THEN 'Actualizacòn'
-                WHEN log.movimiento_logu = 3 THEN 'Cambiar estado'
+                WHEN log.movimiento_logu = 1 THEN 'Actualizaciòn'
+                WHEN log.movimiento_logu = 3 THEN 'Cambiò estado'
                 ELSE 'Movimiento descodocido por el sistema.'
                 END as movimiento,
                 log.fecha_logu AS fecha,

@@ -67,4 +67,15 @@ class cerrar_controller
     echo json_encode($data);
   }
   
+  public function cerrarTodo(){
+    $this->validacion->validarRol(1);
+    $data=$this->cerrar->cerrarTodo($_POST);
+    echo json_encode($data);
+  }
+
+  public function rechazar(){
+    $this->validacion->validarRol(1);
+    $data=$this->cerrar->rechazar($_POST);
+    echo json_encode($data);
+  }
 }

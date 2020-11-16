@@ -142,18 +142,24 @@ class ruta_controller
            $errores[] = array('control' =>"pas2" ,'error' =>"El password debe ser iguales.");
         }
 
+        if(strlen($_POST['codigo'])==""){
+          $errores[] = array('control' =>"codigo" ,'error' =>"El codigo no puede estar vacio.");
+        }else{
+          $_POST['codigo']=$_POST['codigo']."-".date('s').$this->validacion->idMax().substr($_POST['Documento'], -4, 4);
+        }
+
         if(isset($_FILES["img"])){
           $img_name=1;
         } 
 
 
         if(count($errores)==0){
-            $result_editar_usuario=  $this->ruta->crear_usuario($_POST['primernombre'], $_POST['segundonombre'], $_POST['primerapellido'], $_POST['segundoapellido'], $_POST['Documento'], $_POST['Genero'], $_POST['Telefono_1'], $_POST['Telefono_2'], $_POST['Fecha'], $_POST['Direcion'], $_POST['Correo'], $this->encriptar($_POST['pas1']), $_POST['img_name'],$img_name,2,$_POST['estados'],$_POST['ciudades']);
+            $result_editar_usuario=  $this->ruta->crear_usuario($_POST['primernombre'], $_POST['segundonombre'], $_POST['primerapellido'], $_POST['segundoapellido'], $_POST['Documento'], $_POST['Genero'], $_POST['Telefono_1'], $_POST['Telefono_2'], $_POST['Fecha'], $_POST['Direcion'], $_POST['Correo'], $this->encriptar($_POST['pas1']), $_POST['img_name'],$img_name,2,$_POST['estados'],$_POST['ciudades'],$_POST['codigo']);
 
             if (isset($result_editar_usuario["control"]) && $result_editar_usuario["control"] !=1) {
               move_uploaded_file($_FILES['img']['tmp_name'], "view/assets/imagenes_usuario/".$result_editar_usuario["control"]);
             }
-          $errores=array('control' =>0 ,'error' => 0);
+          $errores=array('control' =>0 ,'error' => 0,'codigo' => $_POST['codigo']);
         }
         echo json_encode($errores);  
     }

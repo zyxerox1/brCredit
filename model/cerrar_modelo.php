@@ -15,9 +15,40 @@ class cerrar_modelo
     }
 
     /*/////////////////////////////////////////////guardar///////////////////////////////////*/
-   
+    public function log_cerrar($tipo,$latitud=0,$longitud=0){
+
+        /*movimineto 0-crear,1-editar,3-cambiar estado,2-orden*/
+        /*parametro de errores{*/
+        $controller="";
+        $accion_func="";
+        if(isset($_REQUEST['c'])){
+            $controller=$_REQUEST['c'];
+        }
+        if(isset($_REQUEST['a'])){
+            $accion_func=$_REQUEST['a'];
+        }
+        $ip=$this->getRealIP();
+
+        //$query = "CALL logPrestamo('$movimiento','$id','$controller',".$_SESSION["id_usu_credit"].",'$accion_func','$id_clie','$nota','$valor','$tipo','$latitud','$longitud','$ip')";
+
+        $query="INSERT INTO tbl_log_cierre (id_cierre, fecha_cierre, id_usu, tipo_cierre, longitud_cierre, latitud_cierre, ip_cierre) VALUES (NULL, now(),'".$_SESSION["rol"]."', '$tipo', '$longitud', '$latitud', '$ip');";
+
+        $id=$this->DB_QUERY->save($query);
+        return $id;
+    }
 
     /*////////////////////////////////consulta//////////////////////////////////////////////////*/
+
+    function getRealIP() {
+        if (!empty($_SERVER['HTTP_CLIENT_IP']))
+            return $_SERVER['HTTP_CLIENT_IP'];
+           
+        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR']))
+            return $_SERVER['HTTP_X_FORWARDED_FOR'];
+       
+        return $_SERVER['REMOTE_ADDR'];
+    }
+
     public function obtener_filtro_vendedor(){
         $this->data = array();
         $query="CALL FiltroRuta()";
@@ -29,64 +60,133 @@ class cerrar_modelo
         $this->data = array();
         $WHERE="";
         $GROUP="";
-        if(isset($param['Fecha_fin']) && $param['Fecha_fin']!=""){
-            $WHERE.=" AND log.date_fecha_loge <= '".$param['Fecha_fin']."'";
-        }
-        if(isset($param['Fecha_ini']) && $param['Fecha_ini']!=""){
-            $WHERE.=" AND log.date_fecha_loge >= '".$param['Fecha_ini']."'";
+
+        if(isset($param['codigo']) && $param['codigo']!=0){
+            $WHERE.=" AND usu.id_usu = '".$param['codigo']."' ";
         }
 
-        $query="SELECT CONCAT_WS (' ',usu.primer_nombre_usu,
+        $query1="SELECT CONCAT_WS (' ',usu.primer_nombre_usu,
+                          usu.segundo_nombre_usu,
+                          usu.primer_apellido_usu,
+                          usu.segundo_apellido_usu) as nombre,
+                        usu.codigo_ruta AS codigo,
+                        now() AS fecha,
+                        usu.cerrar_usu AS cerrado,
+                        CONCAT('00',usu.id_usu) AS id,
+                        usu.id_usu AS usu,
+                        usu.validar_usu AS validar,
+                        0 as tipo
+                FROM tbl_usuarios AS usu
+                LEFT JOIN tbl_caja AS caja ON (caja.id_usu=usu.id_usu)
+                WHERE usu.rol_usu = 2 $WHERE";
+
+        if(isset($param['Estado']) && $param['Estado']!=111){
+            $query1.=" AND usu.cerrar_usu = '".$param['Estado']."'";
+        }
+
+        $query1.=" GROUP BY usu.id_usu";
+
+        $query2="SELECT CONCAT_WS (' ',usu.primer_nombre_usu,
                     usu.segundo_nombre_usu,
                     usu.primer_apellido_usu,
                     usu.segundo_apellido_usu) as nombre,
                     usu.codigo_ruta AS codigo,
-                    rh.fecha_rutaH AS fecha,
-                    rh.cerrado_rutaH AS cerrado,
-                    rh.id_rutaH AS id,
-                    usu.id_usu AS usu
-                    FROM tbl_ruta_historial AS rh
-                    INNER JOIN tbl_cliente AS clien ON (rh.id_clien=clien.id_clie)
-                    INNER JOIN tbl_usuarios AS usu ON (usu.id_usu=clien.id_usu)
-                    WHERE usu.id_usu=".$param["codigo"]." $WHERE
-                    GROUP BY usu.id_usu,rh.fecha_rutaH
-                    UNION ALL
-                    SELECT CONCAT_WS (' ',usu.primer_nombre_usu,
-                          usu.segundo_nombre_usu,
-                          usu.primer_apellido_usu,
-                          usu.segundo_apellido_usu) as nombre,
-                     usu.codigo_ruta AS codigo,
-                     now() AS fecha,
-                     clien.cumplimineto_client AS cerrado,
-                     0 AS id,
-                    usu.id_usu AS usu
-                    FROM tbl_usuarios AS usu
-                    LEFT JOIN tbl_cliente AS clien ON (usu.id_usu=clien.id_usu)
-                    WHERE usu.rol_usu = 2 AND usu.id_usu=".$param["codigo"]." $WHERE";
+                    rh.fecha_histV AS fecha,
+                    rh.cerrado_histV AS cerrado,
+                    rh.id_histV AS id,
+                    usu.id_usu AS usu,
+                    rh.validar_histV AS validar,
+                    1 as tipo
+                FROM tbl_historial_vendedor AS rh
+                INNER JOIN tbl_usuarios AS usu ON (usu.id_usu=rh.id_usu)
+                WHERE usu.rol_usu = 2 $WHERE";
 
-                    $query.=" GROUP BY usu.id_usu";
-            
+        if(isset($param['Estado']) && $param['Estado']!=111){
+            $query2.=" AND rh.cerrado_histV = '".$param['Estado']."'";
+        }
+
+        if(isset($param['Fecha_fin']) && $param['Fecha_fin']!=""){
+            $query2.=" AND rh.fecha_histV <= '".$param['Fecha_fin']."'";
+        }
+        if(isset($param['Fecha_ini']) && $param['Fecha_ini']!=""){
+            $query2.=" AND rh.fecha_histV >= '".$param['Fecha_ini']."'";
+        }
+
+        if(isset($param['Fecha_fin']) && $param['Fecha_fin']!="" && isset($param['Fecha_ini']) && $param['Fecha_ini']!=""){
+            if(date("Y-m-d") >= $param['Fecha_ini'] && date("Y-m-d") <= $param['Fecha_fin']){
+                $query=$query1." UNION ALL ".$query2;
+            }else{
+                $query=$query2;
+            }
+        }else if(isset($param['Fecha_ini']) && $param['Fecha_ini']!=""){
+            if (date("Y-m-d") >= $param['Fecha_ini']){
+                $query=$query1." UNION ALL ".$query2;
+            }else{
+                $query=$query2;
+            }
+        }else if(isset($param['Fecha_fin']) && $param['Fecha_fin']!=""){
+            if (date("Y-m-d") <= $param['Fecha_fin']){
+                $query=$query1." UNION ALL ".$query2;
+            }else{
+                $query=$query2;
+            }
+        }else{
+            $query=$query1." UNION ALL ".$query2;
+        }
+
         $data=$this->DB_QUERY->queryDatatable($param,$query);
         return $data;
     }
 
     public function obtenerDetalle($param){
         $this->data = array();
-        $query="SELECT COUNT(logPres.id_logp) AS cobros,
-                       ROUND(SUM(logPres.valor_pres_logp), 2) AS Pagado,
+        $fecha=$param["fecha"];
+        $usu=$param["usu"];
+        $query="SELECT SUM(if(logPres.movimiento_logp=1,1,0)) AS cobros,
+                       ROUND(SUM(if(logPres.movimiento_logp=1,logPres.valor_pres_logp,0)),2) AS Pagado,
                        ROUND(ValorPres.ValorArecuado, 2) AS ValorArecuado,
                        ValorPres.totalRuta,
-                       SUM(gas.valor_gas) AS gasto
+                       SUM(if(gas.valor_gas is null,0,gas.valor_gas)) AS gasto,
+                       if(hv.saldoInicial_histV is null,0,hv.saldoInicial_histV) AS saldoInicial,
+                       SUM(if(logPres.movimiento_logp=1,logPres.valor_pres_logp,0)) as recaudo,
+                       SUM(if(logPres.movimiento_logp=1,1,0)) as numRecaudo,
+                       ValorPres.cartera AS cartera,
+                       SUM(if(logPres.movimiento_logp=0,1,0)) as numnuevaVentas,
+                       SUM(if(logPres.movimiento_logp=0,logPres.valor_pres_logp,0)) as nuevaVentas,
+                       ValorPres.totalCarVen as carteravencidas,
+                       retirosTabla.retiros as Retiros,
+                       retirosTabla.numRetiros as numretiros,
+                       
+                       if(hv.validar_histV is null,'N/a',CONCAT_WS (' ',usuAdmin.primer_nombre_usu,
+                          usuAdmin.segundo_nombre_usu,
+                          usuAdmin.primer_apellido_usu,
+                          usuAdmin.segundo_apellido_usu)) as vali,
+                        if(caj.saldo_caja is null,0,caj.saldo_caja) as caja
+
                 FROM tbl_log_prestamo AS logPres
-                INNER JOIN tbl_gasto AS gas ON (gas.id_usu=logPres.id_autor_usu)
-                INNER JOIN (
-                                SELECT clien.id_usu,SUM(press.valor_cuotas_pres) AS ValorArecuado,COUNT(clien.id_usu) AS totalRuta
+                LEFT JOIN tbl_gasto AS gas ON (gas.id_usu=logPres.id_autor_usu)
+                LEFT JOIN tbl_historial_vendedor AS hv ON (hv.id_usu=logPres.id_autor_usu AND hv.fecha_histV='$fecha')
+                LEFT JOIN tbl_usuarios as usuAdmin ON (usuAdmin.id_usu=hv.validar_histV)
+                LEFT JOIN tbl_caja as caj ON (caj.id_usu=logPres.id_autor_usu)
+                LEFT JOIN (
+                        SELECT SUM(if(ret.valor_ret is null,0,ret.valor_ret)) as retiros,
+                                ret.id_ruta_usu AS usu,
+                                SUM(if(ret.valor_ret is null,0,1)) as numRetiros
+                        FROM tbl_retiro AS ret 
+                        WHERE ret.id_ruta_usu='$usu' AND DATE_FORMAT(ret.fecha_ret, '%Y-%c-%d') = '$fecha'
+                        ) as retirosTabla ON (retirosTabla.usu=logPres.id_autor_usu)
+                LEFT JOIN (
+                        SELECT clien.id_usu,
+                               SUM(press.valor_cuotas_pres) AS ValorArecuado,
+                               COUNT(clien.id_usu) AS totalRuta, 
+                               SUM(press.valor_pres) AS cartera, 
+                               SUM(IF(DATE_FORMAT(press.fecha_limite_pres, '%Y-%c-%d')>DATE_FORMAT(now(), '%Y-%c-%d'),press.valor_pres,0)) AS totalCarVen
                                 FROM tbl_cliente AS clien
                                 LEFT JOIN tbl_prestamo AS press ON (press.id_clie=clien.id_clie)
-                                WHERE clien.id_usu=".$param["usu"]."
+                                WHERE clien.id_usu='$usu'
                             ) AS ValorPres ON (ValorPres.id_usu=logPres.id_autor_usu)
                             
-                WHERE logPres.movimiento_logp = 1 AND logPres.apuntadaor_prestamo_logp = 0 AND logPres.id_autor_usu = ".$param["usu"]."
+                WHERE logPres.apuntadaor_prestamo_logp = 0 AND logPres.id_autor_usu = '$usu' AND DATE_FORMAT(logPres.fecha_logp, '%Y-%c-%d') = '$fecha'
                 GROUP BY logPres.id_autor_usu";
         $data=$this->DB_QUERY->query($query);
         return $data;
@@ -98,9 +198,9 @@ class cerrar_modelo
                     client.segundo_nombre_clie,
                     client.primer_apellido_clie,
                     client.segundo_apellido_clie) as nombre
-FROM tbl_log_prestamo AS pres
-INNER JOIN tbl_cliente AS client ON (client.id_clie=pres.id_clie)
-WHERE pres.movimiento_logp=1 AND pres.id_autor_usu=".$param["usu"];
+        FROM tbl_log_prestamo AS pres
+        INNER JOIN tbl_cliente AS client ON (client.id_clie=pres.id_clie)
+        WHERE pres.movimiento_logp=1 AND pres.id_autor_usu=".$param["usu"];
             
         $data=$this->DB_QUERY->queryDatatable($param,$query);
         return $data;
@@ -175,4 +275,23 @@ WHERE pres.movimiento_logp=1 AND pres.id_autor_usu=".$param["usu"];
     }
     
     /*////////////////////////////////atualizar//////////////////////////////////////////////////*/
+
+     public function rechazar($param){
+        $this->DB_QUERY1->begin();
+        $query="UPDATE tbl_usuarios SET cerrar_usu = 0 WHERE tbl_usuarios.id_usu =".$param["usu"];
+        $id=$this->DB_QUERY1->save($query,'Rechazar cerrar.');
+        $this->log_cerrar(2,$param["latitud"],$param["logitud"]);
+        $this->DB_QUERY1->commit();
+        return array('control' =>0 ,'error' => 0);
+     }
+
+     public function cerrarTodo($param){
+        
+        $this->DB_QUERY1->begin();
+        $query="UPDATE tbl_usuarios SET cerrar_usu = 2 WHERE tbl_usuarios.rol_usu = 2";
+        $id=$this->DB_QUERY1->save($query,'Cerrar todo.');
+        $this->log_cerrar(1,$param["latitud"],$param["logitud"]);
+        $this->DB_QUERY1->commit();
+        return array('control' =>0 ,'error' => 0);
+    }
 }

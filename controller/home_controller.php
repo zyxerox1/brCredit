@@ -8,6 +8,7 @@ class home_controller
     public function __construct()
     {
         $this->model  = new home_modelo();
+        $this->validacion  = new validaciones_controller();
     }
 
     public function index()
@@ -19,6 +20,13 @@ class home_controller
         require_once HTML_DIR . 'overall/topNav.php';
         require_once HTML_DIR . 'overall/home.php';
         require_once HTML_DIR . 'overall/footer.php';
+    }
+
+    public function cerrarDia(){
+        $this->validacion->validarRol(2);
+        $cerrar=$this->model->cerrar_dia($_POST);
+        $_SESSION["cierre"]=1;
+        echo json_encode($cerrar);
     }
 
     public function cerrar(){

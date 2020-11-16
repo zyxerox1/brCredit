@@ -31,7 +31,7 @@ class usuario_modelo
     public function crear_usuario($primernombre, $segundonombre, $primerapellido, $segundoapellido, $Documento, $Genero, $Telefono_1, $Telefono_2, $Fecha, $Direcion, $Correo, $pas1, $img_name_name, $img_name,$perfil,$estados,$ciudades,$codigo){
 
         $user = array();
-
+        $this->DB_QUERY->begin();
         if($img_name==1){
             $img_name=date("YmdHis")."_".$_SESSION["id_usu_credit"].".png";
             $user["text_img_perfil_usu"]=$img_name;
@@ -42,7 +42,10 @@ class usuario_modelo
 
     	$query = "INSERT INTO tbl_usuarios (id_usu, documento_usu, primer_nombre_usu,segundo_nombre_usu, primer_apellido_usu, segundo_apellido_usu, telefono_1_usu, telefono_2_usu, direcion_usu, sexo_usu, correo_usu, contrasena_usu, fecha_nacimineto_usu, foto_usu,rol_usu,estado_localidad_usu,ciudad_localidad_usu,codigo_ruta) VALUES (NULL, $Documento,'$primernombre','$segundonombre','$primerapellido','$segundoapellido', $Telefono_1, $Telefono_2, '$Direcion', '$Genero', '$Correo', '$pas1', '$Fecha', '$img_name',$perfil,$estados,$ciudades,'$codigo')";
         $id=$this->DB_QUERY->save($query,'creacion de usuarios.');
+        $queryCaja = "INSERT INTO tbl_caja (id_caja, saldo_caja, id_usu) VALUES (null, '0', '$id')";
+        $this->DB_QUERY->save($queryCaja,'creacion de caja.');
         $this->log_usuario(0,$id);
+        $this->DB_QUERY->commit();
         return array('control' =>$user["text_img_perfil_usu"] ,'error' => 0,'resp'=>$id);
     }
 
@@ -80,9 +83,11 @@ class usuario_modelo
 
     /*////////////////////////////////atualizar//////////////////////////////////////////////////*/
     public function cambiar_estado($params){
+        $this->DB_QUERY->begin();
         $query="UPDATE `tbl_usuarios` SET `estado_usu` = ".$params['estado']." WHERE `tbl_usuarios`.`id_usu` = '".$params['id']."'";
         $id=$this->DB_QUERY->save($query,'cambiar estado de usuarios.');
         $this->log_usuario(3,$params['id']);
+        $this->DB_QUERY->commit();
         return array('control' =>0 ,'error' => 0);
     }
 
@@ -91,6 +96,7 @@ class usuario_modelo
         $user = array();
 
         $text_img_perfil_usu="";
+        $this->DB_QUERY->begin();
         if($img_name==1){
             $query="SELECT foto_usu FROM tbl_usuarios WHERE id_usu=".$id;
             $data=$this->DB_QUERY->query($query);
@@ -125,6 +131,7 @@ class usuario_modelo
 
         $this->DB_QUERY->save($query,'atualizar usuarios.');
         $this->log_usuario(1,$id);
+        $this->DB_QUERY->commit();
         return $user;
     }
 }
