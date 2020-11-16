@@ -86,7 +86,7 @@
                       <th class="text-color">Usuario</th>
                       <th class="text-color">Documento del usuario</th>
                       <th class="text-color">Valor neto</th>
-                      <th class="text-color">Debe</th>
+                      <th class="text-color">Gastos</th>
                       <th class="text-color">Pagò</th>
                       <th class="text-color">Tipo</th>
                       <th class="text-color">Nota</th>

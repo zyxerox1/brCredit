@@ -15,6 +15,8 @@
         <button type="button" id="crear" onclick="window.location.href = 'index.php?c=cliente&a=crear'" class="btn btn-primary btn-confirmar">Crear cliente</button>
 
         <button type="button" id="historial" onclick="window.location.href = 'index.php?c=historial'" class="btn btn-primary">Ver historial de los clientes</button>
+
+        <button type="button" id="abono" onclick="window.location.href = 'index.php?c=abono'" class="btn btn-primary">Registrar abono</button>
         <hr>
         <?php if($_SESSION["rol"]==1): ?>
         <div class="row">
