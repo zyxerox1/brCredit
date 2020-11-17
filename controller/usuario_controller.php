@@ -113,6 +113,16 @@ class usuario_controller
           $errores[] = array('control' =>"Telefono_1" ,'error' =>"El numero Telefono 1 es corto");
         }
 
+        if($_POST['valorCaja']==""){
+          $errores[] = array('control' =>"valorCaja" ,'error' =>"El Saldo inicial no puede estar vacio");
+        }else{
+          $_POST['valorCaja'] = preg_replace('/[.,]/', '', $_POST['valorCaja']);
+        }
+
+        if($this->validacion->soloNumeros($_POST['valorCaja'])==false){
+          $errores[] = array('control' =>"valorCaja" ,'error' =>"El campo Saldo inicial solo debe contener numeros"  );
+        }
+
         if(strlen($_POST['Telefono_2'])!=0){
            if(strlen($_POST['Telefono_2'])<8){
               $errores[] = array('control' =>"Telefono_2" ,'error' =>"El numero Telefono 2 es corto");
@@ -155,7 +165,7 @@ class usuario_controller
 
 
         if(count($errores)==0){
-            $result_editar_usuario=  $this->usuario->crear_usuario($_POST['primernombre'], $_POST['segundonombre'], $_POST['primerapellido'], $_POST['segundoapellido'], $_POST['Documento'], $_POST['Genero'], $_POST['Telefono_1'], $_POST['Telefono_2'], $_POST['Fecha'], $_POST['Direcion'], $_POST['Correo'], $this->encriptar($_POST['pas1']), $_POST['img_name'],$img_name,2,$_POST['estados'],$_POST['ciudades'],$_POST['codigo']);
+            $result_editar_usuario=  $this->usuario->crear_usuario($_POST['primernombre'], $_POST['segundonombre'], $_POST['primerapellido'], $_POST['segundoapellido'], $_POST['Documento'], $_POST['Genero'], $_POST['Telefono_1'], $_POST['Telefono_2'], $_POST['Fecha'], $_POST['Direcion'], $_POST['Correo'], $this->encriptar($_POST['pas1']), $_POST['img_name'],$img_name,2,$_POST['estados'],$_POST['ciudades'],$_POST['codigo'],$_POST['valorCaja']);
 
             if (isset($result_editar_usuario["control"]) && $result_editar_usuario["control"] !=1) {
               move_uploaded_file($_FILES['img']['tmp_name'], "view/assets/imagenes_usuario/".$result_editar_usuario["control"]);

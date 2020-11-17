@@ -178,10 +178,23 @@
                     </div>
 
                 <div class="row">
-                  <div class="col-md-6 offset-md-3">
+                  <div class="col-md-6">
                     <div class="form-group is-filled">
                       <label for="codigo" class="text-color ">Codigo de la ruta</label>
                       <input type="text" class="form-control" id="codigo" name="codigo" required="required">
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="valorCaja" class="text-color">Saldo inicial*</label>
+                    <div class="input-group form-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">$</span>
+                      </div>
+                      <input type="text" class="form-control Spinner" name="valorCaja" id="valorCaja" onkeyup="format(this)" onchange="format(this)" min="0" max="" value="0" step="1" required="required">
+                      <div class="input-group-append">
+                        <span class="input-group-text">.00</span>
+                      </div>
                     </div>
                   </div>
                 </div>

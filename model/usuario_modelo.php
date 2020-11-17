@@ -28,7 +28,7 @@ class usuario_modelo
         $this->DB_QUERY->save($query);
     }
 
-    public function crear_usuario($primernombre, $segundonombre, $primerapellido, $segundoapellido, $Documento, $Genero, $Telefono_1, $Telefono_2, $Fecha, $Direcion, $Correo, $pas1, $img_name_name, $img_name,$perfil,$estados,$ciudades,$codigo){
+    public function crear_usuario($primernombre, $segundonombre, $primerapellido, $segundoapellido, $Documento, $Genero, $Telefono_1, $Telefono_2, $Fecha, $Direcion, $Correo, $pas1, $img_name_name, $img_name,$perfil,$estados,$ciudades,$codigo,$valorCaja){
 
         $user = array();
         $this->DB_QUERY->begin();
@@ -42,7 +42,7 @@ class usuario_modelo
 
     	$query = "INSERT INTO tbl_usuarios (id_usu, documento_usu, primer_nombre_usu,segundo_nombre_usu, primer_apellido_usu, segundo_apellido_usu, telefono_1_usu, telefono_2_usu, direcion_usu, sexo_usu, correo_usu, contrasena_usu, fecha_nacimineto_usu, foto_usu,rol_usu,estado_localidad_usu,ciudad_localidad_usu,codigo_ruta) VALUES (NULL, $Documento,'$primernombre','$segundonombre','$primerapellido','$segundoapellido', $Telefono_1, $Telefono_2, '$Direcion', '$Genero', '$Correo', '$pas1', '$Fecha', '$img_name',$perfil,$estados,$ciudades,'$codigo')";
         $id=$this->DB_QUERY->save($query,'creacion de usuarios.');
-        $queryCaja = "INSERT INTO tbl_caja (id_caja, saldo_caja, id_usu) VALUES (null, '0', '$id')";
+        $queryCaja = "INSERT INTO tbl_caja (id_caja, saldo_caja, id_usu) VALUES (null, '$valorCaja', '$id')";
         $this->DB_QUERY->save($queryCaja,'creacion de caja.');
         $this->log_usuario(0,$id);
         $this->DB_QUERY->commit();
