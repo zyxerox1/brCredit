@@ -92,8 +92,7 @@ class cliente_modelo
                       pres.numero_cuota_pres as cuota,
                       clien.correo_clie as Correo,
                       logpres.valor_pres_logp as valor, 
-                      SUM(IF(DATE_FORMAT(pres.fecha_limite_pres, '%Y-%c-%d')>DATE_FORMAT(now(), '%Y-%c-%d'),1,0)) AS totalCarVenNro,
-
+                      IF(DATE_FORMAT(pres.fecha_limite_pres, '%Y-%c-%d')<DATE_FORMAT(now(), '%Y-%c-%d'),DATEDIFF(DATE_FORMAT(now(), '%Y-%c-%d'), DATE_FORMAT(pres.fecha_limite_pres, '%Y-%c-%d')),0) AS totalCarVenNro,
                       if(pres.valor_pres IS NOT NULL,pres.valor_pres,0) as valorDeuda,
                       if(pres.id_pres IS NOT NULL,pres.id_pres,0) as id_cobro,
                       clien.orden_ruta_clie as orden

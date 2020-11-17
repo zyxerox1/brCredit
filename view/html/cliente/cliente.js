@@ -308,6 +308,7 @@ function registrar_prestamo(action,datos) {
       success:function(e){
           var obj = JSON.parse(e);
           if(obj["error"]!=0){
+            
             check_todo_input_verificado();
             validate_errores_peticion_ajax(obj);
           }else if(obj["error"]==0){

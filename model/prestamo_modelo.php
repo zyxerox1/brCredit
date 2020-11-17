@@ -44,8 +44,28 @@ class prestamo_modelo
 
     public function crear_prestamo($FechaLimit,$Formap,$Valor,$ncoutas,$Valorc,$inter,$idClient,$valorInteres,$latitud,$longitud){
         $this->DB_QUERY->begin();
+
+        $saldoAtualizar=0;
+        $query="SELECT id_usu,id_caja,saldo_caja FROM tbl_caja WHERE id_usu=".$_SESSION['id_usu_credit'];
+        $data=$this->DB_QUERY->query($query);
+
+        if(count($data)<=0){
+            return array('error' =>"1",'error' =>"No se encontro la caja de la ruta.");
+        }
+
+        if($data[0]['saldo_caja']<$Valor){
+            return array('mensaje' =>"El valor supera el saldo actual de la caja de la ruta" ,'error' => 1);
+        }
+
+        $saldoAtualizar=$data[0]['saldo_caja']-$Valor;
+        $query="UPDATE tbl_caja SET saldo_caja = '$saldoAtualizar' WHERE id_usu =".$_SESSION['id_usu_credit'];
+        $this->DB_QUERY->save($query,'Actualizar saldo de caja prestamo');
+
+
         $query = "INSERT INTO tbl_prestamo (id_pres, id_clie, fecha_limite_pres, valor_pres, forma_pago_pres, numero_cuota_pres, valor_cuotas_pres, intereses_press,valor_neto_clie) VALUES (NULL, $idClient, '$FechaLimit', $valorInteres, $Formap, $ncoutas,$Valorc,$inter,$Valor)";
+
         $id=$this->DB_QUERY->save($query,'Registrar prestamo');
+
         $this->log_prestamo(0,$id,$idClient,"Creao prestamo",$valorInteres,99,$latitud,$longitud);
         $this->DB_QUERY->commit();
         return array('control' =>0 ,'error' => 0);
