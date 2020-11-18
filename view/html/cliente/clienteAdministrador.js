@@ -82,7 +82,8 @@ function cargar_cliente(){
           { data: 'Apellidos'},
           { data: 'Telefono' },
           { data: 'Moroso' },
-          { data: 'Estado' },
+          //{ data: 'Estado' },
+          { data: 'totalCarVenNro'},
           { data: 'Direcion'},
           { data: 'ventas' },
           { data: 'vendido' },
@@ -103,7 +104,7 @@ function cargar_cliente(){
               }
              return input;
            }
-         },{
+         },/*{
            "targets": 4,
            "data": "Estado",
            "render": function ( data, type, row, meta ) {
@@ -115,7 +116,7 @@ function cargar_cliente(){
               }
              return input;
            }
-         },{
+         },*/{
            "targets": 7,
            "data": "vendido",
            "render": function ( data, type, row, meta ) {

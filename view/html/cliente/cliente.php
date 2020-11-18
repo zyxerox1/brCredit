@@ -97,7 +97,7 @@
                 <th class="text-color all">Apellidos</th>
                 <th class="text-color">Telefono</th>
                 <th class="text-color">Moroso</th>
-                <th class="text-color">Estado</th>
+                <th class="text-color">Disa vencidos</th>
                 <th class="text-color all">Direcion</th>
                 <th class="text-color all">Nro ventas</th>
                 <th class="text-color all">Total vendido</th>
