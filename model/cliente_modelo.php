@@ -37,7 +37,9 @@ class cliente_modelo
       if($ruta==0){
          $ruta=$_SESSION["id_usu_credit"];
       }
-     
+      $valoresPrestamo="";
+
+
         $user = array();
 
         if($img_name==1){
@@ -132,7 +134,9 @@ class cliente_modelo
                         SUM(logPress.valor_pres_logp-pres.valor_pres) AS pagado,
                         CONCAT_WS(' - ',clien.prestamo_minimo_client,clien.prestamo_maximo_client) AS Limite,
                         clien.documento_ref_clie AS Referencia,
-                        clien.id_clie AS id
+                        clien.id_clie AS id,
+                        clien.autorizarMaxMin_clie as autorizar,
+                        CONCAT(clien.min_auto_clie,' - ',clien.max_auto_clie) as valoresAutoriazar
                 FROM tbl_cliente as clien
                 LEFT JOIN tbl_prestamo AS pres ON (pres.id_clie=clien.id_clie)
                 LEFT JOIN tbl_log_prestamo AS logPress ON (logPress.id_pres=pres.id_pres AND logPress.movimiento_logp=0)
@@ -186,13 +190,30 @@ class cliente_modelo
       return array('control' =>0 ,'error' => 0);
     }
 
-    public function atualizar_cliente($primernombre, $segundonombre, $primerapellido, $segundoapellido,$Genero, $Telefono_1, $Telefono_2, $Fecha, $Direcion, $Correo, $img_name,$id,$estados,$ciudad,$ccr,$Direcioncobro,$valormin=200,$valormax=300,$ruta=0){
+    public function atualizar_cliente($primernombre, $segundonombre, $primerapellido, $segundoapellido,$Genero, $Telefono_1, $Telefono_2, $Fecha, $Direcion, $Correo, $img_name,$id,$estados,$ciudad,$ccr,$Direcioncobro,$valormin=0,$valormax=0,$ruta=0){
 
         $user = array();
         $this->DB_QUERY->begin();
         $img="";
         $correo="";
         $datosAdmin="";
+        $datosVende="";
+
+        $autorizarMaxMin_clie=0;
+        $max_auto_clie=0;
+        $min_auto_clie=0;
+
+        if($_SESSION["rol"]==2){
+           $query = "SELECT prestamo_minimo_client,prestamo_maximo_client FROM tbl_cliente WHERE id_clie=".$id;
+          $dataVendedor=$this->DB_QUERY->query($query);
+          if($dataVendedor[0]['prestamo_minimo_client']!=$valormin || $dataVendedor[0]['prestamo_minimo_client']!=$valormax){
+            $datosVende=",autorizarMaxMin_clie=1
+                       ,max_auto_clie='$valormax',
+                       min_auto_clie='$valormin'";
+            
+          }
+        }
+
         if($_SESSION['rol']==1){
           $datosAdmin=",prestamo_minimo_client='$valormin',
                        prestamo_maximo_client='$valormax',
@@ -242,6 +263,7 @@ class cliente_modelo
                     direcion_cobro_clie='$Direcioncobro',
                     correo_clie='$Correo'
                     $datosAdmin
+                    $datosVende
                     $img
                   WHERE tbl_cliente.id_clie =".$id;
 
@@ -286,6 +308,30 @@ class cliente_modelo
         $this->log_cliente(2,$params['id']);
         $this->DB_QUERY->commit();
         return array('error' => 0);
+    }
+
+
+    public function autrizarCambioSaldo($params){ 
+      $this->DB_QUERY->begin();
+      $queryUpdate="";
+      $query = "SELECT min_auto_clie,max_auto_clie FROM tbl_cliente WHERE id_clie=".$params['id'];
+      $dataVendedor=$this->DB_QUERY->query($query);
+
+      if($dataVendedor[0]['min_auto_clie']==0 && $dataVendedor[0]['max_auto_clie']==0){
+        return array('error' => 1,'mensaje'=>"Hubo un problema con los saldo, parece que ambos estan en cero.");
+      }
+      $queryUpdate = "UPDATE tbl_cliente 
+                  SET 
+                    prestamo_minimo_client=".$dataVendedor[0]['min_auto_clie'].",
+                    prestamo_maximo_client=".$dataVendedor[0]['max_auto_clie'].",
+                    max_auto_clie=0,
+                    min_auto_clie=0,
+                    autorizarMaxMin_clie=0
+                  WHERE tbl_cliente.id_clie =".$params['id'];
+      $this->DB_QUERY3->save($queryUpdate,'autorizar cambio de saldo.');
+      $this->log_cliente(7,$params['id']);
+      $this->DB_QUERY->commit();
+      return array('error' => 0);
     }
     
 }

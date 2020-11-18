@@ -13,10 +13,11 @@
       <div class="card-body card-body-primary">
 
         <button type="button" id="crear" onclick="window.location.href = 'index.php?c=cliente&a=crear'" class="btn btn-primary btn-confirmar">Crear cliente</button>
-
+        <?php if($_SESSION["rol"]==2): ?>
         <button type="button" id="historial" onclick="window.location.href = 'index.php?c=historial'" class="btn btn-primary">Ver historial de los clientes</button>
 
         <button type="button" id="abono" onclick="window.location.href = 'index.php?c=abono'" class="btn btn-primary">Registrar abono</button>
+         <?php endif ?>
         <hr>
         <?php if($_SESSION["rol"]==1): ?>
         <div class="row">
@@ -105,6 +106,7 @@
                 <th class="text-color all">Limites de ventas</th>
                 <th class="text-color all">Referencia</th>
                 <th class="text-color all">Editar</th>
+                <th class="text-color all">Autorizar aumento de saldo</th>
               <?php endif ?>
             </thead>
             <tbody>

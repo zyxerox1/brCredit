@@ -160,8 +160,11 @@
                             </div>
                           </div>
                   </div>
-
-                  <?php if ($_SESSION['rol']==1): ?>
+                  
+                  <?php if ($_SESSION['rol']==2): ?>
+                  <hr>
+                  <h5>Si llena estos campos debe esperar hasta que el administrador lo autorizè.</h5>
+                  <?php endif ?>
                     <div class="row">
                       <div class="col-md-6">
                         <label for="valormin" class="text-color">Valor minimo del prestamo*</label>
@@ -189,7 +192,10 @@
                         </div>
                       </div>
                     </div>
-
+                <?php if ($_SESSION['rol']==2): ?>
+                  <hr>
+                <?php endif ?>
+                <?php if ($_SESSION['rol']==1): ?>
                     <div class="row">
                       <div class="col-md-8 offset-md-2">
                         <div class="form-group">

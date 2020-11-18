@@ -156,7 +156,26 @@ function cargar_cliente(){
           });
         }
     });
+
+    datosTotal();
+
   }
+
+
+function datosTotal(){
+  $.ajax({
+    url: "index.php?c=abono&a=datosTotal",
+    type: "post",
+    success:function(e){
+      var data = JSON.parse(e);
+      $(".totalNroCar").html("total de pagos("+data[0]["numeroPagado"]+"):");
+      $(".totalrecaudo").html("$"+formaterNumeroDecimales(data[0]["Pagado"]));
+    },
+    error:function(){
+        ohSnap('Error desconocido',{color: 'red'});
+    }
+  });
+}
 
 
 function modalAbonoAuto(id,prestamo,codAtual=0){

@@ -33,6 +33,12 @@ class abono_controller
         echo json_encode($data);
     }
 
+    public function datosTotal(){
+        $this->validacion->validarRol(2);
+        $data=$this->abono->datosTotal();
+        echo json_encode($data);
+    }
+
      public function obtenerDataCliente(){
         $this->validacion->validarRol(2);
         $data=$this->abono->DataCliente($_POST);

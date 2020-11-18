@@ -83,13 +83,27 @@ class abono_modelo
 
         $query.=" GROUP BY clien.id_clie ORDER BY clien.orden_ruta_clie ASC";
 
+        
+
+
         //$tablaSearch="AND int_documento_usu LIKE '%".$params['search']['value']."%'";
 
         $data=$this->DB_QUERY->queryDatatable($params,$query);
+        
         return $data;
     }
+
+    public function datosTotal (){
+        $queryTotal="SELECT 
+                    SUM(if(logpres.movimiento_logp=1,1,0)) AS numeroPagado, 
+                    SUM(if(logpres.movimiento_logp=1,logpres.valor_pres_logp,0)) AS Pagado
+                FROM tbl_log_prestamo AS logpres
+                WHERE DATE_FORMAT(logpres.fecha_logp, '%Y-%c-%d') = DATE_FORMAT(now(), '%Y-%c-%d') AND (logpres.movimiento_logp=1 OR logpres.movimiento_logp=2) AND logpres.apuntadaor_prestamo_logp=0 AND logpres.id_autor_usu=".$_SESSION["id_usu_credit"];
+        $dataTotal=$this->DB_QUERY->query($queryTotal);
+        return $dataTotal;
+    }
  
-    function DataCliente ($params){
+    public function DataCliente ($params){
         $query="SELECT 
                 cliente.id_clie AS nPrestamo,
                 CONCAT('$','R ',sum(prestamos.valor_pres)) AS totalVenta,
@@ -144,7 +158,7 @@ class abono_modelo
                 return array('error' => 1,"mensaje"=>"Error desconocido" );  
             }
 
-            $id=$this->log_abono(2,$idPres,$data[0]['id_clie'],$nota,$valor,$tipo,$latitud,$longitud);
+            $id=$this->log_abono(1,$idPres,$data[0]['id_clie'],$nota,$valor,$tipo,$latitud,$longitud);
 
             $query1 = "UPDATE tbl_cliente SET cumplimineto_client = '$id' WHERE id_clie =".$data[0]['id_clie'];
 

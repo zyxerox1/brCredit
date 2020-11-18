@@ -90,7 +90,8 @@ function cargar_cliente(){
           { data: 'pagado' },
           { data: 'Limite'},
           { data: 'Referencia' },
-          { data: 'id' }
+          { data: 'id' },
+          { data: 'autorizar' }
       ],
       "columnDefs": [{
            "targets": 3,
@@ -138,6 +139,18 @@ function cargar_cliente(){
         "render": function ( data, type, row, meta ) {
             return '<button class="btn btn-outline-primary edit" data-usu="'+row.id+'"><i class="fas fa-user-edit"></i></button>';
         }
+
+      },{
+        "targets": 12,
+        "data": "autorizar",
+        "render": function ( data, type, row, meta ) {
+            if(data==1){
+              return '<button class="btn btn-outline-primary autorizar" data-usu="'+row.id+'">'+row.valoresAutoriazar+'</button>';
+            }else{
+              return "No hay solicitud";
+            }
+            
+        }
       }],
       "processing": true,
       "serverSide": true,
@@ -159,6 +172,12 @@ function cargar_cliente(){
             }
             cambiar_estado(clien,estado);
           });
+
+        $('.autorizar').on('click', function () {
+            var usu=$(this).attr("data-usu");
+            autorizarAumentoSaldo(usu);
+          });
+        
 
         $('.edit').on('click', function () {
           var i=$(this).attr('data-usu');
@@ -183,6 +202,32 @@ function cambiar_estado(id,estado){
       var data = JSON.parse(e);
       if(data["error"]==0){
         ohSnap('Se cambio el estado corretamente',{color: 'green'});
+      }else{
+        error_501();
+        cargar_cliente();
+      }
+    },
+    error:function(){
+        ohSnap('Error desconocido',{color: 'red'});
+    }
+  });
+}
+
+
+function autorizarAumentoSaldo(id){
+  $.ajax({
+    data: {
+      'id':id
+    },
+    url: "index.php?c=cliente&a=autrizarCambioSaldo",
+    type: "post",
+    success:function(e){
+      var data = JSON.parse(e);
+      if(data["error"]==0){
+        cargar_cliente();
+        ohSnap('Se cambio el estado corretamente',{color: 'green'});
+      }else if(data["error"]==1){
+        ohSnap(data["mensaje"],{color: 'red'});
       }else{
         error_501();
         cargar_cliente();

@@ -291,14 +291,8 @@ class cliente_controller
         } 
 
 
-        if($_SESSION['rol']==1){
-          if($_POST['valormax']==""){
-            $errores[] = array('control' =>"valormax" ,'error' =>"Debe ingresar un valor maximo.");
-          }
-
-          if($_POST['valormin']==""){
-            $errores[] = array('control' =>"valormin" ,'error' =>"Debe ingresar un valor minimo.");
-          }
+        
+          
 
           if(isset($_POST['valormax']) && isset($_POST['valormin'])){
             $_POST['valormin']=str_replace( '.', '',$_POST['valormin'] );
@@ -308,6 +302,15 @@ class cliente_controller
             }
           }
 
+        if($_SESSION['rol']==1){
+          if($_POST['valormax']==""){
+            $errores[] = array('control' =>"valormax" ,'error' =>"Debe ingresar un valor maximo.");
+          }
+
+          if($_POST['valormin']==""){
+            $errores[] = array('control' =>"valormin" ,'error' =>"Debe ingresar un valor minimo.");
+          }
+          
           if($_POST['ruta']==0){
             $errores[] = array('control' =>"ruta" ,'ruta' =>"Debe ingresar una ruta.");
           }
@@ -318,7 +321,7 @@ class cliente_controller
             if($_SESSION['rol']==1){
               $result_editar_usuario=  $this->cliente->atualizar_cliente($_POST['primernombre'], $_POST['segundonombre'], $_POST['primerapellido'], $_POST['segundoapellido'], $_POST['Genero'], $_POST['Telefono_1'], $_POST['Telefono_2'], $_POST['Fecha'], $_POST['Direcion'], $_POST['Correo'],$img_name,$_SESSION['id_update'],$_POST['estados'],$_POST['ciudades'],$_POST['ccr'],$_POST['Direcioncobro'],$_POST['valormin'],$_POST['valormax'],$_POST['ruta']);
             }else{
-               $result_editar_usuario=  $this->cliente->atualizar_cliente($_POST['primernombre'], $_POST['segundonombre'], $_POST['primerapellido'], $_POST['segundoapellido'], $_POST['Genero'], $_POST['Telefono_1'], $_POST['Telefono_2'], $_POST['Fecha'], $_POST['Direcion'], $_POST['Correo'],$img_name,$_SESSION['id_update'],$_POST['estados'],$_POST['ciudades'],$_POST['ccr'],$_POST['Direcioncobro']);
+               $result_editar_usuario=  $this->cliente->atualizar_cliente($_POST['primernombre'], $_POST['segundonombre'], $_POST['primerapellido'], $_POST['segundoapellido'], $_POST['Genero'], $_POST['Telefono_1'], $_POST['Telefono_2'], $_POST['Fecha'], $_POST['Direcion'], $_POST['Correo'],$img_name,$_SESSION['id_update'],$_POST['estados'],$_POST['ciudades'],$_POST['ccr'],$_POST['Direcioncobro'],$_POST['valormin'],$_POST['valormax']);
             }
 
 
@@ -341,6 +344,12 @@ class cliente_controller
             $errores=$this->cliente->cambiar_estado($_POST);
         }
         echo json_encode($errores);
+    }
+
+    public function autrizarCambioSaldo(){
+      $this->validacion->validarRol(1);
+      $errores=$this->cliente->autrizarCambioSaldo($_POST);
+      echo json_encode($errores);
     }
 
     public function orden()

@@ -50,6 +50,15 @@
         </div>-->
          <div class="card-body card-body-primary">
           <br>
+          <div class="row">
+            <div class="col-md-3">
+              <h5 class="totalNroCar" style="color: green"></h5>
+              <label class="texto-info" style="color: green"></label>
+            </div>
+             <div class="col-md-3" style="color: green">
+              <h5 class="totalrecaudo" style="color: green"></h5>
+            </div>
+          </div>
               <div class="table-responsive padding" >
                   <table id="datacliente" class="table table-bordred table-striped table-striped table-hover dt-responsive">
                     <thead class="heade-table">
