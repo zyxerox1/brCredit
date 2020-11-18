@@ -23,6 +23,7 @@ class abono_modelo
         /*parametro de errores{*/
         $controller="";
         $accion_func="";
+        $numero=0;
         if(isset($_REQUEST['c'])){
             $controller=$_REQUEST['c'];
         }
@@ -31,9 +32,14 @@ class abono_modelo
         }
         $ip=$this->getRealIP();
 
+        if($movimiento==1){
+            $queryNumeroCouta="SELECT count(id_pres) as numero FROM `tbl_log_prestamo` WHERE movimiento_logp=1 and apuntadaor_prestamo_logp=0 AND id_pres=".$id;
+            $data=$this->DB_QUERY->query($queryNumeroCouta);
+            $numero=$data[0]['numero'];
+        }
         //$query = "CALL logPrestamo('$movimiento','$id','$controller',".$_SESSION["id_usu_credit"].",'$accion_func','$id_clie','$nota','$valor','$tipo','$latitud','$longitud','$ip')";
 
-        $query="INSERT INTO `tbl_log_prestamo` (`id_logp`, `movimiento_logp`, `fecha_logp`, `id_pres`, `controller_logp`, `id_autor_usu`, `accion_func_logp`,id_clie,nota_logp,valor_pres_logp,forma_pago_logp,latitud_logp,longitud_logp,ip_logp) VALUES (NULL, '$movimiento', now(), '$id', '$controller', ".$_SESSION["id_usu_credit"].",'$accion_func','$id_clie','$nota','$valor','$tipo','$latitud','$longitud','$ip');";
+        $query="INSERT INTO `tbl_log_prestamo` (`id_logp`, `movimiento_logp`, `fecha_logp`, `id_pres`, `controller_logp`, `id_autor_usu`, `accion_func_logp`,id_clie,nota_logp,valor_pres_logp,forma_pago_logp,latitud_logp,longitud_logp,ip_logp,numeroCouta_logp) VALUES (NULL, '$movimiento', now(), '$id', '$controller', ".$_SESSION["id_usu_credit"].",'$accion_func','$id_clie','$nota','$valor','$tipo','$latitud','$longitud','$ip','$numero');";
 
         $id=$this->DB_QUERY->save($query);
         return $id;
@@ -131,7 +137,7 @@ class abono_modelo
         $query="";
         $query1="";
         $this->DB_QUERY->begin();
-        $query="SELECT pres.valor_pres,pres.valor_cuotas_pres,pres.id_clie,client.cumplimineto_client, logPres.id_logp,logPres.valor_pres_logp
+        $query="SELECT pres.valor_pres,pres.valor_cuotas_pres,pres.id_clie,client.cumplimineto_client, logPres.id_logp,logPres.valor_pres_logp,logPres.numeroCouta_logp
                       FROM tbl_prestamo as pres
                       INNER JOIN tbl_cliente as client ON (client.id_clie=pres.id_clie) 
                       LEFT JOIN tbl_log_prestamo as logPres ON (client.cumplimineto_client=logPres.id_logp)
@@ -163,6 +169,9 @@ class abono_modelo
             $query1 = "UPDATE tbl_cliente SET cumplimineto_client = '$id' WHERE id_clie =".$data[0]['id_clie'];
 
             $query2 = "UPDATE tbl_log_prestamo SET apuntadaor_prestamo_logp = '$id' WHERE id_logp =".$data[0]['id_logp'];
+
+            $query3 = "UPDATE tbl_log_prestamo SET numeroCouta_logp = '".$data[0]['numeroCouta_logp']."' WHERE id_logp =".$id;
+            $this->DB_QUERY->save($query3,'Actualizar numero de couta');
 
             /*/////////////////////////////caja////////////////////////////////////*/
             $saldoAtualizar=0;

@@ -135,7 +135,7 @@ function cargar_reporte(){
            "render": function ( data, type, row, meta ) {
               $(".tittle-vendedor").html('<i class="fas fa-route icon-btn"></i> '+row.codigo);
               if(row.validar==0){
-              	return '<i class="fas fa-user-tie"></i> '+data+"<h6 class='InvalTable'>Sin validar <i class='fas fa-thumbs-down'></i></h6>";
+              	return '<a class="btn-validar" data-usu="'+row.id+'" data-tipo="'+row.tipo+'" data-fecha="'+row.fecha+'"><i class="fas fa-user-tie"></i> '+data+"<h6 class='InvalTable'>Sin validar <i class='fas fa-thumbs-down'></i></h6></a>";
               }else{
               	return '<i class="fas fa-user-tie"></i> '+data+"<h6 class='valTable'>Validado <i class='fas fa-thumbs-up'></i></h6>";
               }
@@ -224,7 +224,7 @@ function cargar_reporte(){
            "targets": 2,
            "data": "id",
            "render": function ( data, type, row, meta ) {
-              return '<a class="verDetalle" data-ver="0" data-id="'+data+'" data-usu="'+row.usu+'" data-fecha="'+row.fecha+'" data-tipo="'+row.tipo+'" data-cerrado="'+row.cerrado+'"><i class="fas fa-search-plus"></i> Detalle</a><div class="containerDetalle'+data+'" ></div>';
+              return '<a class="verDetalle" data-ver="0" data-id="'+data+'" data-usu="'+row.usu+'" data-fecha="'+row.fecha+'" data-tipo="'+row.tipo+'" data-cerrado="'+row.cerrado+'" data-vali="'+row.validar+'"><i class="fas fa-search-plus"></i> Detalle</a><div class="containerDetalle'+data+'" ></div>';
            }
          }],
         "processing": true,
@@ -238,23 +238,58 @@ function cargar_reporte(){
        			var fecha = $(this).attr("data-fecha");
             var tipo= $(this).attr("data-tipo");
             var cerrado=$(this).attr("data-cerrado");
+            var vali=$(this).attr("data-vali");
        			fecha = new Date(fecha);
        			var mes=parseInt(fecha.getMonth());
        			mes+=1;
        			fecha=fecha.getFullYear()+"-"+mes+"-"+fecha.getDate();
        			if(ver==0){
-       				ContenedorDetalle(id,usu,fecha,tipo,cerrado);
+       				ContenedorDetalle(id,usu,fecha,tipo,cerrado,vali);
        				$(this).attr("data-ver",1);	
        			}else{
        				$(".containerDetalle"+id).html("");
        				$(this).attr("data-ver",0);
        			}
-  			});
+  			  });
+
+          $('.btn-validar').on('click', function () {
+              var usu=$(this).attr('data-usu');
+              var tipo=$(this).attr('data-tipo');
+              var fecha=$(this).attr('data-fecha');
+              validarVendedor(usu,tipo,fecha);
+          });
         }
     });
 }
 
-function ajaxVenta(usu){
+function validarVendedor(usu,tipo,fecha){
+  usu=parseInt(usu);
+  $.ajax({
+      data: {
+        'usu':usu,
+        'tipo':tipo,
+        'fecha':fecha
+      },
+      url: "index.php?c=cerrar&a=validarCierre",
+      type: "post",
+      success:function(e){
+        var obj = JSON.parse(e);
+        if(obj['error']==1){
+            ohSnap(obj['mensaje'],{color: 'red'});
+        }else if(obj['error']==0){
+            ohSnap('Se valido correctamente',{color: 'green'});
+            cargar_reporte();
+        }else{
+          ohSnap('Error desconocido',{color: 'red'});
+        }
+      },
+      error:function(){
+          ohSnap('Error desconocido',{color: 'red'});
+      }
+  });
+}
+
+function ajaxVenta(usu,fecha){
 	if ( $.fn.dataTable.isDataTable( '#dataVenta' ) ) {
       $("#dataVenta").dataTable().fnDestroy();
     }
@@ -263,7 +298,8 @@ function ajaxVenta(usu){
         "autoWidth": true,
         "ajax": {
         	"data": {
-	            'usu':usu
+	            'usu':usu,
+              'fecha':fecha
             },
             "url": MY_AJAX_ACTION_URL
         },
@@ -281,23 +317,71 @@ function ajaxVenta(usu){
         "sort": true,
         "stripeClasses": [ "odd nutzer_tr", "even nutzer_tr"],
         "columns": [
-          { data: 'id' },
+          { data: 'codigo' },
           { data: 'Cliente' },
           { data: 'ValorSin' },
           { data: 'ValorCon' },
           { data: 'Interese' },
-          { data: 'Producto' }
+          { data: 'Producto' },
+          { data: 'estado' }
       ],
-      "columnDefs": [],
+      "columnDefs": [
+        {
+           "targets": 6,
+           "data": "estado",
+           "render": function ( data, type, row, meta ) {
+              var input="";
+              if(data==1){
+                input='<input type="checkbox" data-estado="'+row.id+'" checked data-toggle="toggle" data-size="sm" class="estado_venta">';
+              }else{
+                input='<input type="checkbox" data-estado="'+row.id+'" data-toggle="toggle" data-size="sm" class="estado_venta">';
+              }
+             return input;
+           }
+         }
+      ],
         "processing": true,
         "serverSide": true,
         "pageLength" : 10,
         drawCallback: function () {
+          $('.estado_venta').on('click', function () {
+            var id_v=$(this).attr("data-estado");
+            var estado=1;
+            if( $(this).is(':checked') ){
+              estado=0;
+            } else {
+              estado=1;
+            }
+            cambiar_estado(id_v,estado);
+          });
         }
     });
 }
 
-function ajaxNotaVenta(usu){
+function cambiar_estado(id,estado){
+  $.ajax({
+    data: {
+      'id':id,
+      'estado':estado
+    },
+    url: "index.php?c=cerrar&a=cambioEstadoVentas",
+    type: "post",
+    success:function(e){
+      var data = JSON.parse(e);
+      if(data["error"]==0){
+        ohSnap('Se cambio el estado corretamente',{color: 'green'});
+      }else{
+        error_501();
+        cargar_usuarios();
+      }
+    },
+    error:function(){
+        ohSnap('Error desconocido',{color: 'red'});
+    }
+  });
+}
+
+function ajaxNotaVenta(usu,fecha){
 	 if ( $.fn.dataTable.isDataTable( '#dataNotaVenta' ) ) {
       $("#dataNotaVenta").dataTable().fnDestroy();
     }
@@ -306,7 +390,8 @@ function ajaxNotaVenta(usu){
         "autoWidth": true,
         "ajax": {
         	"data": {
-	            'usu':usu
+	            'usu':usu,
+              'fecha':fecha
             },
             "url": MY_AJAX_ACTION_URL
         },
@@ -336,7 +421,7 @@ function ajaxNotaVenta(usu){
     });
 }
 
-function ajaxRecuado(usu){
+function ajaxRecuado(usu,fecha){
 	 if ( $.fn.dataTable.isDataTable( '#dataRecuado' ) ) {
       $("#dataRecuado").dataTable().fnDestroy();
     }
@@ -345,7 +430,8 @@ function ajaxRecuado(usu){
         "autoWidth": true,
         "ajax": {
         	"data": {
-	            'usu':usu
+	            'usu':usu,
+              'fecha':fecha
             },
             "url": MY_AJAX_ACTION_URL
         },
@@ -372,16 +458,24 @@ function ajaxRecuado(usu){
 			{ data: 'atrasada'},
 			{ data: 'Venta'}
       ],
-      "columnDefs": [],
+      "columnDefs": [{
+           "targets": 2,
+           "data": "Pago",
+           "render": function ( data, type, row, meta ) {
+              return "$"+formaterNumeroDecimales(data);
+           }
+          }],
         "processing": true,
         "serverSide": true,
         "pageLength" : 10,
         drawCallback: function () {
+          
         }
     });
 }
 
-function ajaxGasto(usu){
+function ajaxGasto(usu,fecha){
+  
 	if ( $.fn.dataTable.isDataTable( '#dataGasto' ) ) {
       $("#dataGasto").dataTable().fnDestroy();
     }
@@ -390,7 +484,8 @@ function ajaxGasto(usu){
         "autoWidth": true,
         "ajax": {
         	"data": {
-	            'usu':usu
+	            'usu':usu,
+              'fecha':fecha
             },
             "url": MY_AJAX_ACTION_URL
         },
@@ -412,32 +507,121 @@ function ajaxGasto(usu){
 			{ data: 'Descripcion'},
 			{ data: 'Valor'},
 			{ data: 'Tipo'},
-			{ data: 'Autor'}
+			{ data: 'Autor'},
+      { data: 'id' }
       ],
-      "columnDefs": [],
+      "columnDefs": [{
+           "targets": 5,
+           "data": "id",
+           "render": function ( data, type, row, meta ) {
+              if(row.estado==0){
+                var html='<a class="btn btn-warning cambiar" data-i='+data+'><i class="fas fa-exclamation"></i> Gasto generado</a>';
+              }else if(row.estado==2){
+                var html='Este gasto ha sido abonado.';
+              }else if(row.estado==1){
+                var html='<a class="btn btn-danger cambiar" style="color: white" data-i='+data+'><i class="fas fa-times-circle"> Cancelado</i></a>';
+              }
+              return html;
+           }
+         }],
         "processing": true,
         "serverSide": true,
         "pageLength" : 10,
         drawCallback: function () {
+          $('.cambiar').on('click', function () {
+            var i=$(this).attr('data-i');
+            CambiarGasto(i,usu,fecha);
+          });
+        }
+    });
+}
+
+function ajaxRetiro(usu,fecha){
+  if ( $.fn.dataTable.isDataTable( '#dataretiro' ) ) {
+   $("#dataretiro").dataTable().fnDestroy();
+  }
+    var MY_AJAX_ACTION_URL = "index.php?c=cerrar&a=retiro";
+    table = $('#dataretiro').DataTable({
+        "autoWidth": true,
+        "ajax": {
+          "data": {
+            'usu':usu,
+            'fecha':fecha
+          },
+          "url": MY_AJAX_ACTION_URL
+        },
+        "type": "get",
+        "paging": true,
+        "searching": false,
+        "ordering": true,
+        "language": {
+          "zeroRecords": "Pagina no encontrada",
+          "processing": 'Cargando...'
+        },
+        "bLengthChange" : true,
+        "info": false,
+        "search": false,
+        "sort": true,
+        "stripeClasses": [ "odd nutzer_tr", "even nutzer_tr"],
+        "columns": [
+          { data: 'Retiro' },
+          { data: 'fecha'},
+          { data: 'Descripcion'},
+          { data: 'Valor' },
+          { data: 'Autor' }
+      ],
+      "columnDefs": [
+        { className: "nowrap-column", "targets": [ 1 ] }
+      ],
+        "processing": true,
+        "serverSide": true,
+        "pageLength" : 10,
+        drawCallback: function () {
+       
         }
     });
 }
 
 
-function despleque(e,tab,usu){
+function CambiarGasto(i,usu,fecha){
+  $.ajax({
+      data: {
+        'gas':i
+      },
+      url: "index.php?c=cerrar&a=cambiar_estado_gasto",
+      type: "post",
+      success:function(e){
+        var obj = JSON.parse(e);
+        if(obj['error']==1){
+          ohSnap(obj['mensaje'],{color: 'red'});
+        }else if(obj['error']==0){
+          ohSnap('Se cambio correctamente',{color: 'green'});
+          ajaxGasto(usu,fecha);
+        }
+      },
+      error:function(){
+          ohSnap('Error desconocido',{color: 'red'});
+      }
+  });
+}
+
+
+function despleque(e,tab,usu,fecha){
 	  if($(e).hasClass('fa-chevron-down')){
 	    $(e).parent(".card-header").parent(".card").find(".divDesplegableContainer").show("slow");
 	    $(e).removeClass('fa-chevron-down');
 	    $(e).addClass('fa-chevron-up');
 	    if(tab==1){
-	    	ajaxNotaVenta(usu);
+	    	ajaxNotaVenta(usu,fecha);
 	    }else if(tab==2){
-	    	ajaxVenta(usu);
+	    	ajaxVenta(usu,fecha);
 	    }else if(tab==3){
-	    	ajaxRecuado(usu);
+	    	ajaxRecuado(usu,fecha);
 	    }else if(tab==4){
-	    	ajaxGasto(usu);
-	    }
+	    	ajaxGasto(usu,fecha);
+	    }else if(tab==5){
+        ajaxRetiro(usu,fecha);
+      }
 	  }else if($(e).hasClass('fa-chevron-up')){
 	    $(e).parent(".card-header").parent(".card").find(".divDesplegableContainer").hide("slow");
 	    $(e).addClass('fa-chevron-down');
@@ -446,12 +630,13 @@ function despleque(e,tab,usu){
 	
 }
 
-function Rechazar(usu){
+function Rechazar(usu,fecha){
     $.ajax({
       data: {
         'usu':usu,
         'latitud':latitudCerrar,
-        'logitud':longitudCerrar
+        'logitud':longitudCerrar,
+        'fecha':fecha
       },
       url: "index.php?c=cerrar&a=rechazar",
       type: "post",
@@ -466,7 +651,7 @@ function Rechazar(usu){
   });
 }
 
-function ContenedorDetalle(id,usu,fecha,tipo,cerrado){
+function ContenedorDetalle(id,usu,fecha,tipo,cerrado,vali){
   	$.ajax({
 	    data: {
 	      'usu':usu,
@@ -479,7 +664,7 @@ function ContenedorDetalle(id,usu,fecha,tipo,cerrado){
 	    	if(obj.length==0){
 	    		ohSnap('No se encontraron datos.',{color: 'red'});
 	    	}else{
-	    		$(".containerDetalle"+id).html(dibujarContenedorDetalle(obj,usu,tipo,cerrado));	
+	    		$(".containerDetalle"+id).html(dibujarContenedorDetalle(obj,usu,tipo,cerrado,fecha,vali));	
 	    	}
 	    },
 	    error:function(){
@@ -496,7 +681,7 @@ function formateNumero(numero){
 	return numero;
 }
 
-function dibujarContenedorDetalle(obj,usu,tipo,cerrado){
+function dibujarContenedorDetalle(obj,usu,tipo,cerrado,fecha,vali){
 
 	var pagado=obj[0]['Pagado'];
 	var ValorArecuado=obj[0]['ValorArecuado'];
@@ -603,16 +788,10 @@ function dibujarContenedorDetalle(obj,usu,tipo,cerrado){
 
 					html+='</div>';
 				html+='</div>';
-				html+='<div class="col-md-6">';
-					html+='<div class="form-group">'
-						html+='<label for="Observaciones">Observaciones</label>';
-						html+='<textarea class="form-control" id="Observaciones" disabled="disabled"></textarea>';
-					html+='</div>';
-				html+='</div>';
 			html+='</div>';
 
-      if(tipo==0 && cerrado!=0){
-        html+='<button type="button" class="btn btn-danger offset-md-5" id="Rechazar" onclick="Rechazar('+usu+')">Rechazar <i class="fas fa-times-circle"></i></i></button>';
+      if(tipo==0 && cerrado!=0 && vali==0){
+        html+='<button type="button" class="btn btn-danger offset-md-5" id="Rechazar" onclick="Rechazar('+usu+','+"'"+fecha+"'"+')">Rechazar <i class="fas fa-times-circle"></i></i></button>';
          html+='<hr>';
       }
       
@@ -620,7 +799,7 @@ function dibujarContenedorDetalle(obj,usu,tipo,cerrado){
 			////nota
 			html+='<div class="container-tab">';
 				html+='<div class="card">';
-				    html+='<h5 class="card-header card-header-primary text-center">Nota de ventas <i class="fas fa-chevron-down desplegue-btn" onclick="despleque(this,1,'+usu+')"></i></h5>';
+				    html+='<h5 class="card-header card-header-primary text-center">Nota de ventas <i class="fas fa-chevron-down desplegue-btn" onclick="despleque(this,1,'+usu+','+"'"+fecha+"'"+')"></i></h5>';
 				    html+='<div class="divDesplegableContainer" style="display: none;">';
 				        html+='<div class="card-body card-body-primary">';
 				        	html+='<div class="container-cerrar">';
@@ -643,7 +822,7 @@ function dibujarContenedorDetalle(obj,usu,tipo,cerrado){
 			////Ventas
 			html+='<div class="container-tab">';
 				html+='<div class="card">';
-				    html+='<h5 class="card-header card-header-primary text-center">Ventas <i class="fas fa-chevron-down desplegue-btn" onclick="despleque(this,2,'+usu+')"></i></h5>';
+				    html+='<h5 class="card-header card-header-primary text-center">Ventas <i class="fas fa-chevron-down desplegue-btn" onclick="despleque(this,2,'+usu+','+"'"+fecha+"'"+')"></i></h5>';
 				    html+='<div class="divDesplegableContainer" style="display: none;">';
 				        html+='<div class="card-body card-body-primary">';
 				        	html+='<div class="container-cerrar">';
@@ -656,6 +835,7 @@ function dibujarContenedorDetalle(obj,usu,tipo,cerrado){
 						                  html+='<th class="text-color all">Valor (Con interes)</th>';
 						                  html+='<th class="text-color all">Interese implicados</th>';
 						                  html+='<th class="text-color all">Antiguedad cliente</th>';
+                              html+='<th class="text-color all">Estado de la venta</th>';
 						                html+='</thead>';
 						                html+='<tbody>';
 						                html+='</tbody>';
@@ -670,7 +850,7 @@ function dibujarContenedorDetalle(obj,usu,tipo,cerrado){
 			////Recuado
 			html+='<div class="container-tab">';
 				html+='<div class="card">';
-				    html+='<h5 class="card-header card-header-primary text-center">Recuado <i class="fas fa-chevron-down desplegue-btn" onclick="despleque(this,3,'+usu+')"></i></h5>';
+				    html+='<h5 class="card-header card-header-primary text-center">Recuado <i class="fas fa-chevron-down desplegue-btn" onclick="despleque(this,3,'+usu+','+"'"+fecha+"'"+')"></i></h5>';
 				    html+='<div class="divDesplegableContainer" style="display: none;">';
 				        html+='<div class="card-body card-body-primary">';
 				        	html+='<div class="container-cerrar">';
@@ -699,7 +879,7 @@ function dibujarContenedorDetalle(obj,usu,tipo,cerrado){
 			////Gasto
 			html+='<div class="container-tab">';
 				html+='<div class="card">';
-				    html+='<h5 class="card-header card-header-primary text-center">Gasto <i class="fas fa-chevron-down desplegue-btn" onclick="despleque(this,4,'+usu+')"></i></h5>';
+				    html+='<h5 class="card-header card-header-primary text-center">Gasto <i class="fas fa-chevron-down desplegue-btn" onclick="despleque(this,4,'+usu+','+"'"+fecha+"'"+')"></i></h5>';
 				    html+='<div class="divDesplegableContainer" style="display: none;">';
 				        html+='<div class="card-body card-body-primary">';
 				        	html+='<div class="container-cerrar">';
@@ -711,6 +891,7 @@ function dibujarContenedorDetalle(obj,usu,tipo,cerrado){
 						                  html+='<th class="text-color all">Valor</th>';
 						                  html+='<th class="text-color all">Tipo de gasto</th>';
 						                  html+='<th class="text-color all">Autor</th>';
+                              html+='<th class="text-color all">Estado</th>';
 						                html+='</thead>';
 						                html+='<tbody>';
 						                html+='</tbody>';
@@ -725,12 +906,22 @@ function dibujarContenedorDetalle(obj,usu,tipo,cerrado){
 			////Retiros
 			html+='<div class="container-tab">';
 				html+='<div class="card">';
-				    html+='<h5 class="card-header card-header-primary text-center">Retiros <i class="fas fa-chevron-down desplegue-btn"></i></h5>';
+				    html+='<h5 class="card-header card-header-primary text-center">Retiros <i class="fas fa-chevron-down desplegue-btn" onclick="despleque(this,5,'+usu+','+"'"+fecha+"'"+')"></i></h5>';
 				    html+='<div class="divDesplegableContainer" style="display: none;">';
 				        html+='<div class="card-body card-body-primary">';
 				        	html+='<div class="container-cerrar">';
-								
-							html+='</div>';
+                    html+='<table id="dataretiro" class="table table-bordred table-striped table-striped table-hover tablaNormal" style="width: 100%;">';
+                      html+='<thead class="heade-table">';
+      							    html+='<th class="text-color">Retiro</th>';
+                        html+='<th class="text-color">Fecha</th>';
+                        html+='<th class="text-color">Descripcion</th>';
+                        html+='<th class="text-color">Valor</th>';
+                        html+='<th class="text-color">Autor</th>';
+                       html+='</thead>';
+                       html+='<tbody>';
+                       html+='</tbody>';
+                    html+='</table>'
+							   html+='</div>';
 				        html+='</div>';
 				    html+='</div>';
 				html+='</div>';

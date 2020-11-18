@@ -61,6 +61,12 @@ class cerrar_controller
     echo json_encode($data);
   }
 
+  public function retiro(){
+    $this->validacion->validarRol(1);
+    $data=$this->cerrar->obtenerRetiro($_GET);
+    echo json_encode($data);
+  }
+
   public function resumen(){
     $this->validacion->validarRol(1);
     $data=$this->cerrar->obtenerResumen($_POST);
@@ -78,4 +84,35 @@ class cerrar_controller
     $data=$this->cerrar->rechazar($_POST);
     echo json_encode($data);
   }
+
+  public function validarCierre(){
+    $this->validacion->validarRol(1);
+    $data=$this->cerrar->validarCierre($_POST);
+    echo json_encode($data);
+  }
+
+  public function cambiar_estado_gasto(){
+    $this->validacion->validarRol(1);
+    $errores=[];
+      if(!isset($_POST['gas']) || $_POST['gas']==""){
+          $errores[]=array('mensaje' =>"Algo salio mal" ,'error' =>"1");
+      }
+      if(count($errores)==0){
+        $errores=$this->cerrar->cambiar_estado_gasto($_POST);
+      }
+     echo json_encode($errores);
+  }
+
+  public function cambioEstadoVentas(){
+      $this->validacion->validarRol(1);
+      $errores=[];
+      if(!isset($_POST['id']) || !isset($_POST['estado'])){
+          $errores[]=array('control' =>"1" ,'error' =>"Algo salio mal");
+      }else{
+          $_POST['estado'] = (1 == $_POST['estado']) ? 0 : 1;
+          $errores=$this->cerrar->cambiar_estado($_POST);
+      }
+      echo json_encode($errores);
+  }
+  
 }

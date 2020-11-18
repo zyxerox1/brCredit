@@ -1,5 +1,5 @@
 <?php
-
+require_once 'model/usuario_modelo.php';
 class cerrar_modelo
 {
     private $DB;
@@ -10,12 +10,13 @@ class cerrar_modelo
         $this->DB   = conexion::getConnection();
         $this->DB_QUERY   = new query_modelo;
         $this->DB_QUERY1   = new query_modelo;
+        $this->usuario  = new usuario_modelo();
         $this->cerrar = array();
         $this->data = array();
     }
 
     /*/////////////////////////////////////////////guardar///////////////////////////////////*/
-    public function log_cerrar($tipo,$latitud=0,$longitud=0){
+    public function log_cerrar($tipo,$latitud=0,$longitud=0,$id_usu=0){
 
         /*movimineto 0-crear,1-editar,3-cambiar estado,2-orden*/
         /*parametro de errores{*/
@@ -31,7 +32,7 @@ class cerrar_modelo
 
         //$query = "CALL logPrestamo('$movimiento','$id','$controller',".$_SESSION["id_usu_credit"].",'$accion_func','$id_clie','$nota','$valor','$tipo','$latitud','$longitud','$ip')";
 
-        $query="INSERT INTO tbl_log_cierre (id_cierre, fecha_cierre, id_usu, tipo_cierre, longitud_cierre, latitud_cierre, ip_cierre) VALUES (NULL, now(),'".$_SESSION["rol"]."', '$tipo', '$longitud', '$latitud', '$ip');";
+        $query="INSERT INTO tbl_log_cierre (id_cierre, fecha_cierre, id_usu, tipo_cierre, longitud_cierre, latitud_cierre, ip_cierre,id_usu_cierre) VALUES (NULL, now(),'".$_SESSION["rol"]."', '$tipo', '$longitud', '$latitud', '$ip', '$id_usu');";
 
         $id=$this->DB_QUERY->save($query);
         return $id;
@@ -193,6 +194,7 @@ class cerrar_modelo
     }
 
     public function notaVentas($param){
+        $fecha=$param["fecha"];
         $this->data = array();
         $query="SELECT if(pres.nota_logp<>'',pres.nota_logp,'N/A') AS nota, CONCAT_WS (' ',client.primer_nombre_clie,
                     client.segundo_nombre_clie,
@@ -200,7 +202,7 @@ class cerrar_modelo
                     client.segundo_apellido_clie) as nombre
         FROM tbl_log_prestamo AS pres
         INNER JOIN tbl_cliente AS client ON (client.id_clie=pres.id_clie)
-        WHERE pres.movimiento_logp=1 AND pres.id_autor_usu=".$param["usu"];
+        WHERE pres.movimiento_logp=1 AND DATE_FORMAT(pres.fecha_logp, '%Y-%c-%d') = '$fecha' AND pres.apuntadaor_prestamo_logp=0 AND pres.id_autor_usu=".$param["usu"];
             
         $data=$this->DB_QUERY->queryDatatable($param,$query);
         return $data;
@@ -211,6 +213,8 @@ class cerrar_modelo
         $this->data = array();
         $query="SELECT
                     press.id_pres AS id,
+                    LPAD(press.id_pres,6,0) AS codigo,
+                    press.estado_pres as estado,
                     CONCAT_WS (' ',client.primer_nombre_clie, client.segundo_nombre_clie, client.primer_apellido_clie, client.segundo_apellido_clie) as Cliente,
                     press.valor_neto_clie AS ValorSin,
                     logPress.valor_pres_logp AS ValorCon,
@@ -221,32 +225,29 @@ class cerrar_modelo
                     INNER JOIN tbl_log_prestamo AS logPress ON (logPress.id_pres=press.id_pres AND logPress.movimiento_logp=0)
                     INNER JOIN tbl_usuarios AS usu ON (usu.id_usu=client.id_usu)
                     LEFT JOIN tbl_log_cliente AS logClien ON (logClien.id_usu=client.id_clie AND logClien.movimiento_logc=0 AND DATE_FORMAT(logClien.fecha_logc, '%Y-%c-%d')=DATE_FORMAT(now(), '%Y-%c-%d') )
-                    WHERE usu.id_usu=".$param["usu"];
+                    WHERE DATE_FORMAT(logPress.fecha_logp, '%Y-%c-%d')=DATE_FORMAT('".$param["fecha"]."', '%Y-%c-%d') AND usu.id_usu=".$param["usu"];
             
         $data=$this->DB_QUERY->queryDatatable($param,$query);
         return $data;
     }
 
     public function obtenerRecaudo($param){
+        $fecha=$param["fecha"];
+        $usu=$param["usu"];
+
         $this->data = array();
         $query="SELECT CONCAT_WS (' ',client.primer_nombre_clie, client.segundo_nombre_clie, client.primer_apellido_clie, client.segundo_apellido_clie) as Cliente,
-        press.valor_cuotas_pres  AS Cuota,
-        logPres.valor_pres_logp AS Pago,
-        press.valor_pres AS faltante,
-        dataRuta.vencidos,
-        dataRuta.atrasada,
-        press.id_pres AS Venta,
-        IF(logPres.fecha_logp = ' ','Pagado','No pagado') AS Estado
-        FROM tbl_cliente AS client 
-        LEFT JOIN tbl_log_prestamo AS logPres ON (client.id_clie=logPres.id_clie AND logPres.movimiento_logp=1)
-        INNER JOIN tbl_prestamo AS press ON (press.id_pres=logPres.id_pres)
-        INNER JOIN tbl_usuarios AS usu ON (usu.id_usu=client.id_usu)
-        LEFT JOIN (
-                   SELECT COUNT(rt.id_rutaH) AS vencidos, SUM(presSub.valor_cuotas_pres) AS atrasada,            presSub.id_clie
-                    FROM tbl_ruta_historial AS rt
-                    INNER JOIN tbl_prestamo AS presSub ON (presSub.id_pres=rt.id_pres)
-                   ) AS dataRuta ON (dataRuta.id_clie=client.id_clie)
-        WHERE usu.id_usu=".$param["usu"];
+                    log.numeroCouta_logp as Cuota,
+                    log.valor_pres_logp AS Pago,
+                    pres.numero_cuota_pres-log.numeroCouta_logp AS faltante,
+                    if(pres.valor_pres>0,'Pagado','No pagado') as Estado,
+                    IF(DATE_FORMAT(pres.fecha_limite_pres, '%Y-%c-%d')<DATE_FORMAT(now(), '%Y-%c-%d'),DATEDIFF(DATE_FORMAT(now(), '%Y-%c-%d'),  DATE_FORMAT(pres.fecha_limite_pres, '%Y-%c-%d')),0) as vencidos,
+                    pres.atraso_pres as atrasada,
+                    LPAD(pres.id_pres,6,0) AS Venta
+            FROM tbl_log_prestamo AS log
+            INNER JOIN tbl_prestamo AS pres ON (pres.id_pres=log.id_pres)
+            INNER JOIN tbl_cliente AS client ON (client.id_clie=pres.id_clie)
+            WHERE log.movimiento_logp=1 AND log.apuntadaor_prestamo_logp=0 AND DATE_FORMAT(log.fecha_logp, '%Y-%c-%d')=DATE_FORMAT('$fecha', '%Y-%c-%d') AND client.id_usu=".$usu;
             
         $data=$this->DB_QUERY->queryDatatable($param,$query);
         return $data;
@@ -261,11 +262,30 @@ class cerrar_modelo
             gas.nota_gas AS Descripcion,
             gas.valor_total_gas AS Valor,
             tgas.nombre_tipog AS Tipo,
-            CONCAT_WS (' ',usu.primer_nombre_usu, usu.segundo_nombre_usu, usu.primer_apellido_usu, usu.segundo_apellido_usu) AS Autor
+            CONCAT_WS (' ',usu.primer_nombre_usu, usu.segundo_nombre_usu, usu.primer_apellido_usu, usu.segundo_apellido_usu) AS Autor,
+            gas.estado_gas as estado
             FROM tbl_gasto AS gas
             INNER JOIN tbl_tipo_gasto AS tgas ON (gas.id_tipo_tipog=tgas.id_tipog)
             INNER JOIN tbl_usuarios AS usu ON (usu.id_usu=gas.id_usu)
-            WHERE usu.id_usu=".$param["usu"];
+            WHERE DATE_FORMAT(gas.fecha_gas, '%Y-%c-%d')=DATE_FORMAT('".$param["fecha"]."', '%Y-%c-%d') AND usu.id_usu=".$param["usu"];
+            
+        $data=$this->DB_QUERY->queryDatatable($param,$query);
+        return $data;
+    }
+
+    public function obtenerRetiro($param){
+ 
+    
+        $this->data = array();
+        $query="SELECT 
+                LPAD(ret.id_ret,6,'0') as Retiro,
+                ret.fecha_ret AS fecha,
+                CONCAT_WS(' ',usu.primer_nombre_usu,usu.segundo_nombre_usu,usu.primer_apellido_usu,usu.segundo_apellido_usu) as Autor,
+                ret.descripcion_ret as Descripcion,
+                ret.valor_ret as Valor
+            FROM tbl_retiro AS ret
+            INNER JOIN tbl_usuarios AS usu ON (ret.id_usu=usu.id_usu)
+            WHERE DATE_FORMAT(ret.fecha_ret, '%Y-%c-%d')=DATE_FORMAT('".$param["fecha"]."', '%Y-%c-%d') AND ret.id_ruta_usu=".$param["usu"];
             
         $data=$this->DB_QUERY->queryDatatable($param,$query);
         return $data;
@@ -278,8 +298,67 @@ class cerrar_modelo
     /*////////////////////////////////atualizar//////////////////////////////////////////////////*/
 
      public function rechazar($param){
+        $fecha=$param['fecha'];
+        $queryVenta="";
+        $queryUpdateGasto="";
         $this->DB_QUERY1->begin();
         $query="UPDATE tbl_usuarios SET cerrar_usu = 0 WHERE tbl_usuarios.id_usu =".$param["usu"];
+
+        $dataVenta="SELECT clien.id_usu,
+                       pres.valor_neto_clie,
+                       pres.id_pres
+                FROM tbl_prestamo AS pres 
+                INNER JOIN tbl_cliente AS clien ON (clien.id_clie=pres.id_clie) 
+                INNER JOIN tbl_log_prestamo as logpres ON (logpres.id_pres=pres.id_pres 
+                AND logpres.movimiento_logp=0) 
+                WHERE DATE_FORMAT(logpres.fecha_logp, '%Y-%c-%d')=DATE_FORMAT('$fecha', '%Y-%c-%d') AND pres.estado_pres=1 AND clien.id_usu=".$param['usu'];
+
+        $dataVenta=$this->DB_QUERY->query($dataVenta);
+        if(count($dataVenta)>0){
+            $queryVenta.="UPDATE tbl_prestamo 
+                SET tbl_prestamo.valor_desactivado_pres=tbl_prestamo.valor_pres,
+                    tbl_prestamo.valor_pres=0,
+                    tbl_prestamo.estado_pres=0
+                    WHERE ";
+
+            foreach ($dataVenta as $key => $dataVentaValue) {
+                $queryVenta.=" tbl_prestamo.id_pres = ".$dataVenta[$key]['id_pres']." OR";
+                $totalValorNeto=$totalValorNeto+$dataVenta[$key]['valor_neto_clie'];
+            }
+
+            $queryVenta=substr($queryVenta, 0, -2);
+
+            $saldoAtualizar=0;
+            $queryCaja="SELECT id_usu,id_caja,saldo_caja FROM tbl_caja WHERE id_usu=".$param['usu'];
+            $dataCaja=$this->DB_QUERY->query($queryCaja);
+
+            if(count($dataCaja)<=0){
+                return array('error' =>"1",'error' =>"No se encontro la caja de la ruta.");
+            }
+            $saldoAtualizar=$dataCaja[0]['saldo_caja']+$totalValorNeto;
+            $queryCaja="UPDATE tbl_caja SET saldo_caja = '$saldoAtualizar' WHERE id_usu =".$param['usu'];
+
+            $this->DB_QUERY->save($queryCaja,'Actualizar saldo de caja quitar prestamo');
+            $this->DB_QUERY1->save($queryVenta,'Desactivar venta validad.');
+        }
+
+        $queryGasto="SELECT 
+            gas.id_gas
+            FROM tbl_gasto AS gas
+            WHERE DATE_FORMAT(gas.fecha_gas, '%Y-%c-%d')=DATE_FORMAT('$fecha', '%Y-%c-%d') AND gas.estado_gas=1 ";
+        $dataGasto=$this->DB_QUERY->query($queryGasto);
+
+        if(count($dataGasto)>0){
+            $queryUpdateGasto.="UPDATE tbl_gasto 
+                                SET estado_gas = 0 
+                                WHERE ";
+            foreach ($dataGasto as $key => $dataGastoValue) {
+                $queryUpdateGasto.=" id_gas = ".$dataGasto[$key]['id_gas']." OR";
+            }
+            $queryUpdateGasto=substr($queryUpdateGasto, 0, -2);
+            $this->DB_QUERY->save($queryUpdateGasto,'Cancelar gasto cierre validar');
+        }
+
         $id=$this->DB_QUERY1->save($query,'Rechazar cerrar.');
         $this->log_cerrar(2,$param["latitud"],$param["logitud"]);
         $this->DB_QUERY1->commit();
@@ -293,6 +372,166 @@ class cerrar_modelo
         $id=$this->DB_QUERY1->save($query,'Cerrar todo.');
         $this->log_cerrar(1,$param["latitud"],$param["logitud"]);
         $this->DB_QUERY1->commit();
+        return array('control' =>0 ,'error' => 0);
+    }
+
+    public function validarCierre($param){
+        $queryVenta="";
+        $queryUpdateGasto="";
+        $totalValorNeto=0;
+        $fecha=$param['fecha'];
+        $this->DB_QUERY1->begin();
+
+        if($param['tipo']==0){
+            $queryValidar="UPDATE tbl_usuarios SET validar_usu = 1 WHERE tbl_usuarios.id_usu =".$param['usu'];
+        }else if($param['tipo']==1){
+            $queryValidar="UPDATE tbl_historial_vendedor SET validar_histV = 1 WHERE id_histV =".$param['usu'];
+        }
+
+        $query="SELECT clien.id_usu,
+                       pres.valor_neto_clie,
+                       pres.id_pres
+                FROM tbl_prestamo AS pres 
+                INNER JOIN tbl_cliente AS clien ON (clien.id_clie=pres.id_clie) 
+                INNER JOIN tbl_log_prestamo as logpres ON (logpres.id_pres=pres.id_pres 
+                AND logpres.movimiento_logp=0) 
+                WHERE DATE_FORMAT(logpres.fecha_logp, '%Y-%c-%d')=DATE_FORMAT('$fecha', '%Y-%c-%d') AND pres.estado_pres=0 AND clien.id_usu=".$param['usu'];
+        $dataVenta=$this->DB_QUERY->query($query);
+   
+        if(count($dataVenta)>0){
+            $queryVenta.="UPDATE tbl_prestamo 
+                SET tbl_prestamo.valor_pres=tbl_prestamo.valor_desactivado_pres,
+                    tbl_prestamo.valor_desactivado_pres=0,
+                    tbl_prestamo.estado_pres=1
+                    WHERE ";
+
+            foreach ($dataVenta as $key => $dataVentaValue) {
+                $queryVenta.=" tbl_prestamo.id_pres = ".$dataVenta[$key]['id_pres']." OR";
+                $totalValorNeto=$totalValorNeto+$dataVenta[$key]['valor_neto_clie'];
+            }
+
+            $queryVenta=substr($queryVenta, 0, -2);
+
+            $saldoAtualizar=0;
+            $queryCaja="SELECT id_usu,id_caja,saldo_caja FROM tbl_caja WHERE id_usu=".$param['usu'];
+            $dataCaja=$this->DB_QUERY->query($queryCaja);
+
+            if(count($dataCaja)<=0){
+                return array('error' =>"1",'error' =>"No se encontro la caja de la ruta.");
+            }
+            $saldoAtualizar=$dataCaja[0]['saldo_caja']-$totalValorNeto;
+            $queryCaja="UPDATE tbl_caja SET saldo_caja = '$saldoAtualizar' WHERE id_usu =".$param['usu'];
+
+            $this->DB_QUERY->save($queryCaja,'Actualizar saldo de caja quitar prestamo');
+            $this->DB_QUERY1->save($queryVenta,'Desactivar venta validad.');
+        }
+
+        $queryGasto="SELECT 
+            gas.id_gas
+            FROM tbl_gasto AS gas
+            WHERE DATE_FORMAT(gas.fecha_gas, '%Y-%c-%d')=DATE_FORMAT('$fecha', '%Y-%c-%d') AND gas.estado_gas=0 ";
+        $dataGasto=$this->DB_QUERY->query($queryGasto);
+
+        if(count($dataGasto)>0){
+            $queryUpdateGasto.="UPDATE tbl_gasto 
+                                SET estado_gas = 1 
+                                WHERE ";
+            foreach ($dataGasto as $key => $dataGastoValue) {
+                $queryUpdateGasto.=" id_gas = ".$dataGasto[$key]['id_gas']." OR";
+            }
+            $queryUpdateGasto=substr($queryUpdateGasto, 0, -2);
+            $this->DB_QUERY->save($queryUpdateGasto,'Cancelar gasto cierre validar');
+        }
+
+        
+
+        $id=$this->DB_QUERY1->save($queryValidar,'validar vendedor dia.');
+        $this->log_cerrar(3,0,0);
+        $this->DB_QUERY1->commit();
+        return array('control' =>0 ,'error' => 0);
+    }
+
+    public function cambiar_estado($params){
+        $this->DB_QUERY->begin();
+        $query="SELECT clien.id_usu,pres.valor_neto_clie
+                FROM tbl_prestamo AS pres
+                INNER JOIN tbl_cliente AS clien ON (clien.id_clie=pres.id_clie)
+                WHERE pres.id_pres=".$params['id'];
+        $data=$this->DB_QUERY->query($query);
+
+
+
+        if($params['estado']==0){
+            $query="UPDATE tbl_prestamo 
+                SET tbl_prestamo.valor_desactivado_pres=tbl_prestamo.valor_pres,
+                    tbl_prestamo.valor_pres=0,
+                    tbl_prestamo.estado_pres=0
+                    WHERE tbl_prestamo.id_pres =".$params['id'];
+
+            $saldoAtualizar=0;
+            $queryCaja="SELECT id_usu,id_caja,saldo_caja FROM tbl_caja WHERE id_usu=".$data[0]['id_usu'];
+            $dataCaja=$this->DB_QUERY->query($queryCaja);
+
+            if(count($dataCaja)<=0){
+                return array('error' =>"1",'error' =>"No se encontro la caja de la ruta.");
+            }
+            $saldoAtualizar=$dataCaja[0]['saldo_caja']+$data[0]['valor_neto_clie'];
+            $queryCaja="UPDATE tbl_caja SET saldo_caja = '$saldoAtualizar' WHERE id_usu =".$data[0]['id_usu'];
+            $this->DB_QUERY->save($queryCaja,'Actualizar saldo de caja quitar prestamo');
+            $this->DB_QUERY->save($query,'Desactivar venta');
+            ////////////////////////////////////////////////////////////////
+
+        }else if($params['estado']==1){
+            $query="UPDATE tbl_prestamo 
+                SET tbl_prestamo.valor_pres=tbl_prestamo.valor_desactivado_pres,
+                    tbl_prestamo.valor_desactivado_pres=0,
+                    tbl_prestamo.estado_pres=1
+                    WHERE tbl_prestamo.id_pres = ".$params['id'];
+
+            $saldoAtualizar=0;
+            $queryCaja="SELECT id_usu,id_caja,saldo_caja FROM tbl_caja WHERE id_usu=".$data[0]['id_usu'];
+            $dataCaja=$this->DB_QUERY->query($queryCaja);
+
+            if(count($dataCaja)<=0){
+                return array('error' =>"1",'error' =>"No se encontro la caja de la ruta.");
+            }
+            $saldoAtualizar=$dataCaja[0]['saldo_caja']-$data[0]['valor_neto_clie'];
+            $queryCaja="UPDATE tbl_caja SET saldo_caja = '$saldoAtualizar' WHERE id_usu =".$data[0]['id_usu'];
+            $this->DB_QUERY->save($queryCaja,'Actualizar saldo de caja quitar prestamo');
+            $this->DB_QUERY->save($query,'Desactivar venta');
+        }
+
+        $this->log_cerrar(4,0,0);
+        $this->DB_QUERY->commit();
+        return array('control' =>0 ,'error' => 0);
+    }
+
+
+    public function cambiar_estado_gasto($params){
+         $this->DB_QUERY->begin();
+        $valor='';
+        $query="SELECT estado_gas,valor_gas FROM `tbl_gasto` WHERE id_gas=".$params['gas'];
+        $data=$this->DB_QUERY1->query($query);
+        if($data[0]['estado_gas']==1){
+            if($data[0]['estado_gas']!=2){
+                $query = "UPDATE `tbl_gasto` SET `estado_gas` = 0 WHERE `tbl_gasto`.`id_gas` = ".$params['gas'];
+            }else{
+              return array('control' =>'Este gasto cancelar.' ,'error' =>1 );  
+            }
+            
+        }else if($data[0]['estado_gas']==0){
+            if($data[0]['estado_gas']!=2 ){
+                $query = "UPDATE `tbl_gasto` SET `estado_gas` = 1 WHERE `tbl_gasto`.`id_gas` = ".$params['gas'];
+            }else{
+              return array('control' =>'Este gasto cancelar.' ,'error' =>1 );  
+            } 
+        }
+        $id=$this->DB_QUERY->save($query,'Cambio de estado');
+
+        $query = "CALL logGasto('1','".$params['gas']."','cerrar',".$_SESSION["id_usu_credit"].",'cambiar_estado_gasto','0','CAMBIO DE ESTADO POR CIERRE',0, 0)";
+        $this->DB_QUERY->save($query);
+
+        $this->DB_QUERY->commit();
         return array('control' =>0 ,'error' => 0);
     }
 }

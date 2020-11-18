@@ -106,3 +106,7 @@
 	margin-right: 30px;
     font-size: 30px;
 }
+
+.btn-validar{
+    cursor: pointer;
+}

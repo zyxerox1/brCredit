@@ -12,7 +12,7 @@ class usuario_modelo
     }
 
     /*/////////////////////////////////////////////guardar///////////////////////////////////*/
-    public function log_usuario($movimiento="",$id="",$nota=""){
+    public function log_usuario($movimiento="",$id="",$nota="",$validateFecha=""){
         /*parametro de errores{*/
         $controller="";
         $accion_func="";
@@ -23,7 +23,7 @@ class usuario_modelo
             $accion_func=$_REQUEST['a'];
         }
 
-        $query = "CALL logUsuarios('$movimiento','$id',".$_SESSION["id_usu_credit"].",'$accion_func','$controller')";
+        $query = "CALL logUsuarios('$movimiento','$id',".$_SESSION["id_usu_credit"].",'$accion_func','$controller','$validateFecha')";
 
         $this->DB_QUERY->save($query);
     }

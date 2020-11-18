@@ -83,7 +83,7 @@ class cliente_modelo
          logpres.valor_pres_logp - pres.valor_pres AS Pagado,
          pres.valor_pres AS Debe,
          pres.numero_cuota_pres AS Nrocouta,
-         pres.atraso_pres AS Diasven,
+         IF(DATE_FORMAT(pres.fecha_limite_pres, '%Y-%c-%d')<DATE_FORMAT(now(), '%Y-%c-%d'),DATEDIFF(DATE_FORMAT(now(), '%Y-%c-%d'), DATE_FORMAT(pres.fecha_limite_pres, '%Y-%c-%d')),0) AS Diasven,
          '-' AS Coutareg,
          IF(DATE_FORMAT(pres.fecha_limite_pres, '%Y-%c-%d')>DATE_FORMAT(now(), '%Y-%c-%d'),pres.valor_pres,0) AS Coutaatra,
          DATE_FORMAT(logpres.fecha_logp, '%Y-%c-%d') AS Fechacreacion,
