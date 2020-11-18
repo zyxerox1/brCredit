@@ -23,6 +23,16 @@ $(document).ready(function() {
     }
   });
 
+  $("#guardarAbono").on('click', function () {
+     tipo=0;
+    $("#confirmAbonar").modal("show");
+  });
+
+  $("#guardarAbonoManual").on('click', function () {
+     tipo=1;
+    $("#confirmAbonar").modal("show");
+  });
+
   $("#guardarAbonoConfirm").on('click', function () {
     registrar_abono($("#formulario-crear-abonar").attr('action'),$("#formulario-crear-abonar").serializeArray());
   });
@@ -84,8 +94,7 @@ function cargar_cliente(){
           { data: 'Direcionc' },
           { data: 'Direcionr' },
           { data: 'valorDeuda'},
-          { data: 'id' },
-          { data: 'id' },
+          { data: 'id' }
       ],
       "columnDefs": [ {
            "targets": 5,
@@ -99,7 +108,7 @@ function cargar_cliente(){
               return html;
            }
          },
-         {
+         /*{
            "targets": 6,
            "data": "orden",
            "render": function ( data, type, row, meta ) {
@@ -112,16 +121,16 @@ function cargar_cliente(){
               
               return html;
            }
-         },
+         },*/
          {
-           "targets": 7,
+           "targets": 6,
            "data": "orden",
            "render": function ( data, type, row, meta ) {
               var html="";
               if(row.cumplimiento!=0){
-                html+='<button class="btn btn-outline-success manual" style="float:right" id="manual" data-cliente="'+row.id+'" data-prestamo="'+row.idPres+'" data-cod="'+row.cumplimiento+'"><i class="fas fa-hands-wash"></i> Manual</button>';
+                html+='<button class="btn btn-outline-success pagar" style="float:right" id="manual" data-cliente="'+row.id+'" data-prestamo="'+row.idPres+'" data-cod="'+row.cumplimiento+'"><i class="fas fa-hands-wash"></i> Actualizar pago</button>';
               }else{
-                html+='<button class="btn btn-outline-primary manual" style="float:right" id="manual" data-cliente="'+row.id+'" data-prestamo="'+row.idPres+'" data-cod="0"><i class="fas fa-hands-wash"></i> Manual</button>';
+                html+='<button class="btn btn-outline-primary pagar" style="float:right" id="manual" data-cliente="'+row.id+'" data-prestamo="'+row.idPres+'" data-cod="0"><i class="fas fa-hands-wash"></i>  Hacer Pago </button>';
               }
               
               return html;
@@ -131,27 +140,26 @@ function cargar_cliente(){
         "serverSide": true,
         "pageLength" : 100,
         drawCallback: function () {
-          $('.auto').on('click', function () {
+          /*$('.auto').on('click', function () {
             var i=$(this).attr('data-cliente');
             var prestamo=$(this).attr('data-prestamo');
             codAtual=$(this).attr('data-cod');
             tipo=0;
             modalAbonoAuto(i,0,prestamo,codAtual);
-          });
+          });*/
 
-          $('.manual').on('click', function () {
+          $('.pagar').on('click', function () {
             var i=$(this).attr('data-cliente');
             var prestamo=$(this).attr('data-prestamo');
             codAtual=$(this).attr('data-cod');
-            tipo=1;
-            modalAbonoAuto(i,1,prestamo,codAtual);
+            modalAbonoAuto(i,prestamo,codAtual);
           });
         }
     });
   }
 
 
-function modalAbonoAuto(id,tipo,prestamo,codAtual=0){
+function modalAbonoAuto(id,prestamo,codAtual=0){
   ip=prestamo;
   $.ajax({
     data: {
@@ -171,11 +179,6 @@ function modalAbonoAuto(id,tipo,prestamo,codAtual=0){
         $(".numeroCouta").html(data["data"][0].nCouta);
         $(".valor").html(data["data"][0].valorPagar);
         $("#guardarAbono").html("<i class='fas fa-check'></i> Hacer pago de "+data["data"][0].valorPagar);
-        if(tipo==0){
-          $(".valorManual").hide();
-        }else{
-          $(".valorManual").show();
-        }
         $('#modalAbono').modal("show");
       }
     },
@@ -218,6 +221,8 @@ function registrar_abono(action,datos) {
             cargar_cliente();
             $('#modalAbono').modal("hide");
             $('#confirmAbonar').modal("hide");
+            $('#valorAbono').val('');
+            $('#Nota').val('');
             ohSnap('Se guardo correctamente',{color: 'green'});
           }else{
             ohSnap('Error desconocido.',{color: 'red'});

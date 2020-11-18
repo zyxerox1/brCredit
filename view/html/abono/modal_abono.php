@@ -53,7 +53,7 @@
           </div>
           <br>
           <div class="row">
-            <div class="col-md-12 valorManual">
+            <div class="col-md-12">
               <label for="valorAbono" class="text-color">Valor de abono*</label>
               <div class="input-group form-group">
                 <div class="input-group-prepend">
@@ -79,6 +79,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-success" id="guardarAbono" data-toggle="modal" data-target="#confirmAbonar">Guardar</button>
+        <button type="button" class="btn btn-success" id="guardarAbonoManual" data-toggle="modal" data-target="#confirmAbonar"><i class="fas fa-hands-wash"></i> Hacer pago manual</button>
         <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
       </div>
     </div> 

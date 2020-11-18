@@ -150,6 +150,20 @@ class abono_modelo
 
             $query2 = "UPDATE tbl_log_prestamo SET apuntadaor_prestamo_logp = '$id' WHERE id_logp =".$data[0]['id_logp'];
 
+            /*/////////////////////////////caja////////////////////////////////////*/
+            $saldoAtualizar=0;
+            $queryCaja="SELECT id_usu,id_caja,saldo_caja FROM tbl_caja WHERE id_usu=".$_SESSION['id_usu_credit'];
+            $dataCaja=$this->DB_QUERY->query($queryCaja);
+
+            if(count($dataCaja)<=0){
+                return array('error' =>"1",'error' =>"No se encontro la caja de la ruta.");
+            }
+            $saldoAtualizar=$dataCaja[0]['saldo_caja']-$data[0]['valor_pres_logp'];
+            $saldoAtualizar=$saldoAtualizar+$valor;
+            $queryCaja="UPDATE tbl_caja SET saldo_caja = '$saldoAtualizar' WHERE id_usu =".$_SESSION['id_usu_credit'];
+            $this->DB_QUERY->save($queryCaja,'Actualizar saldo de caja abono');
+            ////////////////////////////////////////////////////////////////
+
             $this->cliente->log_cliente(5,$data[0]['id_clie']);
             $this->DB_QUERY->save($query,'ACTUALIZAR ABONO.');
             $this->DB_QUERY1->save($query1,'ACTUALIZAR ABONO cliente.');
@@ -178,12 +192,29 @@ class abono_modelo
                return array('error' => 1,"mensaje"=>"Error a tratar abonar al cliente" ); 
             }
 
+            /*/////////////////////////////caja////////////////////////////////////*/
+            $saldoAtualizar=0;
+            $queryCaja="SELECT id_usu,id_caja,saldo_caja FROM tbl_caja WHERE id_usu=".$_SESSION['id_usu_credit'];
+            $dataCaja=$this->DB_QUERY->query($queryCaja);
+
+            if(count($dataCaja)<=0){
+                return array('error' =>"1",'error' =>"No se encontro la caja de la ruta.");
+            }
+
+            $saldoAtualizar=$dataCaja[0]['saldo_caja']+$valor;
+            $queryCaja="UPDATE tbl_caja SET saldo_caja = '$saldoAtualizar' WHERE id_usu =".$_SESSION['id_usu_credit'];
+            $this->DB_QUERY->save($queryCaja,'Actualizar saldo de caja abono');
+            ////////////////////////////////////////////////////////////////
+
             $id=$this->log_abono(1,$idPres,$data[0]['id_clie'],$nota,$valor,$tipo,$latitud,$longitud);
             $query1 = "UPDATE tbl_cliente SET cumplimineto_client = '$id' WHERE id_clie =".$data[0]['id_clie'];
             $this->cliente->log_cliente(4,$data[0]['id_clie']);
             $this->DB_QUERY->save($query,'Abonar.');
             $this->DB_QUERY1->save($query1,'Abonar cliente.');
         }
+
+        
+
         $this->DB_QUERY->commit();
         return array('error' => 0); 
     }

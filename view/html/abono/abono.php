@@ -59,8 +59,7 @@
                       <th class="text-color">Direcion de cobro</th>
                       <th class="text-color">Direcion de residencia</th>
                       <th class="text-color all">Deuda</th>
-                      <th class="text-color all">Automatico</th>
-                      <th class="text-color all">Manual</th>
+                      <th class="text-color all">Pagar</th>
                     </thead>
                       <tbody>
           
