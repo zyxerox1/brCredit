@@ -68,10 +68,35 @@ class gasto_modelo
 
     public function obtenerGasto(){
         $suma="";
-        $query="CALL obtenerGasto(".$_REQUEST["id"].")";
+        $query="SELECT tipo.nombre_tipog,
+                if(gas.nota_gas='','N/A',gas.nota_gas) AS nota_gas,
+                gas.fecha_gas as fecha_logg,
+                gas.estado_gas,
+                gas.valor_gas,
+                gas.id_usu,
+                usu.primer_nombre_usu,
+                usu.segundo_nombre_usu,
+                usu.primer_apellido_usu,
+                usu.segundo_apellido_usu,
+                usu.telefono_1_usu,
+                usu.telefono_2_usu,
+                usu.documento_usu,
+                usu.correo_usu,
+                usu.direcion_usu,
+                usu.fecha_nacimineto_usu,
+                gas.id_gas
+                FROM tbl_gasto AS gas
+                INNER JOIN tbl_tipo_gasto AS tipo ON (tipo.id_tipog=gas.id_tipo_tipog)
+                INNER JOIN tbl_usuarios as USU on (usu.id_usu=gas.id_usu)
+                WHERE gas.id_gas=".$_REQUEST["id"];
         $data=$this->DB_QUERY->query($query);
         if(isset($data[0]["id_usu"])){
-            $query="CALL obtenerSumaGastosUsuario(".$data[0]["id_usu"].")";
+            $query="SELECT SUM(if(gas.estado_gas=0,gas.valor_gas,0)) AS pendientes,
+                            SUM(if(gas.estado_gas=1,gas.valor_gas,0)) AS cancelador,
+                            SUM(if(gas.estado_gas=2,gas.valor_gas,0)) AS anulado,
+                            SUM(if(gas.estado_gas=3,gas.valor_gas,0)) AS abonos
+                    FROM tbl_gasto as gas 
+                    WHERE gas.id_usu=".$data[0]["id_usu"];
             $suma=$this->DB_QUERY1->query($query);
         }
         return array('data' => $data,'suma' => $suma );

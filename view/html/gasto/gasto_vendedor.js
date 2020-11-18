@@ -83,9 +83,9 @@ function cargar_gasto(){
            "data": "id",
            "render": function ( data, type, row, meta ) {
            		if(row.estado==0){
-           			var html='<a class="btn btn-outline-warning cambiar" data-i='+data+'><i class="fas fa-exclamation"></i> Pendiente</a>';
+           			var html='<a class="btn btn-outline-warning cambiar" data-i='+data+'><i class="fas fa-exclamation"></i> Gasto generado</a>';
            		}else if(row.estado==1){
-           			var html='<a class="btn btn-outline-success cambiar" style="color: white" data-i='+data+'><i class="fas fa-thumbs-up"></i> Gasto cancelado</a>';
+           			var html='<a class="btn btn-danger cambiar" style="color: white" data-i='+data+'><i class="fas fa-times-circle"></i> Gasto cancelado</a>';
            		}else if(row.estado==2){
                 var html='<a class="btn btn-outline-primary cambiar btnAbonar" style="color: #007bff" data-i='+data+'><i class="fas fa-receipt"></i> Gasto abonado</a>';
               }
@@ -116,21 +116,12 @@ function modalCambiar(i){
 	  success:function(e){
 	      var obj = JSON.parse(e);
 	      if(obj["data"].length>0){
-          var pendientes='<td> $'+0+'</td>';
-          var cancelador='<td> $'+0+'</td>';
-          var anulado='<td> $'+0+'</td>';
-          var abonos='<td> $'+0+'</td>';
-          var tabla="";
   		    $("#titleGasto").html("Gasto de "+obj["data"][0].nombre_tipog);
-          if(obj["data"][0].estado_gas!=0){
-            $(".anular").hide();
-          }else{
-            $(".anular").show();
-          }
+          
     		 	$(".detalle").html(obj["data"][0].nota_gas);
     		 	$('.fecha_d').html(obj["data"][0].fecha_logg);
     		 	if(obj["data"][0].estado_gas==0){
-    		 		$('.estado').html("Pendiente");
+    		 		$('.estado').html("Gasto generado");
     		 	}else if(obj["data"][0].estado_gas==1){
     		 		$('.estado').html("Cancelado");
     		 	}else if(obj["data"][0].estado_gas==2){
@@ -140,24 +131,10 @@ function modalCambiar(i){
     		 	}
   			  $('.valor').html('$'+formatValor(obj["data"][0].valor_gas)+".00");
 
-          tabla+="<tr>";
-    			for (var i = 0; i < obj["suma"].length; i++) {
-    				if(obj["suma"][i].estado==0){
-              pendientes="<td>"+'$'+formatValor(obj["suma"][i].total)+".00"+"</td>";
-    				}
-            if(obj["suma"][i].estado==1){
-    					cancelador="<td>"+'$'+formatValor(obj["suma"][i].total)+".00"+"</td>";
-    				}
-            if(obj["suma"][i].estado==2){
-    					anulado="<td>"+'$'+formatValor(obj["suma"][i].total)+".00"+"</td>";
-    				}
-            if(obj["suma"][i].estado==3){
-    					abonos="<td>"+'$'+formatValor(obj["suma"][i].total)+".00"+"</td>";
-    				}
-    			}
-          tabla+=pendientes+cancelador+anulado+abonos+"</tr>";
-
-          $(".table-total").find('tbody').html(tabla);
+          $('#Vpendientes').html("$"+formaterNumeroDecimales(obj["suma"][0]['pendientes']));
+          $('#Vcancelador').html("$"+formaterNumeroDecimales(obj["suma"][0]['cancelador']));
+          $('#Vabonos').html("$"+formaterNumeroDecimales(obj["suma"][0]['anulado']));
+          $('#Vanulado').html("$"+formaterNumeroDecimales(obj["suma"][0]['abonos']));
 	      	$("#gastoModal").modal("show");
           $('#confirmacion').attr("data-g",obj["data"][0].id_gas);
           //$('.anular').attr('href','index.php?c=gasto&a=cambiarEstado&id='+obj["data"][0].id_gas);

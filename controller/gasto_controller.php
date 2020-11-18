@@ -68,9 +68,9 @@ class gasto_controller
         }else{
             $_POST['valor']= preg_replace('/[.,]/', '', $_POST['valor']);
         }
-        if($_POST['nota']==""){
+        /*if($_POST['nota']==""){
            $errores[] = array('control' =>"nota" ,'error' =>"Tiene que ingresar un detalle"  );
-        }
+        }*/
 
         if(isset($_FILES["img"])){
             $str=$_FILES['img']['name'];
@@ -84,9 +84,12 @@ class gasto_controller
         if(count($errores)==0){
               
             $result=  $this->gasto->crear_gasto($_POST['Tipo'], $_POST['valor'], $_POST['nota'],$img_name);
-
-            if (isset($result["control"]) && $result["control"] !=1) {
-                move_uploaded_file($_FILES['img']['tmp_name'], "view/assets/evidenciasGastosPropios/".$result["control"]);
+            if(isset($_FILES["img"])){
+                if (isset($result["control"]) && $result["control"] !=1) {
+                    move_uploaded_file($_FILES['img']['tmp_name'], "view/assets/evidenciasGastosPropios/".$result["control"]);
+                    $errores=array('control' =>0 ,'error' => 0);
+                }
+            }else{
                 $errores=array('control' =>0 ,'error' => 0);
             }
           

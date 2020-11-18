@@ -91,7 +91,7 @@
             <table class="table table-totales">
               <thead class="thead-dark">
                 <tr>
-                  <th scope="col">Pendientes</th>
+                  <th scope="col">Gasto generado</th>
                   <th scope="col">Cancelado</th>
                   <th scope="col">Abonos de administrador</th>
                   <th scope="col">Anulados</th>
@@ -114,9 +114,10 @@
           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalAbono" >Abonar</button>
           <a type="button" href="" class="btn btn-success cancelar">Cancelar</a>
           <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+          <!--<button type="button" href="" class="btn btn-secondary anular">Anular</button>-->
         <?php } ?>
         <?php if($_SESSION["rol"]==2){ ?>
-          <button type="button" href="" class="btn btn-secondary anular">Anular</button>
+          
           <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
         <?php } ?>
       </div>

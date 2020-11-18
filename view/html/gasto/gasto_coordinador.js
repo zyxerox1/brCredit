@@ -114,13 +114,13 @@ function cargar_gasto(){
            "data": "id",
            "render": function ( data, type, row, meta ) {
            		if(row.estado==0){
-           			var html='<a class="btn btn-warning cambiar" data-i='+data+'><i class="fas fa-exclamation"></i> Pendiente</a>';
+           			var html='<a class="btn btn-warning cambiar" data-i='+data+'><i class="fas fa-exclamation"></i> Gasto generado</a>';
            		}else if(row.estado==2){
            			var html='<a class="btn btn-primary cambiar" style="color: white" data-i='+data+'>Abono</a>';
            		}else if(row.estado==1){
-                var html='<a class="btn btn-success cambiar" style="color: white" data-i='+data+'><i class="fas fa-thumbs-up"></i></a>';
+                var html='<a class="btn btn-danger cambiar" style="color: white" data-i='+data+'><i class="fas fa-times-circle"> Cancelado</i></a>';
               }else if(row.estado==3){
-                var html='<a class="btn btn-danger cambiar" style="color: white" data-i='+data+'>Anulado</a>';
+                var html='<a class="btn btn-success cambiar" style="color: white" data-i='+data+'>Anulado</a>';
               }
            		
               return html;
@@ -182,17 +182,11 @@ function modalCambiar(i){
 			$('.direcion').html(obj["data"][0].direcion_usu);
 			$('.fecha').html(obj["data"][0].fecha_nacimineto_usu);
 
-			for (var i = 0; i < obj["suma"].length; i++) {
-				if(obj["suma"][i].estado==0){
-					$('#Vpendientes').html('$'+formaterNumeroDecimales(obj["suma"][i].total));
-				}if(obj["suma"][i].estado==1){
-					$('#Vcancelador').html('$'+formaterNumeroDecimales(obj["suma"][i].total));
-				}if(obj["suma"][i].estado==2){
-					$('#Vabonos').html('$'+formaterNumeroDecimales(obj["suma"][i].total));
-				}if(obj["suma"][i].estado==3){
-					$('#Vanulado').html('$'+formaterNumeroDecimales(obj["suma"][i].total));
-				}
-			}
+			$('#Vpendientes').html("$"+formaterNumeroDecimales(obj["suma"][0]['pendientes']));
+      $('#Vcancelador').html("$"+formaterNumeroDecimales(obj["suma"][0]['cancelador']));
+      $('#Vabonos').html("$"+formaterNumeroDecimales(obj["suma"][0]['anulado']));
+      $('#Vanulado').html("$"+formaterNumeroDecimales(obj["suma"][0]['abonos']));
+          
 			$('.cancelar').attr('href','index.php?c=gasto&a=cambiarEstado&id='+obj["data"][0].id_gas);
 	      	$("#gastoModal").modal("show");
 	   	  }else{
