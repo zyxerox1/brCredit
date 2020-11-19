@@ -11,6 +11,7 @@ class cliente_modelo
         $this->DB_QUERY1   = new query_modelo;
         $this->DB_QUERY2   = new query_modelo;
         $this->DB_QUERY3   = new query_modelo;
+        $this->notificaciones  = new notificacion_controller();
         $this->user = array();
     }
 
@@ -56,6 +57,8 @@ class cliente_modelo
     	  $query = "INSERT INTO tbl_cliente (id_clie, documento_clie, documento_ref_clie, primer_nombre_clie, segundo_nombre_clie, primer_apellido_clie, segundo_apellido_clie, telefono_1_clie, telefono_2_clie, direcion_clie, direcion_cobro_clie, sexo_clie, correo_clie, fecha_nacimineto_clie, foto_clie, estado_localidad_clie, ciudad_localidad_clie, id_usu,prestamo_minimo_client,prestamo_maximo_client, orden_ruta_clie) VALUES (NULL, $Documento, $ccr,'$primernombre', '$segundonombre', '$primerapellido', '$segundoapellido', $Telefono_1, $Telefono_2, '$Direcion', '$Direcionc','$Genero', '$Correo', '$Fecha','$img_name',$estados,$ciudades,$ruta,$valormin,$valormax,".$data[0]["orden_ruta_clie"].");";
         $id=$this->DB_QUERY->save($query,'creacion de cliente.');
         $this->log_cliente(0,$id);
+        $nombre=$_SESSION["nombre"];
+        $this->notificaciones->gnotifiacionesSave($_SESSION['id_usu_credit'],1,"El vendedor $nombre creo un cliente en le gestor de cliente.","Un vendedor creo un nuevo cliente");
         $this->DB_QUERY->commit();
         return array('control' =>$user["text_img_perfil_usu"] ,'error' => 0,'resp'=>$id);
     }
@@ -210,7 +213,8 @@ class cliente_modelo
             $datosVende=",autorizarMaxMin_clie=1
                        ,max_auto_clie='$valormax',
                        min_auto_clie='$valormin'";
-            
+            $nombre=$_SESSION["nombre"];
+            $this->notificaciones->gnotifiacionesSave($_SESSION['id_usu_credit'],1,"El vendedor $nombre quire aumentar el saldo.","Un vendedor quiere aumentar el saldo");
           }
         }
 

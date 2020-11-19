@@ -205,7 +205,17 @@
 	        </div>
 
 	    	<hr>
-
+	    	<div class="notificaciones">
+	    		
+	    		<?php if(count($dataNotif)>0){
+	    				echo "<h5>Notificaciones</h5>";
+	    				foreach ($dataNotif as $key => $value) { ?>
+	    					<h4><?php  echo $dataNotif[0]['tittle_noti']; ?></h4>
+	    					<p><?php  echo $dataNotif[0]['mensaje_noti']; ?></p>
+	    					<p><?php  echo $dataNotif[0]['fecha_noti']; ?></p>
+	    					<hr>
+	    		<?php } } ?>
+	    	</div>
 	  
 
    		</div>

@@ -5,6 +5,7 @@ session_start();
 require_once 'core.php';
 require_once 'bd/conexion.php';
 require_once 'controller/validacion_controller.php';
+require_once 'controller/notificacion_controller.php';
 require_once 'model/query_modelo.php';
 
 function index($controller)

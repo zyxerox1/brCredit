@@ -9,10 +9,14 @@ class home_controller
     {
         $this->model  = new home_modelo();
         $this->validacion  = new validaciones_controller();
+        $this->notificaciones  = new notificacion_controller();
+        
     }
 
     public function index()
     {
+
+        $dataNotif=$this->notificaciones->obtenerNotif();
         //variable necesaria para encontrar la ruta del script js--se utiliza en le footer de la app
         $c='overall'; //carpeta;
         $p='script';//nombre del archivo js

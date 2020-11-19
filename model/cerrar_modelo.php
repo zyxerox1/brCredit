@@ -11,6 +11,7 @@ class cerrar_modelo
         $this->DB_QUERY   = new query_modelo;
         $this->DB_QUERY1   = new query_modelo;
         $this->usuario  = new usuario_modelo();
+        $this->notificaciones  = new notificacion_controller();
         $this->cerrar = array();
         $this->data = array();
     }
@@ -134,7 +135,7 @@ class cerrar_modelo
         }else{
             $query=$query1." UNION ALL ".$query2;
         }
-
+        
         $data=$this->DB_QUERY->queryDatatable($param,$query);
         return $data;
     }
@@ -302,6 +303,7 @@ class cerrar_modelo
         $queryVenta="";
         $queryUpdateGasto="";
         $this->DB_QUERY1->begin();
+        $totalValorNeto=0;
         $query="UPDATE tbl_usuarios SET cerrar_usu = 0 WHERE tbl_usuarios.id_usu =".$param["usu"];
 
         $dataVenta="SELECT clien.id_usu,
@@ -443,7 +445,8 @@ class cerrar_modelo
             $this->DB_QUERY->save($queryUpdateGasto,'Cancelar gasto cierre validar');
         }
 
-        
+        $nombre=$_SESSION["nombre"];
+        $this->notificaciones->gnotifiacionesSave($_SESSION['id_usu_credit'],2,"El administrador $nombre valido tu dia.","El administrador valido.",$param['usu']);
 
         $id=$this->DB_QUERY1->save($queryValidar,'validar vendedor dia.');
         $this->log_cerrar(3,0,0);

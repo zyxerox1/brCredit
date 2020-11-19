@@ -226,9 +226,39 @@ function readTextFile(file, callback) {
     rawFile.send(null);
 }
 
+function notificcion(){
+  var html="";
+    $.ajax({
+      username: "master",
+      url: "index.php?c=notificacion",
+      success:function(e){
+        var data = JSON.parse(e);
+
+        for (var i = 0; i < data.length; i++) {
+          if(data[i]["leido_noti"]==0){
+              Push.create(data[i]["tittle_noti"],{
+              body: data[i]["mensaje_noti"],
+              icon: './imagenes_app/icon_pag.png',
+              timeout: 50000,
+              onClick: function () {
+                  window.focus();
+                  this.close();
+              }
+            });
+          }
+          html+="<h4>"+data[i]["tittle_noti"]+"</h4><p>"+data[i]["mensaje_noti"]+"</p><p>"+data[i]["fecha_noti"]+"</p> <hr>";
+         
+        }
+         $(".notificaciones").html(html);
+    }
+  });
+}
+
 $(document).ready(function() {
 
-  
+  setInterval(function(){
+    notificcion();
+  },10000);
 
   //select 2 antiguo
   $( ".select2" ).each(function( index ) {

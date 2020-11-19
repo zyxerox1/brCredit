@@ -9,6 +9,7 @@ class prestamo_modelo
     {
         $this->DB_QUERY   = new query_modelo;
         $this->LOG   = new log_controller();
+        $this->notificaciones  = new notificacion_controller();
         $this->data = array();
     }
 
@@ -67,6 +68,8 @@ class prestamo_modelo
         $id=$this->DB_QUERY->save($query,'Registrar prestamo');
 
         $this->log_prestamo(0,$id,$idClient,"Creao prestamo",$valorInteres,99,$latitud,$longitud);
+        $nombre=$_SESSION["nombre"];
+        $this->notificaciones->gnotifiacionesSave($_SESSION['id_usu_credit'],1,"El vendedor $nombre hizo una nueva venta de $valorInteres.","Un vendedor hizo una venta");
         $this->DB_QUERY->commit();
         return array('control' =>0 ,'error' => 0);
     }

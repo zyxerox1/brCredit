@@ -10,6 +10,7 @@ class gasto_modelo
         $this->DB   = conexion::getConnection();
         $this->DB_QUERY   = new query_modelo;
         $this->DB_QUERY1   = new query_modelo;
+        $this->notificaciones  = new notificacion_controller();
         $this->data = array();
     }
 
@@ -192,7 +193,7 @@ class gasto_modelo
         $this->DB_QUERY->begin();
         $valor=0;
         $estado='';
-        $query="SELECT estado_gas,valor_gas FROM `tbl_gasto` WHERE id_gas=".$idGasto;
+        $query="SELECT estado_gas,valor_gas,id_usu FROM `tbl_gasto` WHERE id_gas=".$idGasto;
         $data=$this->DB_QUERY1->query($query);
  
         if($data[0]['estado_gas']==1 || $data[0]['estado_gas']==4){
@@ -213,6 +214,8 @@ class gasto_modelo
         
         $id=$this->DB_QUERY->save($query,'Abono.');
         $this->log_gasto(2,$idGasto,$notaGasto,$valorAbono,$latitud,$longitud);
+        $nombre=$_SESSION["nombre"];
+        $this->notificaciones->gnotifiacionesSave($_SESSION['id_usu_credit'],2,"El administrador $nombre cambio el esado de tu gasto.","El administrador valido.",$data[0]['id_usu']);
         $this->DB_QUERY->commit();
         return array('control' =>0 ,'error' => 0);
 
@@ -221,7 +224,7 @@ class gasto_modelo
     public function cambiarEstado($params,$tipo){
         $this->DB_QUERY->begin();
         $valor='';
-        $query="SELECT estado_gas,valor_gas FROM `tbl_gasto` WHERE id_gas=".$params['id'];
+        $query="SELECT estado_gas,valor_gas,id_usu FROM `tbl_gasto` WHERE id_gas=".$params['id'];
         $data=$this->DB_QUERY1->query($query);
         if($tipo==3){
             if($data[0]['estado_gas']!=0){
@@ -236,6 +239,8 @@ class gasto_modelo
         if($tipo==3){
             return array('control' =>0 ,'error' => 0);
         }
+        $nombre=$_SESSION["nombre"];
+        $this->notificaciones->gnotifiacionesSave($_SESSION['id_usu_credit'],2,"El administrador $nombre cambio el esado de tu gasto.","El administrador valido.",$data[0]['id_usu']);
         $this->DB_QUERY->commit();
         return "";
     }
