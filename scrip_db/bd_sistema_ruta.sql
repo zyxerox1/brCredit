@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 16-11-2020 a las 22:52:07
+-- Tiempo de generación: 19-11-2020 a las 04:50:48
 -- Versión del servidor: 10.4.11-MariaDB
 -- Versión de PHP: 7.4.4
 
@@ -89,9 +89,9 @@ BEGIN
 	INSERT INTO `tbl_log_tipo_gasto` (`id_logt`, `movimiento_logt`, `fecha_logt`, `id_tipo_gasto_logt`, `controller_logt`, `id_autor_ust`, `accion_func_logt`) VALUES (NULL, movimiento, now(), id_gasto, controller, autor, accion);
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `logUsuarios` (IN `movimiento` TEXT, IN `id` BIGINT, IN `autor` BIGINT, IN `accion_func` TEXT, IN `controller` TEXT)  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `logUsuarios` (IN `movimiento` TEXT, IN `id` BIGINT, IN `autor` BIGINT, IN `accion_func` TEXT, IN `controller` TEXT, IN `dia` TEXT)  NO SQL
 BEGIN
-INSERT INTO tbl_log_usuarios (id_logu,movimiento_logu,fecha_logu,id_usu,id_autor_usu,controller_logu,accion_func_logu) VALUES (NULL, movimiento,now(),id,autor,controller,accion_func);
+INSERT INTO tbl_log_usuarios (id_logu,movimiento_logu,fecha_logu,id_usu,id_autor_usu,controller_logu,accion_func_logu,fecha_dia_validar_logu) VALUES (NULL, movimiento,now(),id,autor,controller,accion_func,dia);
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `obtenerAdministradores` ()  NO SQL
@@ -184,10 +184,13 @@ CREATE TABLE `tbl_cliente` (
   `estado_localidad_clie` text COLLATE utf8mb4_swedish_ci NOT NULL DEFAULT 'No tiene',
   `ciudad_localidad_clie` text COLLATE utf8mb4_swedish_ci NOT NULL DEFAULT 'No tiene',
   `id_usu` bigint(20) NOT NULL DEFAULT 0,
-  `prestamo_minimo_client` int(11) NOT NULL,
-  `prestamo_maximo_client` int(11) NOT NULL,
+  `prestamo_minimo_client` double NOT NULL,
+  `prestamo_maximo_client` double NOT NULL,
   `orden_ruta_clie` int(11) NOT NULL,
-  `cumplimineto_client` int(11) NOT NULL DEFAULT 0 COMMENT '0-no pago,1-pago'
+  `cumplimineto_client` int(11) NOT NULL DEFAULT 0 COMMENT '0-no pago,1-pago',
+  `autorizarMaxMin_clie` int(11) NOT NULL DEFAULT 0,
+  `max_auto_clie` double NOT NULL DEFAULT 0,
+  `min_auto_clie` double NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_swedish_ci;
 
 -- --------------------------------------------------------
@@ -237,7 +240,8 @@ CREATE TABLE `tbl_log_cierre` (
   `tipo_cierre` int(11) NOT NULL COMMENT '0-manual,1-automatico',
   `longitud_cierre` text COLLATE utf8_swedish_ci NOT NULL,
   `latitud_cierre` text COLLATE utf8_swedish_ci NOT NULL,
-  `ip_cierre` double NOT NULL
+  `ip_cierre` double NOT NULL,
+  `id_usu_cierre` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
 
 -- --------------------------------------------------------
@@ -248,7 +252,7 @@ CREATE TABLE `tbl_log_cierre` (
 
 CREATE TABLE `tbl_log_cliente` (
   `id_logc` bigint(20) NOT NULL,
-  `movimiento_logc` int(11) NOT NULL COMMENT '0-CREAR, 1-UPDATE,2-cambiar orden,3-DESACTIVAR,4-ABONO,5-ACTUALIZAR ABONO,6-CAMBIO ESTADO',
+  `movimiento_logc` int(11) NOT NULL COMMENT '0-CREAR, 1-UPDATE,2-cambiar orden,3-DESACTIVAR,4-ABONO,5-ACTUALIZAR ABONO,6-CAMBIO ESTADO,7-autorizar cambio de saldo',
   `fecha_logc` datetime NOT NULL,
   `id_usu` bigint(20) NOT NULL,
   `controller_logc` text COLLATE utf8_swedish_ci DEFAULT NULL,
@@ -313,7 +317,8 @@ CREATE TABLE `tbl_log_prestamo` (
   `latitud_logp` text COLLATE utf8_swedish_ci DEFAULT '0',
   `longitud_logp` text COLLATE utf8_swedish_ci DEFAULT '0',
   `ip_logp` text COLLATE utf8_swedish_ci DEFAULT '0',
-  `apuntadaor_prestamo_logp` bigint(20) NOT NULL DEFAULT 0
+  `apuntadaor_prestamo_logp` bigint(20) NOT NULL DEFAULT 0,
+  `numeroCouta_logp` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
 
 -- --------------------------------------------------------
@@ -340,12 +345,30 @@ CREATE TABLE `tbl_log_tipo_gasto` (
 
 CREATE TABLE `tbl_log_usuarios` (
   `id_logu` bigint(20) NOT NULL,
-  `movimiento_logu` int(11) NOT NULL COMMENT '0-CREAR, 1-UPDATE,3-DESACTIVAR',
+  `movimiento_logu` int(11) NOT NULL COMMENT '0-CREAR, 1-UPDATE,3-DESACTIVAR,4-validar',
   `fecha_logu` datetime NOT NULL,
+  `fecha_dia_validar_logu` datetime DEFAULT NULL,
   `id_usu` bigint(20) NOT NULL,
   `controller_logu` text COLLATE utf8_swedish_ci DEFAULT NULL,
   `id_autor_usu` bigint(20) NOT NULL,
   `accion_func_logu` text COLLATE utf8_swedish_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tbl_notificaciones`
+--
+
+CREATE TABLE `tbl_notificaciones` (
+  `id_noti` int(11) NOT NULL,
+  `id_usu_remitente_noti` bigint(20) NOT NULL,
+  `id_usu_destinatario_noti` bigint(20) NOT NULL,
+  `tipo_noti` int(11) NOT NULL,
+  `leido_noti` int(11) NOT NULL,
+  `fecha_noti` datetime NOT NULL,
+  `mensaje_noti` text COLLATE utf8_swedish_ci NOT NULL,
+  `tittle_noti` text COLLATE utf8_swedish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
 
 -- --------------------------------------------------------
@@ -364,7 +387,9 @@ CREATE TABLE `tbl_prestamo` (
   `valor_cuotas_pres` double NOT NULL,
   `intereses_press` text COLLATE utf8_swedish_ci NOT NULL,
   `valor_neto_clie` double NOT NULL,
-  `atraso_pres` int(11) NOT NULL DEFAULT 0
+  `atraso_pres` int(11) NOT NULL DEFAULT 0,
+  `estado_pres` int(11) NOT NULL DEFAULT 1,
+  `valor_desactivado_pres` double NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
 
 -- --------------------------------------------------------
@@ -529,6 +554,12 @@ ALTER TABLE `tbl_log_usuarios`
   ADD KEY `FK_USUARIO-LOG` (`id_usu`);
 
 --
+-- Indices de la tabla `tbl_notificaciones`
+--
+ALTER TABLE `tbl_notificaciones`
+  ADD PRIMARY KEY (`id_noti`);
+
+--
 -- Indices de la tabla `tbl_prestamo`
 --
 ALTER TABLE `tbl_prestamo`
@@ -632,6 +663,12 @@ ALTER TABLE `tbl_log_usuarios`
   MODIFY `id_logu` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT de la tabla `tbl_notificaciones`
+--
+ALTER TABLE `tbl_notificaciones`
+  MODIFY `id_noti` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `tbl_prestamo`
 --
 ALTER TABLE `tbl_prestamo`
@@ -729,18 +766,39 @@ DELIMITER $$
 --
 -- Eventos
 --
-CREATE DEFINER=`root`@`localhost` EVENT `eventoPagoHistrorial` ON SCHEDULE EVERY 23 DAY STARTS '2020-11-07 16:06:22' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
+CREATE DEFINER=`root`@`localhost` EVENT `eventoPagoHistrorial` ON SCHEDULE EVERY 1 DAY STARTS '2020-11-19 23:59:59' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
 INSERT INTO tbl_ruta_historial (id_rutaH, id_clien, cumplimineto_rutaH, fecha_rutaH,id_pres,id_log_pres_rutaH) 
 (SELECT NULL,
 tbl_cliente.id_clie,
 if(tbl_cliente.cumplimineto_client!=0,tbl_cliente.cumplimineto_client,0) AS cumplimineto_rutaH,
-'2020-09-10 05:48:32' AS fecha_rutaH,
+now() AS fecha_rutaH,
 tbl_prestamo.id_pres,
 tbl_cliente.cumplimineto_client
 FROM tbl_cliente
 LEFT JOIN tbl_prestamo ON (tbl_prestamo.id_clie=tbl_cliente.id_clie AND tbl_prestamo.valor_pres>0));
 
 UPDATE tbl_cliente SET cumplimineto_client = 0;
+
+INSERT INTO tbl_historial_vendedor (id_histV, saldoInicial_histV, cerrado_histV, validar_histV,fecha_histV,id_usu) 
+(SELECT null,
+ caj.saldo_caja as saldoInicial_histV,
+ 1,
+ usu.validar_usu as validar_histV,
+ now() as fecha_histV,
+ usu.id_usu
+FROM tbl_usuarios as usu
+INNER JOIN tbl_caja as caj on (caj.id_usu=usu.id_usu)
+WHERE usu.rol_usu=2);
+
+UPDATE tbl_usuarios SET tbl_usuarios.cerrar_usu = 0;
+
+UPDATE
+    tbl_prestamo
+    INNER JOIN tbl_cliente ON (tbl_cliente.id_clie=tbl_prestamo.id_clie)
+SET
+    tbl_prestamo.atraso_pres = tbl_prestamo.atraso_pres+1
+WHERE tbl_cliente.cumplimineto_client=0 AND tbl_prestamo.estado_pres=1;
+
 END$$
 
 DELIMITER ;
