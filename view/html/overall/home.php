@@ -178,6 +178,17 @@
 		        			</div>
 		        		</a>
 		        	</div>
+
+		        	<div class="col-md-3">
+		        		<a class="btn btn-home btn-abono" href="index.php?c=abono">
+		        			<div class="row">
+		        				<i class="fas fa-money-bill-alt icon-btn"></i>
+		        			</div>
+		        			<div class="row">
+		        				<label class="mensaje-btn">Registrar abono</label>
+		        			</div>
+		        		</a>
+		        	</div>
 	        	<?php endif ?>
 	        	<?php if ($_SESSION['rol']==1): ?>
 	        	<div class="col-md-3">
@@ -192,6 +203,10 @@
 	        	</div>
 	        	<?php endif ?>
 	        </div>
+
+	    	<hr>
+
+	  
 
    		</div>
 	</div>

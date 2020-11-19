@@ -16,9 +16,11 @@ class home_modelo
 
     public function cerrar_dia($param){ 
         $this->DB_QUERY_HOME->begin();
-         $query = "UPDATE tbl_usuarios SET cerrar_usu = 1 WHERE tbl_usuarios.id_usu =".$_SESSION['rol'];
+         $query = "UPDATE tbl_usuarios SET cerrar_usu = 1 WHERE tbl_usuarios.id_usu =".$_SESSION['id_usu_credit'];
+        
         $id=$this->DB_QUERY_HOME->save($query,'Cerrar dia.');
         $this->cerrar->log_cerrar(0,$param["latitud"],$param["logitud"]);
+        
         $this->DB_QUERY_HOME->commit();
         return array('control' =>0 ,'error' => 0);
 

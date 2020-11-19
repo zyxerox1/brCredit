@@ -66,9 +66,14 @@
 }
 
 .btn-gasto{
-	background: #000000 !important;
+	background: #386d55 !important;
 }
 
 .btn-retiro{
 	background: #f39d00 !important;
 }
+
+.btn-abono{
+	background: #068623 !important;
+}
+

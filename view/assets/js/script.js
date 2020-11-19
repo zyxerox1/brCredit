@@ -76,7 +76,6 @@ $(".desplegue-btn").on('click', function () {
     $(this).addClass('fa-chevron-down');
     $(this).removeClass('fa-chevron-up');
   }
-  console.log($(this).parent(".card-header").parent(".card"));
 });
 
 function format(input)
@@ -194,6 +193,8 @@ function validate_errores_peticion_ajax(errores){
   });
 }
 
+
+
 function shake(control) {
     var interval = 100;
     var distance = 10;
@@ -227,9 +228,10 @@ function readTextFile(file, callback) {
 
 $(document).ready(function() {
 
+  
+
   //select 2 antiguo
   $( ".select2" ).each(function( index ) {
-    console.log($(".container-select2:eq("+index+")"));
     $(".select2").select2({
       theme: 'bootstrap4',
       dropdownParent: $(".container-select2:eq("+index+")"),

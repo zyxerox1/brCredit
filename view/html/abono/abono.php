@@ -11,6 +11,8 @@
             <br>
             <div class="container">
               <br>
+              <button type="button" id="registraPagoUrl" onclick="window.location.href = 'index.php?c=cliente'" class="btn btn-primary btn-confirmar">Registra prestamo</button>
+              <hr>
               <div class="row">
                     <div class="col-md-6 container-select2">
                         <div class="form-group">

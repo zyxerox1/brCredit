@@ -39,6 +39,9 @@
 <!--boostrapDialog-->
 <script src="./<?php echo(APP_PLUGIN)?>bootstrap4-dialog-bootstrap4-dev/js/bootstrap-dialog.min.js"></script>
 
+<!--notificaciones-->
+<script src="./<?php echo(APP_PLUGIN)?>push.js-master/push.min.js"></script>
+
 <!--Input-Spinner-->
 <!--<script src="./<?php //echo(APP_PLUGIN)?>Input-Spinner-Plugin-Bootstrap-4/bootstrap-input-spinner.js"></script>-->
 
